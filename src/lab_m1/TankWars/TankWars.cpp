@@ -12,7 +12,8 @@ using namespace tw;
 
 TankWars::TankWars()
 {
-
+    this->terrain = NULL;
+    this->modelMatrix = glm::mat3(1);
 }
 
 TankWars::~TankWars()
@@ -32,9 +33,17 @@ void TankWars::Init()
 
 
     // Draw a square.
-    Mesh* square = objects::CreateSquare("tudor", 400, glm::vec3(1, .85f, .34f));
-    AddMeshToList(square);
+    /*Mesh* square = objects::CreateSquare("tudor", 400, glm::vec3(1, .85f, .34f));
+    AddMeshToList(square);*/
 
+    Mesh* terrSquare = objects::CreateSquare("terrSquare", 50, glm::vec3(1, .85f, .34f));
+    AddMeshToList(terrSquare);
+
+
+    this->terrain = new Terrain(1.0, 2.0, 0.5, 1.0, 0.5, 3.0);
+    this->terrain->computeHeights(0.0, (float)resolution.x, 7);
+
+    this->terrain->printHeightMap();
 }
 
 
@@ -52,10 +61,16 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    this->modelMatrix = glm::mat3(1);
-    modelMatrix *= transform::Rotate(0.2);
+    /*this->modelMatrix = glm::mat3(1);
+    modelMatrix *= transform::Scale(0.4, 0.75);
+    modelMatrix *= transform::Scissor(0, 0.5);
     modelMatrix *= transform::Translate(210, 210);
-    RenderMesh2D(meshes["tudor"], shaders["VertexColor"], modelMatrix);
+    RenderMesh2D(meshes["terrSquare"], shaders["VertexColor"], modelMatrix);
+
+    this->modelMatrix = glm::mat3(1);
+    RenderMesh2D(meshes["terrSquare"], shaders["VertexColor"], modelMatrix);*/
+
+    DrawTerrain();
 }
 
 
@@ -112,4 +127,27 @@ void TankWars::OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY)
 
 void TankWars::OnWindowResize(int width, int height)
 {
+}
+
+
+void TankWars::DrawTerrain() {
+    for (int i = 0; i < terrain->heightMap.size() - 1; i++) {
+        auto pointA = terrain->heightMap[i];
+        auto pointB = terrain->heightMap[i + 1];
+
+        float scaleX = pointB.first - pointA.first;
+        float scaleY = max(pointB.second, pointA.second);
+
+        //cout << "Scale x = " << scaleX << ", Scale y = " << scaleY << "\n";
+
+        float scissorY = (pointB.second - pointA.second) / (pointB.first - pointA.first);
+
+        modelMatrix = glm::mat3(1);
+
+        modelMatrix *= transform::Translate(pointA.first, pointA.second);
+        modelMatrix *= transform::Scissor(0, scissorY);
+        modelMatrix *= transform::Scale(scaleX, scaleY);
+
+        RenderMesh2D(meshes["terrSquare"], shaders["VertexColor"], modelMatrix);
+    }
 }

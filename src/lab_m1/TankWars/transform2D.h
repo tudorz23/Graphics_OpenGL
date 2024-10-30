@@ -32,5 +32,14 @@ namespace tw
                           glm::sin(radians), glm::cos(radians), 0,
                           0, 0, 1));
         }
+
+        // Scissor matrix
+        inline glm::mat3 Scissor(float scissorX, float scissorY)
+        {
+            return glm::transpose(
+                glm::mat3(1, scissorX, 0,
+                          scissorY, 1, 0,
+                          0, 0, 1));
+        }
 	}
 }

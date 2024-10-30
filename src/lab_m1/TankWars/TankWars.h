@@ -2,6 +2,9 @@
 
 #include "components/simple_scene.h"
 
+#include "lab_m1/TankWars/Terrain.h"
+
+
 namespace tw
 {
     class TankWars : public gfxc::SimpleScene
@@ -26,8 +29,13 @@ namespace tw
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
 
+
+        void DrawTerrain();
+
     protected:
         glm::mat3 modelMatrix;
+
+        Terrain *terrain;
 
     };
 }   // namespace tw
