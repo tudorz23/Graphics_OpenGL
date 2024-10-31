@@ -3,19 +3,20 @@
 #include "components/simple_scene.h"
 
 #include "lab_m1/TankWars/Terrain.h"
+#include "lab_m1/TankWars/Tank.h"
 
 
 namespace tw
 {
     class TankWars : public gfxc::SimpleScene
     {
-    public:
+     public:
         TankWars();
         ~TankWars();
 
         void Init() override;
 
-    private:
+     private:
         void FrameStart() override;
         void Update(float deltaTimeSeconds) override;
         void FrameEnd() override;
@@ -31,11 +32,13 @@ namespace tw
 
 
         void DrawTerrain();
+        void DrawTank();
 
-    protected:
+     protected:
         glm::mat3 modelMatrix;
 
         Terrain *terrain;
+        Tank* tank;
 
     };
 }   // namespace tw

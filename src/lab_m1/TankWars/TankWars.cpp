@@ -18,6 +18,7 @@ TankWars::TankWars()
 
 TankWars::~TankWars()
 {
+    delete terrain;
 }
 
 
@@ -40,11 +41,23 @@ void TankWars::Init()
     Mesh* terrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
     AddMeshToList(terrainMesh);
 
-    Mesh* trapez = objects::CreateTrapezoid("trapez", 200, 50, glm::vec3(1, 0, 0));
-    AddMeshToList(trapez);
 
-    Mesh* semicerc = objects::CreateSemiCircle("semicerc", 50, glm::vec3(1, 0, 1));
-    AddMeshToList(semicerc);
+
+    // Add tank components.
+
+    /*Mesh* upperTrap = objects::CreateTrapezoid("upperTrap", TANK_UPPER_LENGTH,
+                                               TANK_UPPER_HEIGHT, glm::vec3(1, 0, 0));
+    AddMeshToList(upperTrap);
+
+    Mesh* lowerTrap = objects::CreateTrapezoid("lowerTrap", TANK_LOWER_LENGTH,
+                                               TANK_LOWER_HEIGHT, glm::vec3(1, 0, 0));
+    AddMeshToList(lowerTrap);
+
+    Mesh* cap = objects::CreateSemiCircle("cap", TANK_CAP_RADIUS, glm::vec3(1, 0, 1));
+    AddMeshToList(cap);*/
+
+    Mesh* tankMesh = objects::CreateTank("tank", glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+    AddMeshToList(tankMesh);
 }
 
 
@@ -62,17 +75,8 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform::Translate(500, 500);
-    modelMatrix *= transform::Rotate(M_PI);
-    modelMatrix *= transform::Scale(5, 5);
-    RenderMesh2D(meshes["semicerc"], shaders["VertexColor"], modelMatrix);
-
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform::Translate(400, 450);
-    modelMatrix *= transform::Rotate(M_PI);
-    RenderMesh2D(meshes["trapez"], shaders["VertexColor"], modelMatrix);
-
+    
+    DrawTank();
     DrawTerrain();
 
     
@@ -139,4 +143,12 @@ void TankWars::DrawTerrain()
 {
     modelMatrix = glm::mat3(1);
     RenderMesh2D(meshes["terrain"], shaders["VertexColor"], modelMatrix);
+}
+
+
+void TankWars::DrawTank()
+{
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform::Translate(200, 200);
+    RenderMesh2D(meshes["tank"], shaders["VertexColor"], modelMatrix);
 }

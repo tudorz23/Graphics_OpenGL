@@ -23,7 +23,7 @@ namespace tw
 
 		std::vector<std::pair<float, float>> sineWaveParams;
 
-	public:
+	 public:
 		std::vector<std::pair<float, float>> heightMap;
 
 	};

@@ -22,7 +22,16 @@ namespace tw
 	constexpr float OMEGA4 = 0.0355f;
 
 	// For semicircle drawing.
-	constexpr int NUM_TRIANGLES = 60;
+	constexpr int NUM_TRIANGLES_SEMICIRCLE = 70;
 
+	// Tank dimmensions.
+	constexpr float TANK_UPPER_LENGTH = 200.0f;
+	constexpr float TANK_UPPER_HEIGHT = 60.0f;
+	constexpr float TANK_UPPER_TR_LEN = 30.0f;
 
+	constexpr float TANK_LOWER_LENGTH = 150.0f;
+	constexpr float TANK_LOWER_HEIGHT = 50.0f;
+	constexpr float TANK_LOWER_TR_LEN = 20.0f;
+
+	constexpr float TANK_CAP_RADIUS = 50.0f;
 }
