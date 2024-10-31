@@ -22,16 +22,29 @@ namespace tw
 	constexpr float OMEGA4 = 0.0355f;
 
 	// For semicircle drawing.
-	constexpr int NUM_TRIANGLES_SEMICIRCLE = 70;
+	constexpr int NUM_VERTICES_SEMICIRCLE = 70;
 
-	// Tank dimmensions.
-	constexpr float TANK_UPPER_LENGTH = 200.0f;
-	constexpr float TANK_UPPER_HEIGHT = 60.0f;
-	constexpr float TANK_UPPER_TR_LEN = 30.0f;
+	// Tank measurements.
+	constexpr float TANK_UPPER_LENGTH = 80.0f;
+	constexpr float TANK_UPPER_HEIGHT = 20.0f;
+	constexpr float TANK_UPPER_TR_LEN = 12.0f;
 
-	constexpr float TANK_LOWER_LENGTH = 150.0f;
-	constexpr float TANK_LOWER_HEIGHT = 50.0f;
-	constexpr float TANK_LOWER_TR_LEN = 20.0f;
+	constexpr float TANK_LOWER_LENGTH = 60.0f;
+	constexpr float TANK_LOWER_HEIGHT = 12.0f;
+	constexpr float TANK_LOWER_TR_LEN = 8.0f;
 
-	constexpr float TANK_CAP_RADIUS = 50.0f;
+	constexpr float TANK_TOTAL_HEIGHT = TANK_UPPER_HEIGHT + TANK_LOWER_HEIGHT;
+	constexpr float TANK_CAP_RADIUS = 18.0f;
+
+
+	// Tank specifics.
+	constexpr float START_X1 = 400.f;
+	constexpr float START_Y1 = 400.f;
+	constexpr float SPEED1 = 100.f;
+
+	constexpr float START_X2 = 800.f;
+	constexpr float START_Y2 = 400.f;
+	constexpr float SPEED2 = 100.f;
+
+	constexpr float ROTATE_SPEED = -5.f;
 }

@@ -29,7 +29,7 @@ namespace tw
 		Mesh* CreateSemiCircle(const std::string& name, float radius, glm::vec3 color);
 
 
-		// Create a tank with the middle of the bottom trpaezoid as the origin.
-		Mesh* CreateTank(const std::string& name, glm::vec3 color1, glm::vec3 color2);
+		// Create the tank body, with the middle of the bottom trapezoid as the origin.
+		Mesh* CreateTankBody(const std::string& name, glm::vec3 color1, glm::vec3 color2);
 	}
 }

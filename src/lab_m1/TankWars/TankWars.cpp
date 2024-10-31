@@ -13,12 +13,17 @@ using namespace tw;
 TankWars::TankWars()
 {
     this->terrain = NULL;
+    this->tank1 = NULL;
+    this->tank2 = NULL;
+
     this->modelMatrix = glm::mat3(1);
 }
 
 TankWars::~TankWars()
 {
     delete terrain;
+    delete tank1;
+    delete tank2;
 }
 
 
@@ -42,22 +47,22 @@ void TankWars::Init()
     AddMeshToList(terrainMesh);
 
 
-
     // Add tank components.
 
-    /*Mesh* upperTrap = objects::CreateTrapezoid("upperTrap", TANK_UPPER_LENGTH,
-                                               TANK_UPPER_HEIGHT, glm::vec3(1, 0, 0));
-    AddMeshToList(upperTrap);
+    Mesh* tankBodyMesh1 = objects::CreateTankBody("body1", glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+    AddMeshToList(tankBodyMesh1);
 
-    Mesh* lowerTrap = objects::CreateTrapezoid("lowerTrap", TANK_LOWER_LENGTH,
-                                               TANK_LOWER_HEIGHT, glm::vec3(1, 0, 0));
-    AddMeshToList(lowerTrap);
+    Mesh* tankCapMesh1 = objects::CreateSemiCircle("cap1", TANK_CAP_RADIUS, glm::vec3(1, 0, 1));
+    AddMeshToList(tankCapMesh1);
 
-    Mesh* cap = objects::CreateSemiCircle("cap", TANK_CAP_RADIUS, glm::vec3(1, 0, 1));
-    AddMeshToList(cap);*/
+    Mesh* tankBodyMesh2 = objects::CreateTankBody("body2", glm::vec3(0, 0, 1), glm::vec3(1, 1, 0));
+    AddMeshToList(tankBodyMesh2);
 
-    Mesh* tankMesh = objects::CreateTank("tank", glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
-    AddMeshToList(tankMesh);
+    Mesh* tankCapMesh2 = objects::CreateSemiCircle("cap2", TANK_CAP_RADIUS, glm::vec3(0, 1, 1));
+    AddMeshToList(tankCapMesh2);
+
+    this->tank1 = new Tank("body1", "cap1", START_X1, START_Y1, SPEED1, ROTATE_SPEED);
+    this->tank2 = new Tank("body2", "cap2", START_X2, START_Y2, SPEED2, ROTATE_SPEED);
 }
 
 
@@ -70,16 +75,30 @@ void TankWars::FrameStart()
     glm::ivec2 resolution = window->GetResolution();
     // Sets the screen area where to draw
     glViewport(0, 0, resolution.x, resolution.y);
+
+    tank1->bodyMatrix = glm::mat3(1);
+    tank1->capMatrix = glm::mat3(1);
+
+    tank2->bodyMatrix = glm::mat3(1);
+    tank2->capMatrix = glm::mat3(1);
 }
 
 
 void TankWars::Update(float deltaTimeSeconds)
 {
     
-    DrawTank();
-    DrawTerrain();
+    tank1->translate(tank1->posX, tank1->posY);
+    tank1->rotate(tank1->rotationAngle);
 
     
+    tank2->translate(tank2->posX, tank2->posY);
+    tank2->rotate(tank2->rotationAngle);
+
+    DrawTank(tank1);
+    DrawTank(tank2);
+
+
+    DrawTerrain();
 }
 
 
@@ -96,6 +115,30 @@ void TankWars::FrameEnd()
 
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
+    if (window->KeyHold(GLFW_KEY_W)) {
+        tank1->posY += tank1->moveSpeed * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_S)) {
+        tank1->posY -= tank1->moveSpeed * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_A)) {
+        tank1->posX -= tank1->moveSpeed * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_D)) {
+        tank1->posX += tank1->moveSpeed * deltaTime;
+    }
+
+
+    if (window->KeyHold(GLFW_KEY_Q)) {
+        tank1->rotationAngle -= tank1->rotateSpeed * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_E)) {
+        tank1->rotationAngle += tank1->rotateSpeed * deltaTime;
+    }
 }
 
 
@@ -146,9 +189,10 @@ void TankWars::DrawTerrain()
 }
 
 
-void TankWars::DrawTank()
+void TankWars::DrawTank(Tank *tank)
 {
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform::Translate(200, 200);
-    RenderMesh2D(meshes["tank"], shaders["VertexColor"], modelMatrix);
+    RenderMesh2D(meshes[tank->bodyName], shaders["VertexColor"], tank->bodyMatrix);
+
+    tank->capMatrix *= transform::Translate(0, TANK_TOTAL_HEIGHT);
+    RenderMesh2D(meshes[tank->capName], shaders["VertexColor"], tank->capMatrix);
 }

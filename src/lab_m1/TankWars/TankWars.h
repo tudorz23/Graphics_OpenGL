@@ -32,13 +32,15 @@ namespace tw
 
 
         void DrawTerrain();
-        void DrawTank();
+        void DrawTank(Tank *tank);
 
      protected:
         glm::mat3 modelMatrix;
 
         Terrain *terrain;
-        Tank* tank;
+
+        Tank* tank1;
+        Tank* tank2;
 
     };
 }   // namespace tw

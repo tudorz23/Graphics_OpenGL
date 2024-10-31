@@ -102,7 +102,6 @@ Mesh* objects::CreateTrapezoid(const std::string& name, float length, float heig
 
 	Mesh* trapezoid = new Mesh(name);
 	trapezoid->InitFromData(vertices, indices);
-
 	return trapezoid;
 }
 
@@ -114,9 +113,9 @@ Mesh* objects::CreateSemiCircle(const std::string& name, float radius, glm::vec3
 	std::vector<VertexFormat> vertices { VertexFormat(center, color) };
 	std::vector<unsigned int> indices;
 
-	float angle_base = M_PI / (float) (NUM_TRIANGLES_SEMICIRCLE - 1);
+	float angle_base = M_PI / (float) (NUM_VERTICES_SEMICIRCLE - 1);
 
-	for (int i = 0; i < NUM_TRIANGLES_SEMICIRCLE; i++) {
+	for (int i = 0; i < NUM_VERTICES_SEMICIRCLE; i++) {
 		float angle = angle_base * i;
 
 		float x = radius * glm::cos(angle);
@@ -126,7 +125,7 @@ Mesh* objects::CreateSemiCircle(const std::string& name, float radius, glm::vec3
 		indices.push_back(i);
 	}
 
-	indices.push_back(NUM_TRIANGLES_SEMICIRCLE);
+	indices.push_back(NUM_VERTICES_SEMICIRCLE);
 
 	Mesh* semicircle = new Mesh(name);
 
@@ -136,7 +135,7 @@ Mesh* objects::CreateSemiCircle(const std::string& name, float radius, glm::vec3
 }
 
 
-Mesh* objects::CreateTank(const std::string& name, glm::vec3 color1, glm::vec3 color2)
+Mesh* objects::CreateTankBody(const std::string& name, glm::vec3 color1, glm::vec3 color2)
 {
 	// Lower trapezoid.
 	glm::vec3 lowerBottomLeft = glm::vec3(-TANK_LOWER_LENGTH / 2.f, 0, 0);
@@ -145,13 +144,10 @@ Mesh* objects::CreateTank(const std::string& name, glm::vec3 color1, glm::vec3 c
 	glm::vec3 lowerBottomRight = lowerBottomLeft + glm::vec3(TANK_LOWER_LENGTH, 0, 0);
 
 	// Upper trapezoid.
-	glm::vec3 upperTopLeft = glm::vec3(-TANK_UPPER_LENGTH / 2.f, TANK_LOWER_HEIGHT + TANK_UPPER_HEIGHT, 0);
+	glm::vec3 upperTopLeft = glm::vec3(-TANK_UPPER_LENGTH / 2.f, TANK_TOTAL_HEIGHT, 0);
 	glm::vec3 upperTopRight = upperTopLeft + glm::vec3(TANK_UPPER_LENGTH, 0, 0);
 	glm::vec3 upperBottomRight = upperTopRight + glm::vec3(TANK_UPPER_TR_LEN, -TANK_UPPER_HEIGHT, 0);
 	glm::vec3 upperBottomLeft = upperTopLeft + glm::vec3(-TANK_UPPER_TR_LEN, -TANK_UPPER_HEIGHT, 0);
-
-	// Semicircle center.
-	glm::vec3 center = glm::vec3(0, TANK_LOWER_HEIGHT + TANK_UPPER_HEIGHT, 0);
 
 	std::vector<VertexFormat> vertices =
 	{
@@ -165,45 +161,12 @@ Mesh* objects::CreateTank(const std::string& name, glm::vec3 color1, glm::vec3 c
 		VertexFormat(upperBottomRight, color2),
 		VertexFormat(upperBottomLeft, color2),
 
-		VertexFormat(center, color2)
 	};
 
 	std::vector<unsigned int> indices = { 0, 2, 1, 0, 3, 2,
 										  7, 5, 4, 7, 6, 5 };
-
-	// Semicircle other points.
-	float angle_base = M_PI / (float)(NUM_TRIANGLES_SEMICIRCLE - 1);
-
-	// Point of angle 0 (vertex of index 9).
-	glm::vec3 angle0 = center + glm::vec3(-TANK_CAP_RADIUS, 0, 0);
-	vertices.push_back(VertexFormat(angle0, color2));
-
-	for (int i = 1; i < NUM_TRIANGLES_SEMICIRCLE; i++) {
-		float angle = angle_base * i;
-
-		if (angle < M_PI / 2.0) {
-			angle = M_PI - angle;
-		}
-
-		float x = center.x + TANK_CAP_RADIUS * glm::cos(angle);
-		float y = center.y + TANK_CAP_RADIUS * glm::sin(angle);
-
-		// Vertex index 9 + i.
-		vertices.push_back(VertexFormat(glm::vec3(x, y, 0), color2));
-		indices.push_back(8);
-		indices.push_back(9 + i - 1);
-		indices.push_back(9 + i);
-
-		std::cout << 8 << " " << 9 + i - 1 << " " << 9 + i << "\n";
-		std::cout << x << " " << y << "\n";
-		std::cout << angle << "\n\n";
-	}
-
 	
-	
-
 	Mesh* tank = new Mesh(name);
 	tank->InitFromData(vertices, indices);
-
 	return tank;
 }
