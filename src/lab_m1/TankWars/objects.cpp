@@ -10,7 +10,7 @@ using namespace tw;
 
 Mesh* objects::CreateSquare(const std::string& name, float length, glm::vec3 color, bool fill)
 {
-	float halfLength = length / 2.0;
+	float halfLength = length / 2.0f;
 
 	glm::vec3 bottomLeft = glm::vec3(-halfLength, -halfLength, 0);
 

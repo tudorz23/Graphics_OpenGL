@@ -14,6 +14,7 @@ namespace tw
 		Mesh* CreateSquare(const std::string& name, float length,
 						   glm::vec3 color, bool fill = true);
 
+		// Create the terrain based on heightMap, using TRIANGLE_STRIP.
 		Mesh* CreateTerrain(const std::string& name, glm::vec3 color,
 							std::vector<std::pair<float, float>> heightMap);
 	}

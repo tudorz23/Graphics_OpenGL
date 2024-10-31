@@ -1,6 +1,7 @@
 #include "lab_m1/TankWars/Terrain.h"
 
 #include "utils/glm_utils.h"
+#include "lab_m1/TankWars/constants.h"
 
 #include <iostream>
 
@@ -9,27 +10,19 @@ using namespace tw;
 
 
 // Constructor
-Terrain::Terrain(float a1, float a2, float a3, float a4,
-				 float omega1, float omega2, float omega3, float omega4)
+Terrain::Terrain(std::vector<std::pair<float, float>> sineWaveParams)
 {
-	this->a1 = a1;
-	this->a2 = a2;
-	this->a3 = a3;
-	this->a4 = a4;
-	this->omega1 = omega1;
-	this->omega2 = omega2;
-	this->omega3 = omega3;
-	this->omega4 = omega4;
+	this->sineWaveParams = sineWaveParams;
 }
 
 
 float Terrain::generatingFunction(float x)
 {
-	float y = 200.f;
-	y += a1 * glm::sin(omega1 * x);
-	y += a2 * glm::sin(omega2 * x);
-	y += a3 * glm::sin(omega3 * x);
-	y += a4 * glm::sin(omega4 * x);
+	float y = TERRAIN_BASE_HEIGHT;
+
+	for (const auto& param : this->sineWaveParams) {
+		y += param.first * glm::sin(param.second * x);
+	}
 
 	return y;
 }

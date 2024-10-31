@@ -31,14 +31,15 @@ void TankWars::Init()
     camera->Update();
     GetCameraInput()->SetActive(false);
 
-
-
-    this->terrain = new Terrain(120.0, 60.0, 20.0, 10.0, 0.005, 0.001, 0.015, 0.035);
-    this->terrain->computeHeights(0.0, (float)resolution.x, 10);
+    // Initialize the Terrain class with a sine wave.
+    vector<pair<float, float>> sineWaveParams = { {A1, OMEGA1}, {A2, OMEGA2},
+                                                  {A3, OMEGA3}, {A4, OMEGA4} };
+    this->terrain = new Terrain(sineWaveParams);
+    this->terrain->computeHeights(0.0, (float)resolution.x, 10.0f);
 
     this->terrain->printHeightMap();
 
-    Mesh* terrainMesh = objects::CreateTerrain("terrain", glm::vec3(1, .85f, .34f), terrain->heightMap);
+    Mesh* terrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
     AddMeshToList(terrainMesh);
 }
 
@@ -57,24 +58,6 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    /*this->modelMatrix = glm::mat3(1);
-    modelMatrix *= transform::Scale(0.4, 0.75);
-    modelMatrix *= transform::Scissor(0, 0.5);
-    modelMatrix *= transform::Translate(210, 210);
-    RenderMesh2D(meshes["terrSquare"], shaders["VertexColor"], modelMatrix);
-
-    this->modelMatrix = glm::mat3(1);
-    RenderMesh2D(meshes["terrSquare"], shaders["VertexColor"], modelMatrix);*/
-
-    //modelMatrix = glm::mat3(1);
-    ////modelMatrix *= transform::Translate(300, 300);
-    ////modelMatrix *= transform::Translate(50, -100);
-    //modelMatrix *= transform::Scissor(0, 1.25);
-
-    //modelMatrix *= transform::Translate(50, 100);
-    //modelMatrix *= transform::Scale(10, 20);
-    //RenderMesh2D(meshes["tudor"], shaders["VertexColor"], modelMatrix);
-
     DrawTerrain();
 }
 
