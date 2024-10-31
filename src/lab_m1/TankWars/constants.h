@@ -9,7 +9,7 @@ namespace tw
 	constexpr float BACKGROUND_ALPHA = 1;
 
 	constexpr glm::vec3 TERRAIN_COLOR = glm::vec3(1, .85f, .34f);
-
+	constexpr float TERRAIN_BASE_HEIGHT = 250.0f;
 
 	// Params for the sine wave of the terrain.
 	constexpr float A1 = 120.0f;
@@ -21,6 +21,8 @@ namespace tw
 	constexpr float OMEGA3 = 0.015f;
 	constexpr float OMEGA4 = 0.0355f;
 
+	// For semicircle drawing.
+	constexpr int NUM_TRIANGLES = 60;
 
-	constexpr float TERRAIN_BASE_HEIGHT = 250.0f;
+
 }

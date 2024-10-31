@@ -37,10 +37,14 @@ void TankWars::Init()
     this->terrain = new Terrain(sineWaveParams);
     this->terrain->computeHeights(0.0, (float)resolution.x, 10.0f);
 
-    this->terrain->printHeightMap();
-
     Mesh* terrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
     AddMeshToList(terrainMesh);
+
+    Mesh* trapez = objects::CreateTrapezoid("trapez", 200, 50, glm::vec3(1, 0, 0));
+    AddMeshToList(trapez);
+
+    Mesh* semicerc = objects::CreateSemiCircle("semicerc", 50, glm::vec3(1, 0, 1));
+    AddMeshToList(semicerc);
 }
 
 
@@ -58,7 +62,20 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform::Translate(500, 500);
+    modelMatrix *= transform::Rotate(M_PI);
+    modelMatrix *= transform::Scale(5, 5);
+    RenderMesh2D(meshes["semicerc"], shaders["VertexColor"], modelMatrix);
+
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform::Translate(400, 450);
+    modelMatrix *= transform::Rotate(M_PI);
+    RenderMesh2D(meshes["trapez"], shaders["VertexColor"], modelMatrix);
+
     DrawTerrain();
+
+    
 }
 
 

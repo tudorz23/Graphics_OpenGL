@@ -17,5 +17,15 @@ namespace tw
 		// Create the terrain based on heightMap, using TRIANGLE_STRIP.
 		Mesh* CreateTerrain(const std::string& name, glm::vec3 color,
 							std::vector<std::pair<float, float>> heightMap);
+
+
+		// Create a trapezoid with the center being the center of the rectangle,
+		// and positioned in (0, 0).
+		Mesh* CreateTrapezoid(const std::string& name, float length, float height,
+							  glm::vec3 color);
+
+
+		// Create a semi circle with the center in (0, 0).
+		Mesh* CreateSemiCircle(const std::string& name, float radius, glm::vec3 color);
 	}
 }
