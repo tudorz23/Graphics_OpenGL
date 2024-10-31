@@ -32,18 +32,14 @@ void TankWars::Init()
     GetCameraInput()->SetActive(false);
 
 
-    // Draw a square.
-    /*Mesh* square = objects::CreateSquare("tudor", 400, glm::vec3(1, .85f, .34f));
-    AddMeshToList(square);*/
 
-    Mesh* terrSquare = objects::CreateSquare("terrSquare", 50, glm::vec3(1, .85f, .34f));
-    AddMeshToList(terrSquare);
-
-
-    this->terrain = new Terrain(1.0, 2.0, 0.5, 1.0, 0.5, 3.0);
-    this->terrain->computeHeights(0.0, (float)resolution.x, 7);
+    this->terrain = new Terrain(120.0, 60.0, 20.0, 10.0, 0.005, 0.001, 0.015, 0.035);
+    this->terrain->computeHeights(0.0, (float)resolution.x, 10);
 
     this->terrain->printHeightMap();
+
+    Mesh* terrainMesh = objects::CreateTerrain("terrain", glm::vec3(1, .85f, .34f), terrain->heightMap);
+    AddMeshToList(terrainMesh);
 }
 
 
@@ -69,6 +65,15 @@ void TankWars::Update(float deltaTimeSeconds)
 
     this->modelMatrix = glm::mat3(1);
     RenderMesh2D(meshes["terrSquare"], shaders["VertexColor"], modelMatrix);*/
+
+    //modelMatrix = glm::mat3(1);
+    ////modelMatrix *= transform::Translate(300, 300);
+    ////modelMatrix *= transform::Translate(50, -100);
+    //modelMatrix *= transform::Scissor(0, 1.25);
+
+    //modelMatrix *= transform::Translate(50, 100);
+    //modelMatrix *= transform::Scale(10, 20);
+    //RenderMesh2D(meshes["tudor"], shaders["VertexColor"], modelMatrix);
 
     DrawTerrain();
 }
@@ -130,24 +135,8 @@ void TankWars::OnWindowResize(int width, int height)
 }
 
 
-void TankWars::DrawTerrain() {
-    for (int i = 0; i < terrain->heightMap.size() - 1; i++) {
-        auto pointA = terrain->heightMap[i];
-        auto pointB = terrain->heightMap[i + 1];
-
-        float scaleX = pointB.first - pointA.first;
-        float scaleY = max(pointB.second, pointA.second);
-
-        //cout << "Scale x = " << scaleX << ", Scale y = " << scaleY << "\n";
-
-        float scissorY = (pointB.second - pointA.second) / (pointB.first - pointA.first);
-
-        modelMatrix = glm::mat3(1);
-
-        modelMatrix *= transform::Translate(pointA.first, pointA.second);
-        modelMatrix *= transform::Scissor(0, scissorY);
-        modelMatrix *= transform::Scale(scaleX, scaleY);
-
-        RenderMesh2D(meshes["terrSquare"], shaders["VertexColor"], modelMatrix);
-    }
+void TankWars::DrawTerrain()
+{
+    modelMatrix = glm::mat3(1);
+    RenderMesh2D(meshes["terrain"], shaders["VertexColor"], modelMatrix);
 }

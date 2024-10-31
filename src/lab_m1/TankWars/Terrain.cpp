@@ -9,24 +9,27 @@ using namespace tw;
 
 
 // Constructor
-Terrain::Terrain(float a1, float a2, float a3,
-				 float omega1, float omega2, float omega3)
+Terrain::Terrain(float a1, float a2, float a3, float a4,
+				 float omega1, float omega2, float omega3, float omega4)
 {
 	this->a1 = a1;
 	this->a2 = a2;
 	this->a3 = a3;
+	this->a4 = a4;
 	this->omega1 = omega1;
 	this->omega2 = omega2;
 	this->omega3 = omega3;
+	this->omega4 = omega4;
 }
 
 
 float Terrain::generatingFunction(float x)
 {
-	float y = 0.0f;
+	float y = 200.f;
 	y += a1 * glm::sin(omega1 * x);
 	y += a2 * glm::sin(omega2 * x);
-	y += a3* glm::sin(omega3 * x);
+	y += a3 * glm::sin(omega3 * x);
+	y += a4 * glm::sin(omega4 * x);
 
 	return y;
 }
