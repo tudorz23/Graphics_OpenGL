@@ -43,12 +43,12 @@ void TankWars::Init()
     this->terrain = new Terrain(sineWaveParams);
     this->terrain->computeHeights(0.0, (float)resolution.x, 10.0f);
 
+    // Add the terrain mesh.
     Mesh* terrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
     AddMeshToList(terrainMesh);
 
 
-    // Add tank components.
-
+    // Add meshes for tank components.
     Mesh* tankBodyMesh1 = objects::CreateTankBody("body1", COLOR_BLACK, COLOR_PURPLE);
     AddMeshToList(tankBodyMesh1);
 
@@ -62,10 +62,7 @@ void TankWars::Init()
     AddMeshToList(tankCapMesh2);
 
     this->tank1 = new Tank("body1", "cap1", START_X1, START_Y1, SPEED1, ROTATE_SPEED);
-    this->tank1->orientate(terrain->heightMap);
-
     this->tank2 = new Tank("body2", "cap2", START_X2, START_Y2, SPEED2, ROTATE_SPEED);
-    this->tank2->orientate(terrain->heightMap);
 }
 
 
@@ -79,6 +76,7 @@ void TankWars::FrameStart()
     // Sets the screen area where to draw
     glViewport(0, 0, resolution.x, resolution.y);
 
+
     tank1->resetMatrixes();
     tank2->resetMatrixes();
 }
@@ -86,16 +84,16 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
+    tank1->orientate(terrain->heightMap, deltaTimeSeconds);
     tank1->translate(tank1->posX, tank1->posY);
     tank1->rotate(tank1->slopeAngle);
 
-    
+    tank2->orientate(terrain->heightMap, deltaTimeSeconds);
     tank2->translate(tank2->posX, tank2->posY);
     tank2->rotate(tank2->slopeAngle);
 
     DrawTank(tank1);
     DrawTank(tank2);
-
 
     DrawTerrain();
 }
@@ -125,28 +123,24 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
     if (window->KeyHold(GLFW_KEY_A)) {
         if (tank1->posX > LEFT_LIMIT) {
             tank1->posX -= tank1->moveSpeed * deltaTime;
-            tank1->orientate(terrain->heightMap);
         }
     }
 
     if (window->KeyHold(GLFW_KEY_D)) {
         if (tank1->posX < RIGHT_LIMIT) {
             tank1->posX += tank1->moveSpeed * deltaTime;
-            tank1->orientate(terrain->heightMap);
         }
     }
 
     if (window->KeyHold(GLFW_KEY_LEFT)) {
         if (tank2->posX > LEFT_LIMIT) {
             tank2->posX -= tank2->moveSpeed * deltaTime;
-            tank2->orientate(terrain->heightMap);
         }
     }
 
     if (window->KeyHold(GLFW_KEY_RIGHT)) {
         if (tank2->posX < RIGHT_LIMIT) {
             tank2->posX += tank2->moveSpeed * deltaTime;
-            tank2->orientate(terrain->heightMap);
         }
     }
 

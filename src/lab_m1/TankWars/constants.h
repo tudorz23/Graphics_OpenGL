@@ -49,6 +49,8 @@ namespace tw
 	constexpr float TANK_TOTAL_HEIGHT = TANK_UPPER_HEIGHT + TANK_LOWER_HEIGHT;
 	constexpr float TANK_CAP_RADIUS = 18.0f;
 
+	constexpr float PLANTED_DEPTH = 3.0f;
+
 
 	// Tank movement parameters.
 	constexpr float START_X1 = 400.0f;
@@ -59,7 +61,7 @@ namespace tw
 	constexpr float START_Y2 = 400.0f;
 	constexpr float SPEED2 = 150.0f;
 
-	constexpr float ROTATE_SPEED = -5.f;
+	constexpr float ROTATE_SPEED = 12.f;
 
 	constexpr float RIGHT_LIMIT = 1225.0f;
 	constexpr float LEFT_LIMIT = 55.0f;
