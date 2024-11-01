@@ -30,6 +30,6 @@ namespace tw
 
 
 		// Create the tank body, with the middle of the bottom trapezoid as the origin.
-		Mesh* CreateTankBody(const std::string& name, glm::vec3 color1, glm::vec3 color2);
+		Mesh* CreateTankBody(const std::string& name, glm::vec3 low_color, glm::vec3 up_color);
 	}
 }

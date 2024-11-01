@@ -135,7 +135,7 @@ Mesh* objects::CreateSemiCircle(const std::string& name, float radius, glm::vec3
 }
 
 
-Mesh* objects::CreateTankBody(const std::string& name, glm::vec3 color1, glm::vec3 color2)
+Mesh* objects::CreateTankBody(const std::string& name, glm::vec3 low_color, glm::vec3 up_color)
 {
 	// Lower trapezoid.
 	glm::vec3 lowerBottomLeft = glm::vec3(-TANK_LOWER_LENGTH / 2.f, 0, 0);
@@ -151,16 +151,15 @@ Mesh* objects::CreateTankBody(const std::string& name, glm::vec3 color1, glm::ve
 
 	std::vector<VertexFormat> vertices =
 	{
-		VertexFormat(lowerBottomLeft, color1),
-		VertexFormat(lowerTopLeft, color1),
-		VertexFormat(lowerTopRight, color1),
-		VertexFormat(lowerBottomRight, color1),
+		VertexFormat(lowerBottomLeft, low_color),
+		VertexFormat(lowerTopLeft, low_color),
+		VertexFormat(lowerTopRight, low_color),
+		VertexFormat(lowerBottomRight, low_color),
 
-		VertexFormat(upperTopLeft, color2),
-		VertexFormat(upperTopRight, color2),
-		VertexFormat(upperBottomRight, color2),
-		VertexFormat(upperBottomLeft, color2),
-
+		VertexFormat(upperTopLeft, up_color),
+		VertexFormat(upperTopRight, up_color),
+		VertexFormat(upperBottomRight, up_color),
+		VertexFormat(upperBottomLeft, up_color)
 	};
 
 	std::vector<unsigned int> indices = { 0, 2, 1, 0, 3, 2,

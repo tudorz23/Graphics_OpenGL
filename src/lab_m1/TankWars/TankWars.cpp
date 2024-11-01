@@ -49,20 +49,23 @@ void TankWars::Init()
 
     // Add tank components.
 
-    Mesh* tankBodyMesh1 = objects::CreateTankBody("body1", glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+    Mesh* tankBodyMesh1 = objects::CreateTankBody("body1", COLOR_BLACK, COLOR_PURPLE);
     AddMeshToList(tankBodyMesh1);
 
-    Mesh* tankCapMesh1 = objects::CreateSemiCircle("cap1", TANK_CAP_RADIUS, glm::vec3(1, 0, 1));
+    Mesh* tankCapMesh1 = objects::CreateSemiCircle("cap1", TANK_CAP_RADIUS, COLOR_BLACK);
     AddMeshToList(tankCapMesh1);
 
-    Mesh* tankBodyMesh2 = objects::CreateTankBody("body2", glm::vec3(0, 0, 1), glm::vec3(1, 1, 0));
+    Mesh* tankBodyMesh2 = objects::CreateTankBody("body2", COLOR_RED, COLOR_YELLOW);
     AddMeshToList(tankBodyMesh2);
 
-    Mesh* tankCapMesh2 = objects::CreateSemiCircle("cap2", TANK_CAP_RADIUS, glm::vec3(0, 1, 1));
+    Mesh* tankCapMesh2 = objects::CreateSemiCircle("cap2", TANK_CAP_RADIUS, COLOR_RED);
     AddMeshToList(tankCapMesh2);
 
     this->tank1 = new Tank("body1", "cap1", START_X1, START_Y1, SPEED1, ROTATE_SPEED);
+    this->tank1->orientate(terrain->heightMap);
+
     this->tank2 = new Tank("body2", "cap2", START_X2, START_Y2, SPEED2, ROTATE_SPEED);
+    this->tank2->orientate(terrain->heightMap);
 }
 
 
@@ -76,23 +79,19 @@ void TankWars::FrameStart()
     // Sets the screen area where to draw
     glViewport(0, 0, resolution.x, resolution.y);
 
-    tank1->bodyMatrix = glm::mat3(1);
-    tank1->capMatrix = glm::mat3(1);
-
-    tank2->bodyMatrix = glm::mat3(1);
-    tank2->capMatrix = glm::mat3(1);
+    tank1->resetMatrixes();
+    tank2->resetMatrixes();
 }
 
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    
     tank1->translate(tank1->posX, tank1->posY);
-    tank1->rotate(tank1->rotationAngle);
+    tank1->rotate(tank1->slopeAngle);
 
     
     tank2->translate(tank2->posX, tank2->posY);
-    tank2->rotate(tank2->rotationAngle);
+    tank2->rotate(tank2->slopeAngle);
 
     DrawTank(tank1);
     DrawTank(tank2);
@@ -115,30 +114,50 @@ void TankWars::FrameEnd()
 
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
-    if (window->KeyHold(GLFW_KEY_W)) {
+    /*if (window->KeyHold(GLFW_KEY_W)) {
         tank1->posY += tank1->moveSpeed * deltaTime;
     }
 
     if (window->KeyHold(GLFW_KEY_S)) {
         tank1->posY -= tank1->moveSpeed * deltaTime;
-    }
+    }*/
 
     if (window->KeyHold(GLFW_KEY_A)) {
-        tank1->posX -= tank1->moveSpeed * deltaTime;
+        if (tank1->posX > LEFT_LIMIT) {
+            tank1->posX -= tank1->moveSpeed * deltaTime;
+            tank1->orientate(terrain->heightMap);
+        }
     }
 
     if (window->KeyHold(GLFW_KEY_D)) {
-        tank1->posX += tank1->moveSpeed * deltaTime;
+        if (tank1->posX < RIGHT_LIMIT) {
+            tank1->posX += tank1->moveSpeed * deltaTime;
+            tank1->orientate(terrain->heightMap);
+        }
+    }
+
+    if (window->KeyHold(GLFW_KEY_LEFT)) {
+        if (tank2->posX > LEFT_LIMIT) {
+            tank2->posX -= tank2->moveSpeed * deltaTime;
+            tank2->orientate(terrain->heightMap);
+        }
+    }
+
+    if (window->KeyHold(GLFW_KEY_RIGHT)) {
+        if (tank2->posX < RIGHT_LIMIT) {
+            tank2->posX += tank2->moveSpeed * deltaTime;
+            tank2->orientate(terrain->heightMap);
+        }
     }
 
 
-    if (window->KeyHold(GLFW_KEY_Q)) {
+    /*if (window->KeyHold(GLFW_KEY_Q)) {
         tank1->rotationAngle -= tank1->rotateSpeed * deltaTime;
     }
 
     if (window->KeyHold(GLFW_KEY_E)) {
         tank1->rotationAngle += tank1->rotateSpeed * deltaTime;
-    }
+    }*/
 }
 
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "utils/glm_utils.h"
 
@@ -15,6 +16,9 @@ namespace tw
 
 		void translate(float translateX, float translateY);
 		void rotate(float angle);
+		void resetMatrixes();
+
+		void orientate(const std::vector<std::pair<float, float>> &heightMap);
 		 
 		std::string bodyName;
 		std::string capName;
@@ -25,7 +29,7 @@ namespace tw
 		float posX;
 		float posY;
 
-		float rotationAngle;
+		float slopeAngle;
 
 		float moveSpeed;
 		float rotateSpeed;

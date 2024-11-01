@@ -2,14 +2,27 @@
 
 namespace tw
 {
+	/* COLORS */
 	// Background color params.
 	constexpr float BACKGROUND_RED = 0.67f;
 	constexpr float BACKGROUND_GREEN = 0.84f;
 	constexpr float BACKGROUND_BLUE = 0.9f;
 	constexpr float BACKGROUND_ALPHA = 1;
 
-	constexpr glm::vec3 TERRAIN_COLOR = glm::vec3(1, .85f, .34f);
+	constexpr glm::vec3 TERRAIN_COLOR = glm::vec3(0.61f, 0.8f, 0.12f);
 	constexpr float TERRAIN_BASE_HEIGHT = 250.0f;
+
+	// Tank colors.
+	constexpr glm::vec3 COLOR_RED = glm::vec3(1.0f, 0.0f, 0.0f);
+	constexpr glm::vec3 COLOR_PURPLE = glm::vec3(0.78f, 0.05f, 0.94f);
+	constexpr glm::vec3 COLOR_BROWN = glm::vec3(0.3f, 0.07f, 0.07f);
+	constexpr glm::vec3 COLOR_GREEN = glm::vec3(0.22f, 0.94f, 0.1f);
+	constexpr glm::vec3 COLOR_GREY = glm::vec3(0.6f, 0.53f, 0.58f);
+	constexpr glm::vec3 COLOR_PINK = glm::vec3(0.94f, 0.1f, 0.82f);
+	constexpr glm::vec3 COLOR_BLACK = glm::vec3(0.0f, 0.0f, 0.0f);
+	constexpr glm::vec3 COLOR_YELLOW = glm::vec3(1.0f, 1.0f, 0.0f);
+	
+
 
 	// Params for the sine wave of the terrain.
 	constexpr float A1 = 120.0f;
@@ -37,14 +50,17 @@ namespace tw
 	constexpr float TANK_CAP_RADIUS = 18.0f;
 
 
-	// Tank specifics.
-	constexpr float START_X1 = 400.f;
-	constexpr float START_Y1 = 400.f;
-	constexpr float SPEED1 = 100.f;
+	// Tank movement parameters.
+	constexpr float START_X1 = 400.0f;
+	constexpr float START_Y1 = 400.0f;
+	constexpr float SPEED1 = 150.f;
 
-	constexpr float START_X2 = 800.f;
-	constexpr float START_Y2 = 400.f;
-	constexpr float SPEED2 = 100.f;
+	constexpr float START_X2 = 800.0f;
+	constexpr float START_Y2 = 400.0f;
+	constexpr float SPEED2 = 150.0f;
 
 	constexpr float ROTATE_SPEED = -5.f;
+
+	constexpr float RIGHT_LIMIT = 1225.0f;
+	constexpr float LEFT_LIMIT = 55.0f;
 }
