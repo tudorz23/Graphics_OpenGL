@@ -15,19 +15,21 @@ namespace tw
 			  float posX, float posY, float moveSpeed, float rotationSpeed);
 
 
-		// Utility function over the transform::translate().
+		// Utility function over transform::translate().
 		void translate(float translateX, float translateY);
 
-		// Utility function over the transform::rotate().
+		// Utility function over transform::rotate().
 		void rotate(float angle);
 
 		// Sets all the modelation matrixes to identity.
 		void resetMatrixes();
 
-		// Computes the Y and the rotation angle, while also preventing laggy
-		// rotation animation, by using the nextAngle class attribute.
-		void orientate(const std::vector<std::pair<float, float>> &heightMap,
-					   float deltaTime);
+		// Computes the Y and the next rotation angle.
+		void orientate(const std::vector<std::pair<float, float>> &heightMap);
+
+		// Updates the slopeAngle to gradually reach nextAngle value,
+		// to prevent a laggy animation.
+		void updateOrientation(float deltaTime);
 		 
 
 		std::string bodyName;

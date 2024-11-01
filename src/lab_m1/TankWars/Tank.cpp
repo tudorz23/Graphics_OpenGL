@@ -5,6 +5,8 @@
 
 #include "utils/glm_utils.h"
 
+#include <iostream>
+
 
 using namespace std;
 using namespace tw;
@@ -49,8 +51,10 @@ void Tank::resetMatrixes()
 }
 
 
-void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap, float deltaTime)
+void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap)
 {
+	std::cout << "Lewis Hamilton\n";
+
 	for (int i = 0; i < heightMap.size() - 1; i++) {
 		const auto& pointA = heightMap[i];
 		const auto& pointB = heightMap[i + 1];
@@ -64,8 +68,13 @@ void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap, floa
 			float deltaY = pointB.second - pointA.second;
 
 			this->nextAngle = glm::atan2(deltaY, deltaX);
-			this->slopeAngle += (this->nextAngle - this->slopeAngle) * this->rotationSpeed * deltaTime;
 			return;
 		}
 	}
+}
+
+
+void Tank::updateOrientation(float deltaTime)
+{
+	this->slopeAngle += (this->nextAngle - this->slopeAngle) * this->rotationSpeed * deltaTime;
 }

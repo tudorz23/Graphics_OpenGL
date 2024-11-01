@@ -23,7 +23,6 @@ namespace tw
 	constexpr glm::vec3 COLOR_YELLOW = glm::vec3(1.0f, 1.0f, 0.0f);
 	
 
-
 	// Params for the sine wave of the terrain.
 	constexpr float A1 = 120.0f;
 	constexpr float A2 = 60.0f;
@@ -37,6 +36,7 @@ namespace tw
 	// For semicircle drawing.
 	constexpr int NUM_VERTICES_SEMICIRCLE = 70;
 
+
 	// Tank measurements.
 	constexpr float TANK_UPPER_LENGTH = 80.0f;
 	constexpr float TANK_UPPER_HEIGHT = 20.0f;
@@ -49,7 +49,7 @@ namespace tw
 	constexpr float TANK_TOTAL_HEIGHT = TANK_UPPER_HEIGHT + TANK_LOWER_HEIGHT;
 	constexpr float TANK_CAP_RADIUS = 18.0f;
 
-	constexpr float PLANTED_DEPTH = 3.0f;
+	constexpr float PLANTED_DEPTH = 3.0f;	// Makes the tank seem planted.
 
 
 	// Tank movement parameters.
