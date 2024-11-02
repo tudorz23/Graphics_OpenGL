@@ -10,6 +10,7 @@
 using namespace std;
 using namespace tw;
 
+
 // Constructor.
 TankWars::TankWars()
 {
@@ -19,6 +20,7 @@ TankWars::TankWars()
 
     this->modelMatrix = glm::mat3(1);
 }
+
 
 // Destructor.
 TankWars::~TankWars()
@@ -45,7 +47,6 @@ void TankWars::Init()
                                                   {A3, OMEGA3}, {A4, OMEGA4} };
     this->terrain = new Terrain(sineWaveParams);
     this->terrain->computeHeights(0.0, (float)resolution.x, 1.5f);
-    std::cout << terrain->heightMap.size() << "\n";
 
 
     // Add the terrain mesh.
@@ -100,8 +101,13 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
+    // Update the slopes of the tanks gradually at each frame, so there is no lag.
     tank1->updateOrientation(deltaTimeSeconds);
     tank2->updateOrientation(deltaTimeSeconds);
+
+    ApplyTransformationsToTank(tank1);
+    ApplyTransformationsToTank(tank2);
+
 
     DrawTank(tank1);
     DrawTank(tank2);
@@ -113,6 +119,50 @@ void TankWars::Update(float deltaTimeSeconds)
 void TankWars::FrameEnd()
 {
 }
+
+
+void TankWars::ApplyTransformationsToTank(Tank* tank)
+{
+    // Rotate the tank with slopeAngle.
+    // Translate the tank to its current position.
+    // Affected: body, cap, pipe.
+    tank->translate(tank->posX, tank->posY);
+    tank->rotate(tank->slopeAngle);
+
+    // Translate the cap to the top of the tank (this will be done first, so it
+    // rotates around the tank's center).
+    // Affected: cap.
+    tank->capMatrix *= transform::Translate(0, TANK_TOTAL_HEIGHT);
+
+
+    // Rotate the pipe around its own center, than translate it
+    // to the cap's center position.
+    // Affected: pipe.
+    tank->pipeMatrix *= transform::Translate(tank->pipeX, tank->pipeY);
+    tank->pipeMatrix *= transform::Rotate(tank->pipeAngle);
+}
+
+
+void TankWars::DrawTerrain()
+{
+    modelMatrix = glm::mat3(1);
+    RenderMesh2D(meshes["terrain"], shaders["VertexColor"], modelMatrix);
+}
+
+
+void TankWars::DrawTank(Tank* tank)
+{
+    // Render body.
+    RenderMesh2D(meshes[tank->bodyName], shaders["VertexColor"], tank->bodyMatrix);
+    
+    // Render cap.
+    RenderMesh2D(meshes[tank->capName], shaders["VertexColor"], tank->capMatrix);
+
+    // Render pipe.
+    RenderMesh2D(meshes[tank->pipeName], shaders["VertexColor"], tank->pipeMatrix);
+}
+
+
 
 
 /*
@@ -210,33 +260,4 @@ void TankWars::OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY)
 
 void TankWars::OnWindowResize(int width, int height)
 {
-}
-
-
-void TankWars::DrawTerrain()
-{
-    modelMatrix = glm::mat3(1);
-    RenderMesh2D(meshes["terrain"], shaders["VertexColor"], modelMatrix);
-}
-
-
-void TankWars::DrawTank(Tank *tank)
-{
-    // Render body.
-    tank->translate(tank->posX, tank->posY);
-    tank->rotate(tank->slopeAngle);
-    RenderMesh2D(meshes[tank->bodyName], shaders["VertexColor"], tank->bodyMatrix);
-
-
-    // Translate the cap to the top of the tank (this will be done first, so it
-    // rotates around the tank's center).
-    tank->capMatrix *= transform::Translate(0, TANK_TOTAL_HEIGHT);
-    RenderMesh2D(meshes[tank->capName], shaders["VertexColor"], tank->capMatrix);
-
-
-    // Rotate the target around its own center, than translate it
-    // to the cap's center.
-    tank->pipeMatrix *= transform::Translate(tank->pipeX, tank->pipeY);
-    tank->pipeMatrix *= transform::Rotate(tank->pipeAngle);
-    RenderMesh2D(meshes[tank->pipeName], shaders["VertexColor"], tank->pipeMatrix);
 }

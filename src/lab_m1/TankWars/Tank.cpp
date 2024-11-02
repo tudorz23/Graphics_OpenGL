@@ -7,11 +7,11 @@
 
 #include <iostream>
 
-
 using namespace std;
 using namespace tw;
 
-// Constructor
+
+// Constructor.
 Tank::Tank(const std::string& bodyName, const std::string& capName,
 		   const std::string& pipeName,
 		   float posX, float posY, float moveSpeed, float rotationSpeed)
@@ -36,7 +36,16 @@ Tank::Tank(const std::string& bodyName, const std::string& capName,
 	this->pipeAngle = 0.0f;
 	this->pipeRotationSpeed = PIPE_ROTATE_SPEED;
 
+	// Initialize model matrixes.
 	this->resetMatrixes();
+}
+
+
+void Tank::resetMatrixes()
+{
+	this->bodyMatrix = glm::mat3(1);
+	this->capMatrix = glm::mat3(1);
+	this->pipeMatrix = glm::mat3(1);
 }
 
 
@@ -60,18 +69,8 @@ void Tank::rotate(float angle)
 }
 
 
-void Tank::resetMatrixes()
-{
-	this->bodyMatrix = glm::mat3(1);
-	this->capMatrix = glm::mat3(1);
-	this->pipeMatrix = glm::mat3(1);
-}
-
-
 void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap)
 {
-	std::cout << "Lewis Hamilton\n";
-
 	for (int i = 0; i < heightMap.size() - 1; i++) {
 		const auto& pointA = heightMap[i];
 		const auto& pointB = heightMap[i + 1];

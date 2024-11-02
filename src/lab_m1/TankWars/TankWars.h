@@ -17,10 +17,20 @@ namespace tw
         void Init() override;
 
      private:
+        // Frame handling functions.
         void FrameStart() override;
         void Update(float deltaTimeSeconds) override;
         void FrameEnd() override;
 
+
+        // Game functions.
+        void ApplyTransformationsToTank(Tank* tank);
+
+        void DrawTerrain();
+        void DrawTank(Tank* tank);
+
+
+        // Callback functions.
         void OnInputUpdate(float deltaTime, int mods) override;
         void OnKeyPress(int key, int mods) override;
         void OnKeyRelease(int key, int mods) override;
@@ -30,9 +40,6 @@ namespace tw
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
 
-
-        void DrawTerrain();
-        void DrawTank(Tank *tank);
 
      protected:
         glm::mat3 modelMatrix;
