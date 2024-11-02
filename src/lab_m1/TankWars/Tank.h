@@ -7,17 +7,17 @@
 
 namespace tw
 {
-	// A tank is formed from a body and a cap.
+	// A tank is formed from a body and a head.
 	class Tank
 	{
 	 public:
 		// Constructor.
-		Tank(const std::string& bodyName, const std::string& capName,
-			 const std::string& pipeName,
+		Tank(const std::string& bodyName, const std::string& headName,
+			 const std::string& pipeName, const std::string& barName,
 			 float posX, float posY, float moveSpeed, float rotationSpeed);
 
 
-		// Sets all the modelation matrixes to identity.
+		// Sets all the modelation matrixes to identity matrix.
 		void resetMatrixes();
 
 
@@ -40,10 +40,11 @@ namespace tw
 
 		// Names.
 		std::string bodyName;
-		std::string capName;
+		std::string headName;
 		std::string pipeName;
+		std::string barName;
 
-		// Body and cap params.
+		// Body and head params.
 		float posX;
 		float posY;
 		float moveSpeed;
@@ -60,7 +61,10 @@ namespace tw
 
 		// Model matrixes.
 		glm::mat3 bodyMatrix;
-		glm::mat3 capMatrix;
+		glm::mat3 headMatrix;
 		glm::mat3 pipeMatrix;
+		glm::mat3 barMatrix;
+
+		int lives;
 	};
 }

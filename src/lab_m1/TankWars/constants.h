@@ -16,11 +16,12 @@ namespace tw
 	constexpr glm::vec3 COLOR_RED = glm::vec3(1.0f, 0.0f, 0.0f);
 	constexpr glm::vec3 COLOR_PURPLE = glm::vec3(0.78f, 0.05f, 0.94f);
 	constexpr glm::vec3 COLOR_BROWN = glm::vec3(0.3f, 0.07f, 0.07f);
-	constexpr glm::vec3 COLOR_GREEN = glm::vec3(0.22f, 0.94f, 0.1f);
+	constexpr glm::vec3 COLOR_GREEN = glm::vec3(0.0f, 1.0f, 0.0f);
 	constexpr glm::vec3 COLOR_GREY = glm::vec3(0.6f, 0.53f, 0.58f);
 	constexpr glm::vec3 COLOR_PINK = glm::vec3(0.94f, 0.1f, 0.82f);
 	constexpr glm::vec3 COLOR_BLACK = glm::vec3(0.0f, 0.0f, 0.0f);
 	constexpr glm::vec3 COLOR_YELLOW = glm::vec3(1.0f, 1.0f, 0.0f);
+	constexpr glm::vec3 COLOR_DARK_GREEN = glm::vec3(0.05f, 0.52f, 0.03f);
 	
 
 	// Params for the sine wave of the terrain.
@@ -32,6 +33,7 @@ namespace tw
 	constexpr float OMEGA2 = 0.001f;
 	constexpr float OMEGA3 = 0.015f;
 	constexpr float OMEGA4 = 0.0355f;
+
 
 	// For semicircle drawing.
 	constexpr int NUM_VERTICES_SEMICIRCLE = 70;
@@ -47,7 +49,7 @@ namespace tw
 	constexpr float TANK_LOWER_TR_LEN = 8.0f;
 
 	constexpr float TANK_TOTAL_HEIGHT = TANK_UPPER_HEIGHT + TANK_LOWER_HEIGHT;
-	constexpr float TANK_CAP_RADIUS = 18.0f;
+	constexpr float TANK_HEAD_RADIUS = 18.0f;
 
 	constexpr float TANK_PIPE_LENGTH = 50.0f;
 	constexpr float TANK_PIPE_WIDTH = 10.0f;
@@ -69,4 +71,15 @@ namespace tw
 
 	constexpr float RIGHT_LIMIT = 1225.0f;
 	constexpr float LEFT_LIMIT = 55.0f;
+
+
+	// Life bar measurements.
+	constexpr float BAR_LEN = 80.0f;
+	constexpr float BAR_WIDTH = 30.0f;
+	constexpr float BAR_THICK = 5.0f;
+	constexpr float BAR_DELTA = 100.0f;
+
+
+	// Game logic params.
+	constexpr int INITIAL_LIVES = 6;
 }

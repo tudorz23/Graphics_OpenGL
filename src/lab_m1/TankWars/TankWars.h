@@ -23,7 +23,7 @@ namespace tw
         void FrameEnd() override;
 
 
-        // Game functions.
+        // Game logic functions.
         void ApplyTransformationsToTank(Tank* tank);
 
         void DrawTerrain();
@@ -49,5 +49,6 @@ namespace tw
         Tank* tank1;
         Tank* tank2;
 
+        float LIFE_RECT_LEN;
     };
 }   // namespace tw

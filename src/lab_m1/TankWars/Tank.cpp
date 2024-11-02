@@ -12,16 +12,17 @@ using namespace tw;
 
 
 // Constructor.
-Tank::Tank(const std::string& bodyName, const std::string& capName,
-		   const std::string& pipeName,
+Tank::Tank(const std::string& bodyName, const std::string& headName,
+		   const std::string& pipeName, const std::string& barName,
 		   float posX, float posY, float moveSpeed, float rotationSpeed)
 {
 	// Names.
 	this->bodyName = bodyName;
-	this->capName = capName;
+	this->headName = headName;
 	this->pipeName = pipeName;
+	this->barName = barName;
 
-	// Body and cap params.
+	// Body and head params.
 	this->posX = posX;
 	this->posY = posY;
 	this->moveSpeed = moveSpeed;
@@ -38,29 +39,37 @@ Tank::Tank(const std::string& bodyName, const std::string& capName,
 
 	// Initialize model matrixes.
 	this->resetMatrixes();
+
+	// Initial number of lives.
+	this->lives = INITIAL_LIVES;
 }
 
 
 void Tank::resetMatrixes()
 {
 	this->bodyMatrix = glm::mat3(1);
-	this->capMatrix = glm::mat3(1);
+	this->headMatrix = glm::mat3(1);
 	this->pipeMatrix = glm::mat3(1);
+	this->barMatrix = glm::mat3(1);
 }
 
 
+// Translates the whole tank with the given params.
+// Affects: body, head, pipe.
 void Tank::translate(float translateX, float translateY)
 {
 	this->bodyMatrix *= transform::Translate(translateX, translateY);
-	this->capMatrix *= transform::Translate(translateX, translateY);
+	this->headMatrix *= transform::Translate(translateX, translateY);
 	this->pipeMatrix *= transform::Translate(translateX, translateY);
 }
 
 
+// Rotates the tank around its body's center, which is the center of the base line.
+// Affects: body, head, pipe.
 void Tank::rotate(float angle)
 {
 	this->bodyMatrix *= transform::Rotate(angle);
-	this->capMatrix *= transform::Rotate(angle);
+	this->headMatrix *= transform::Rotate(angle);
 
 	// When rotating the tank, the pipe doesn't rotate around tank's center,
 	// but changes both its x and y coordinates.

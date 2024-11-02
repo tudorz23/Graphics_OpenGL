@@ -8,39 +8,7 @@
 
 #include <iostream>
 
-
 using namespace tw;
-
-Mesh* objects::CreateSquare(const std::string& name, float length, glm::vec3 color, bool fill)
-{
-	float halfLength = length / 2.0f;
-
-	glm::vec3 bottomLeft = glm::vec3(-halfLength, -halfLength, 0);
-
-	std::vector<VertexFormat> vertices =
-	{
-		VertexFormat(bottomLeft, color),
-		VertexFormat(bottomLeft + glm::vec3(length, 0, 0), color),
-		VertexFormat(bottomLeft + glm::vec3(length, length, 0), color),
-		VertexFormat(bottomLeft + glm::vec3(0, length, 0), color)
-	};
-
-	std::vector<unsigned int> indices = { 0, 1, 2, 3 };
-
-	Mesh* square = new Mesh(name);
-
-	if (!fill) {
-		square->SetDrawMode(GL_LINE_LOOP);
-	}
-	else {
-		// Draw 2 triangles. Add the remaining 2 indices
-		indices.push_back(0);
-		indices.push_back(2);
-	}
-
-	square->InitFromData(vertices, indices);
-	return square;
-}
 
 
 Mesh* objects::CreateTerrain(const std::string& name, glm::vec3 color,
@@ -62,47 +30,6 @@ Mesh* objects::CreateTerrain(const std::string& name, glm::vec3 color,
 	terrain->SetDrawMode(GL_TRIANGLE_STRIP);
 	terrain->InitFromData(vertices, indices);
 	return terrain;
-}
-
-
-
-/**
-*		*************
-*      **			**
-*	  *****************
-*/
-Mesh* objects::CreateTrapezoid(const std::string& name, float length, float height,
-							glm::vec3 color)
-{
-	// Center will be (0, 0).
-	glm::vec3 center = glm::vec3(0, 0, 0);
-	glm::vec3 rectangleBottLeft = center - glm::vec3(length / 2.0, height / 2.0, 0);
-
-	float triangleEdge = 0.66f * height;
-
-	std::vector<VertexFormat> vertices =
-	{
-		// Left triangle.
-		VertexFormat(rectangleBottLeft - glm::vec3(triangleEdge, 0, 0), color),
-		VertexFormat(rectangleBottLeft, color),
-		VertexFormat(rectangleBottLeft + glm::vec3(0, height, 0), color),
-
-		// Rectangle.
-		VertexFormat(rectangleBottLeft + glm::vec3(length, height, 0), color),
-		VertexFormat(rectangleBottLeft + glm::vec3(length, 0, 0), color),
-
-		// Right triangle.
-		VertexFormat(rectangleBottLeft + glm::vec3(length + triangleEdge, 0, 0), color)
-	};
-
-	std::vector<unsigned int> indices = { 0, 1, 2,
-										  1, 3, 2,
-										  1, 4, 3,
-										  4, 5, 3 };
-
-	Mesh* trapezoid = new Mesh(name);
-	trapezoid->InitFromData(vertices, indices);
-	return trapezoid;
 }
 
 
@@ -171,7 +98,7 @@ Mesh* objects::CreateTankBody(const std::string& name, glm::vec3 low_color, glm:
 }
 
 
-Mesh* objects::CreateRectangle(const std::string& name, float width, float length, glm::vec3 color)
+Mesh* objects::CreatePipe(const std::string& name, float width, float length, glm::vec3 color)
 {
 	float halfWidth = width / 2.0f;
 	glm::vec3 bottomLeft = glm::vec3(-halfWidth, 0, 0);
@@ -192,4 +119,164 @@ Mesh* objects::CreateRectangle(const std::string& name, float width, float lengt
 	Mesh* rectangle = new Mesh(name);
 	rectangle->InitFromData(vertices, indices);
 	return rectangle;
+}
+
+
+/*
+*		3	* *				* *
+*		2	* *				* *
+* 
+*			
+*		1	* *				* *
+*		0	* *				* *
+* 
+*			0 1				2 3
+*/
+Mesh* objects::CreateLifeBar(const std::string& name, float length, float width,
+							 float thick, glm::vec3 color)
+{
+	float totalLen = length + 2 * thick;
+	float totalWidth = width + 2 * thick;
+
+	glm::vec3 point00 = glm::vec3(-totalLen / 2.0f, 0, 0);
+	glm::vec3 point01 = point00 + glm::vec3(thick, 0, 0);
+	glm::vec3 point02 = point01 + glm::vec3(length, 0, 0);
+	glm::vec3 point03 = point02 + glm::vec3(thick, 0, 0);
+
+	glm::vec3 point10 = point00 + glm::vec3(0, thick, 0);
+	glm::vec3 point11 = point10 + glm::vec3(thick, 0, 0);
+	glm::vec3 point12 = point11 + glm::vec3(length, 0, 0);
+	glm::vec3 point13 = point12 + glm::vec3(thick, 0, 0);
+
+	glm::vec3 point20 = point10 + glm::vec3(0, width, 0);
+	glm::vec3 point21 = point20 + glm::vec3(thick, 0, 0);
+	glm::vec3 point22 = point21 + glm::vec3(length, 0, 0);
+	glm::vec3 point23 = point22 + glm::vec3(thick, 0, 0);
+
+	glm::vec3 point30 = point20 + glm::vec3(0, thick, 0);
+	glm::vec3 point31 = point30 + glm::vec3(thick, 0, 0);
+	glm::vec3 point32 = point31 + glm::vec3(length, 0, 0);
+	glm::vec3 point33 = point32 + glm::vec3(thick, 0, 0);
+
+
+	std::vector<VertexFormat> vertices =
+	{
+		VertexFormat(point00, color),
+		VertexFormat(point01, color),
+		VertexFormat(point02, color),
+		VertexFormat(point03, color),
+
+		VertexFormat(point10, color),
+		VertexFormat(point11, color),
+		VertexFormat(point12, color),
+		VertexFormat(point13, color),
+
+		VertexFormat(point20, color),
+		VertexFormat(point21, color),
+		VertexFormat(point22, color),
+		VertexFormat(point23, color),
+
+		VertexFormat(point30, color),
+		VertexFormat(point31, color),
+		VertexFormat(point32, color),
+		VertexFormat(point33, color)
+	};
+
+	std::vector<unsigned int> indices =
+	{ 0, 1, 4,
+	  1, 5, 4,
+	  4, 5, 8,
+	  5, 9, 8,
+	  8, 9, 12,
+	  9, 13, 12,
+	  9, 10, 13,
+	  10, 14, 13,
+	  10, 11, 14,
+	  11, 15, 14,
+	  6, 7, 10,
+	  7, 11, 10,
+	  2, 3, 6,
+	  6, 3, 7,
+	  1, 2, 5,
+	  2, 6 , 5
+	};
+
+	Mesh* lifeBar = new Mesh(name);
+	lifeBar->InitFromData(vertices, indices);
+	return lifeBar;
+}
+
+
+
+
+/* Following seemed necessary but ended up not used. */
+Mesh* objects::CreateSquare(const std::string& name, float length, glm::vec3 color, bool fill)
+{
+	float halfLength = length / 2.0f;
+
+	glm::vec3 bottomLeft = glm::vec3(-halfLength, -halfLength, 0);
+
+	std::vector<VertexFormat> vertices =
+	{
+		VertexFormat(bottomLeft, color),
+		VertexFormat(bottomLeft + glm::vec3(length, 0, 0), color),
+		VertexFormat(bottomLeft + glm::vec3(length, length, 0), color),
+		VertexFormat(bottomLeft + glm::vec3(0, length, 0), color)
+	};
+
+	std::vector<unsigned int> indices = { 0, 1, 2, 3 };
+
+	Mesh* square = new Mesh(name);
+
+	if (!fill) {
+		square->SetDrawMode(GL_LINE_LOOP);
+	}
+	else {
+		// Draw 2 triangles. Add the remaining 2 indices
+		indices.push_back(0);
+		indices.push_back(2);
+	}
+
+	square->InitFromData(vertices, indices);
+	return square;
+}
+
+
+/**
+*		*************
+*      **			**
+*	  *****************
+*/
+Mesh* objects::CreateTrapezoid(const std::string& name, float length, float height,
+	glm::vec3 color)
+{
+	// Center will be (0, 0).
+	glm::vec3 center = glm::vec3(0, 0, 0);
+	glm::vec3 rectangleBottLeft = center - glm::vec3(length / 2.0, height / 2.0, 0);
+
+	float triangleEdge = 0.66f * height;
+
+	std::vector<VertexFormat> vertices =
+	{
+		// Left triangle.
+		VertexFormat(rectangleBottLeft - glm::vec3(triangleEdge, 0, 0), color),
+		VertexFormat(rectangleBottLeft, color),
+		VertexFormat(rectangleBottLeft + glm::vec3(0, height, 0), color),
+
+		// Rectangle.
+		VertexFormat(rectangleBottLeft + glm::vec3(length, height, 0), color),
+		VertexFormat(rectangleBottLeft + glm::vec3(length, 0, 0), color),
+
+		// Right triangle.
+		VertexFormat(rectangleBottLeft + glm::vec3(length + triangleEdge, 0, 0), color)
+	};
+
+	std::vector<unsigned int> indices = { 0, 1, 2,
+										  1, 3, 2,
+										  1, 4, 3,
+										  4, 5, 3 };
+
+	Mesh* trapezoid = new Mesh(name);
+	trapezoid->InitFromData(vertices, indices);
+	return trapezoid;
 }

@@ -54,32 +54,46 @@ void TankWars::Init()
     AddMeshToList(terrainMesh);
 
 
-    // Add meshes for tank components.
+    // Add meshes for tank1.
     Mesh* tankBodyMesh1 = objects::CreateTankBody("body1", COLOR_BLACK, COLOR_PURPLE);
     AddMeshToList(tankBodyMesh1);
 
-    Mesh* tankCapMesh1 = objects::CreateSemiCircle("cap1", TANK_CAP_RADIUS, COLOR_BLACK);
-    AddMeshToList(tankCapMesh1);
+    Mesh* tankHeadMesh1 = objects::CreateSemiCircle("head1", TANK_HEAD_RADIUS, COLOR_BLACK);
+    AddMeshToList(tankHeadMesh1);
 
-    Mesh* tankPipeMesh1 = objects::CreateRectangle("pipe1", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
+    Mesh* tankPipeMesh1 = objects::CreatePipe("pipe1", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
     AddMeshToList(tankPipeMesh1);
 
-    this->tank1 = new Tank("body1", "cap1", "pipe1", START_X1, START_Y1, SPEED1, ROTATE_SPEED);
+    Mesh* tankBarMesh1 = objects::CreateLifeBar("bar1", BAR_LEN, BAR_WIDTH, BAR_THICK, COLOR_BLACK);
+    AddMeshToList(tankBarMesh1);
 
+    this->tank1 = new Tank("body1", "head1", "pipe1", "bar1",
+                            START_X1, START_Y1, SPEED1, ROTATE_SPEED);
 
+    // Add meshes for tank2.
     Mesh* tankBodyMesh2 = objects::CreateTankBody("body2", COLOR_RED, COLOR_YELLOW);
     AddMeshToList(tankBodyMesh2);
 
-    Mesh* tankCapMesh2 = objects::CreateSemiCircle("cap2", TANK_CAP_RADIUS, COLOR_RED);
-    AddMeshToList(tankCapMesh2);
+    Mesh* tankHeadMesh2 = objects::CreateSemiCircle("head2", TANK_HEAD_RADIUS, COLOR_RED);
+    AddMeshToList(tankHeadMesh2);
 
-    Mesh* tankPipeMesh2 = objects::CreateRectangle("pipe2", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
+    Mesh* tankPipeMesh2 = objects::CreatePipe("pipe2", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
     AddMeshToList(tankPipeMesh2);
 
-    this->tank2 = new Tank("body2", "cap2", "pipe2", START_X2, START_Y2, SPEED2, ROTATE_SPEED);
+    Mesh* tankBarMesh2 = objects::CreateLifeBar("bar2", BAR_LEN, BAR_WIDTH, BAR_THICK, COLOR_BLACK);
+    AddMeshToList(tankBarMesh2);
+
+    this->tank2 = new Tank("body2", "head2", "pipe2", "bar2",
+                            START_X2, START_Y2, SPEED2, ROTATE_SPEED);
 
     tank1->orientate(terrain->heightMap);
     tank2->orientate(terrain->heightMap);
+
+    
+    // Add a rectangle mesh for lives.
+    this->LIFE_RECT_LEN = BAR_LEN / INITIAL_LIVES;
+    Mesh* lifeRectangle = objects::CreatePipe("lifeRectangle", LIFE_RECT_LEN, BAR_WIDTH, COLOR_DARK_GREEN);
+    AddMeshToList(lifeRectangle);
 }
 
 
@@ -108,9 +122,13 @@ void TankWars::Update(float deltaTimeSeconds)
     ApplyTransformationsToTank(tank1);
     ApplyTransformationsToTank(tank2);
 
+    if (tank1->lives > 0) {
+        DrawTank(tank1);
+    }
 
-    DrawTank(tank1);
-    DrawTank(tank2);
+    if (tank2->lives > 0) {
+        DrawTank(tank2);
+    }
 
     DrawTerrain();
 }
@@ -125,21 +143,24 @@ void TankWars::ApplyTransformationsToTank(Tank* tank)
 {
     // Rotate the tank with slopeAngle.
     // Translate the tank to its current position.
-    // Affected: body, cap, pipe.
+    // Affected: body, head, pipe.
     tank->translate(tank->posX, tank->posY);
     tank->rotate(tank->slopeAngle);
 
-    // Translate the cap to the top of the tank (this will be done first, so it
+    // Translate the head to the top of the tank (this will be done first, so it
     // rotates around the tank's center).
-    // Affected: cap.
-    tank->capMatrix *= transform::Translate(0, TANK_TOTAL_HEIGHT);
+    // Affected: head.
+    tank->headMatrix *= transform::Translate(0, TANK_TOTAL_HEIGHT);
 
 
     // Rotate the pipe around its own center, than translate it
-    // to the cap's center position.
+    // to the head's center position.
     // Affected: pipe.
     tank->pipeMatrix *= transform::Translate(tank->pipeX, tank->pipeY);
     tank->pipeMatrix *= transform::Rotate(tank->pipeAngle);
+
+    // Translate the life bar above the tank.
+    tank->barMatrix *= transform::Translate(tank->posX, tank->posY + BAR_DELTA);
 }
 
 
@@ -155,11 +176,23 @@ void TankWars::DrawTank(Tank* tank)
     // Render body.
     RenderMesh2D(meshes[tank->bodyName], shaders["VertexColor"], tank->bodyMatrix);
     
-    // Render cap.
-    RenderMesh2D(meshes[tank->capName], shaders["VertexColor"], tank->capMatrix);
+    // Render head.
+    RenderMesh2D(meshes[tank->headName], shaders["VertexColor"], tank->headMatrix);
 
     // Render pipe.
     RenderMesh2D(meshes[tank->pipeName], shaders["VertexColor"], tank->pipeMatrix);
+
+    // Render life bar.
+    RenderMesh2D(meshes[tank->barName], shaders["VertexColor"], tank->barMatrix);
+
+    // Render life rectangles.
+    float firstX = tank->posX - BAR_LEN / 2.0f + LIFE_RECT_LEN / 2.0f;
+    float y = tank->posY + BAR_DELTA + BAR_THICK;
+    for (int i = 0; i < tank->lives; i++) {
+        modelMatrix = glm::mat3(1);
+        modelMatrix *= transform::Translate(firstX + i * LIFE_RECT_LEN, y);
+        RenderMesh2D(meshes["lifeRectangle"], shaders["VertexColor"], modelMatrix);
+    }
 }
 
 
@@ -226,6 +259,13 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
 void TankWars::OnKeyPress(int key, int mods)
 {
     // Add key press event
+    if (key == GLFW_KEY_G) {
+        tank1->lives--;
+    }
+
+    if (key == GLFW_KEY_H) {
+        tank2->lives--;
+    }
 }
 
 
