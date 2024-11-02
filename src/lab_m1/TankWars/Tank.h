@@ -12,7 +12,8 @@ namespace tw
 	{
 	 public:
 		Tank(const std::string& bodyName, const std::string& capName,
-			  float posX, float posY, float moveSpeed, float rotationSpeed);
+			 const std::string& pipeName,
+			 float posX, float posY, float moveSpeed, float rotationSpeed);
 
 
 		// Utility function over transform::translate().
@@ -32,19 +33,29 @@ namespace tw
 		void updateOrientation(float deltaTime);
 		 
 
+		// Names.
 		std::string bodyName;
 		std::string capName;
+		std::string pipeName;
 
+		// Model matrixes.
 		glm::mat3 bodyMatrix;
 		glm::mat3 capMatrix;
+		glm::mat3 pipeMatrix;
 
+		// Body and cap params.
 		float posX;
 		float posY;
+		float moveSpeed;
 
 		float slopeAngle;
 		float nextAngle;
-
-		float moveSpeed;
 		float rotationSpeed;
+
+		// Pipe params.
+		float pipeX;
+		float pipeY;
+		float pipeAngle;
+		float pipeRotationSpeed;
 	};
 }

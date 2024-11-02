@@ -13,20 +13,30 @@ using namespace tw;
 
 // Constructor
 Tank::Tank(const std::string& bodyName, const std::string& capName,
+		   const std::string& pipeName,
 		   float posX, float posY, float moveSpeed, float rotationSpeed)
 {
+	// Names.
 	this->bodyName = bodyName;
 	this->capName = capName;
+	this->pipeName = pipeName;
+
+	// Body and cap params.
 	this->posX = posX;
 	this->posY = posY;
-
 	this->moveSpeed = moveSpeed;
-	this->rotationSpeed = rotationSpeed;
-
+	
 	this->slopeAngle = 0;
 	this->nextAngle = 0;
-	this->bodyMatrix = glm::mat3(1);
-	this->capMatrix = glm::mat3(1);
+	this->rotationSpeed = rotationSpeed;
+
+	// Pipe params.
+	this->pipeX = 0.0f;
+	this->pipeY = 0.0f;
+	this->pipeAngle = 0.0f;
+	this->pipeRotationSpeed = PIPE_ROTATE_SPEED;
+
+	this->resetMatrixes();
 }
 
 
@@ -34,6 +44,7 @@ void Tank::translate(float translateX, float translateY)
 {
 	this->bodyMatrix *= transform::Translate(translateX, translateY);
 	this->capMatrix *= transform::Translate(translateX, translateY);
+	this->pipeMatrix *= transform::Translate(translateX, translateY);
 }
 
 
@@ -41,6 +52,11 @@ void Tank::rotate(float angle)
 {
 	this->bodyMatrix *= transform::Rotate(angle);
 	this->capMatrix *= transform::Rotate(angle);
+
+	// When rotating the tank, the pipe doesn't rotate around tank's center,
+	// but changes both its x and y coordinates.
+	this->pipeX = -TANK_TOTAL_HEIGHT * glm::sin(angle);
+	this->pipeY = TANK_TOTAL_HEIGHT * glm::cos(angle);
 }
 
 
@@ -48,6 +64,7 @@ void Tank::resetMatrixes()
 {
 	this->bodyMatrix = glm::mat3(1);
 	this->capMatrix = glm::mat3(1);
+	this->pipeMatrix = glm::mat3(1);
 }
 
 

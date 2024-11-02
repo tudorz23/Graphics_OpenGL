@@ -31,5 +31,9 @@ namespace tw
 
 		// Create the tank body, with the middle of the bottom trapezoid as the origin.
 		Mesh* CreateTankBody(const std::string& name, glm::vec3 low_color, glm::vec3 up_color);
+
+
+		// Create a rectangle with the center of the lower line (the width) in (0, 0).
+		Mesh* CreateRectangle(const std::string& name, float width, float length, glm::vec3 color);
 	}
 }

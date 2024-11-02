@@ -169,3 +169,27 @@ Mesh* objects::CreateTankBody(const std::string& name, glm::vec3 low_color, glm:
 	tank->InitFromData(vertices, indices);
 	return tank;
 }
+
+
+Mesh* objects::CreateRectangle(const std::string& name, float width, float length, glm::vec3 color)
+{
+	float halfWidth = width / 2.0f;
+	glm::vec3 bottomLeft = glm::vec3(-halfWidth, 0, 0);
+	glm::vec3 bottomRight = glm::vec3(halfWidth, 0, 0);
+	glm::vec3 topLeft = glm::vec3(-halfWidth, length, 0);
+	glm::vec3 topRight = glm::vec3(halfWidth, length, 0);
+
+	std::vector<VertexFormat> vertices =
+	{
+		VertexFormat(bottomLeft, color),
+		VertexFormat(bottomRight, color),
+		VertexFormat(topRight, color),
+		VertexFormat(topLeft, color)
+	};
+
+	std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3 };
+
+	Mesh* rectangle = new Mesh(name);
+	rectangle->InitFromData(vertices, indices);
+	return rectangle;
+}
