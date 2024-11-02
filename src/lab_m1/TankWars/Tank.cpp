@@ -103,3 +103,9 @@ void Tank::updateOrientation(float deltaTime)
 {
 	this->slopeAngle += (this->nextAngle - this->slopeAngle) * this->rotationSpeed * deltaTime;
 }
+
+
+bool Tank::isAlive()
+{
+	return this->lives > 0;
+}

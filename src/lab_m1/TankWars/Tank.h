@@ -36,6 +36,9 @@ namespace tw
 		// Updates the slopeAngle to gradually reach nextAngle value,
 		// to prevent a laggy animation.
 		void updateOrientation(float deltaTime);
+
+
+		bool isAlive();
 		 
 
 		// Names.

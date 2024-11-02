@@ -18,6 +18,8 @@ TankWars::TankWars()
     this->tank1 = NULL;
     this->tank2 = NULL;
 
+    this->LIFE_RECT_LEN = 0.0f;
+
     this->modelMatrix = glm::mat3(1);
 }
 
@@ -94,6 +96,11 @@ void TankWars::Init()
     this->LIFE_RECT_LEN = BAR_LEN / INITIAL_LIVES;
     Mesh* lifeRectangle = objects::CreatePipe("lifeRectangle", LIFE_RECT_LEN, BAR_WIDTH, COLOR_DARK_GREEN);
     AddMeshToList(lifeRectangle);
+
+
+    // Add the missile mesh.
+    Mesh* missileMesh = objects::CreateCircle("missile", MISSILE_RADIUS, COLOR_BLACK);
+    AddMeshToList(missileMesh);
 }
 
 
@@ -131,6 +138,36 @@ void TankWars::Update(float deltaTimeSeconds)
     }
 
     DrawTerrain();
+
+
+    for (Missile* missile : this->missiles) {
+        if (missile->active) {
+            missile->UpdatePosition(deltaTimeSeconds);
+            cout << "Missile update, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
+        }
+    }
+
+    // Remove inactive missiles.
+    vector<Missile*>::iterator it = this->missiles.begin();
+    while (it != this->missiles.end()) {
+        Missile* missile = *it;
+        if (!missile->active) {
+            it = this->missiles.erase(it);
+            delete missile;
+        } else {
+            it++;
+        }
+    }
+
+    if (missiles.empty()) {
+        cout << "Lewis Hamilton\n";
+    }
+
+    DrawMissiles();
+
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform::Translate(500, 500);
+    RenderMesh2D(meshes["missile"], shaders["VertexColor"], modelMatrix);
 }
 
 
@@ -192,6 +229,18 @@ void TankWars::DrawTank(Tank* tank)
         modelMatrix = glm::mat3(1);
         modelMatrix *= transform::Translate(firstX + i * LIFE_RECT_LEN, y);
         RenderMesh2D(meshes["lifeRectangle"], shaders["VertexColor"], modelMatrix);
+    }
+}
+
+
+void TankWars::DrawMissiles()
+{
+    for (Missile* missile : this->missiles) {
+        if (missile->active) {
+            modelMatrix = glm::mat3(1);
+            modelMatrix *= transform::Translate(missile->posX, missile->posY);
+            RenderMesh2D(meshes["missile"], shaders["VertexColor"], modelMatrix);
+        }
     }
 }
 
@@ -265,6 +314,21 @@ void TankWars::OnKeyPress(int key, int mods)
 
     if (key == GLFW_KEY_H) {
         tank2->lives--;
+    }
+
+    if (key == GLFW_KEY_SPACE && tank1->isAlive()) {
+        float pipeHeadX = tank1->posX + tank1->pipeX - glm::sin(tank1->pipeAngle) * TANK_PIPE_LENGTH;
+        float pipeHeadY = tank1->posY + tank1->pipeY + glm::cos(tank1->pipeAngle) * TANK_PIPE_LENGTH;
+
+        glm::ivec2 resolution = window->GetResolution();
+
+        Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank1->pipeAngle,
+                                       MISSILE_POW, GRAVITY, (float) resolution.x);
+        missiles.push_back(missile);
+
+        cout << "pipeAngle = " << tank1->pipeAngle << "\n";
+        cout << "tank pipe x = " << tank1->pipeX << ", y = " << tank1->pipeY << "\n";
+        cout << "Missile here, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
     }
 }
 

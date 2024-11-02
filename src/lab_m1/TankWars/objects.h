@@ -15,7 +15,7 @@ namespace tw
 							std::vector<std::pair<float, float>> heightMap);
 
 
-		// Create a semi circle with the center in (0, 0).
+		// Create a semi circle, with the center in (0, 0).
 		Mesh* CreateSemiCircle(const std::string& name, float radius, glm::vec3 color);
 
 
@@ -23,13 +23,17 @@ namespace tw
 		Mesh* CreateTankBody(const std::string& name, glm::vec3 low_color, glm::vec3 up_color);
 
 
-		// Create a rectangle with the center of the base line (the width) in (0, 0).
+		// Create a rectangle, with the center of the base line (the width) in (0, 0).
 		Mesh* CreatePipe(const std::string& name, float width, float length, glm::vec3 color);
 
 
-		// Create a life bar with the center of the base line in (0, 0).
+		// Create a life bar, with the center of the base line in (0, 0).
 		Mesh* CreateLifeBar(const std::string& name, float length, float width,
 							float thick, glm::vec3 color);
+
+
+		// Create a circle, with the center in (0, 0).
+		Mesh* CreateCircle(const std::string& name, float radius, glm::vec3 color);
 
 
 		/* Following seemed necessary but ended up not used. */

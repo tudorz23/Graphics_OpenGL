@@ -37,10 +37,10 @@ Mesh* objects::CreateSemiCircle(const std::string& name, float radius, glm::vec3
 {
 	glm::vec3 center = glm::vec3(0, 0, 0);
 
-	std::vector<VertexFormat> vertices { VertexFormat(center, color) };
-	std::vector<unsigned int> indices;
+	std::vector<VertexFormat> vertices = { VertexFormat(center, color) };
+	std::vector<unsigned int> indices = { 0 };
 
-	float angle_base = M_PI / (float) (NUM_VERTICES_SEMICIRCLE - 1);
+	float angle_base = (float) M_PI / (float) (NUM_VERTICES_SEMICIRCLE - 1);
 
 	for (int i = 0; i < NUM_VERTICES_SEMICIRCLE; i++) {
 		float angle = angle_base * i;
@@ -49,13 +49,10 @@ Mesh* objects::CreateSemiCircle(const std::string& name, float radius, glm::vec3
 		float y = radius * glm::sin(angle);
 
 		vertices.push_back(VertexFormat(glm::vec3(x, y, 0), color));
-		indices.push_back(i);
+		indices.push_back(i + 1);
 	}
 
-	indices.push_back(NUM_VERTICES_SEMICIRCLE);
-
 	Mesh* semicircle = new Mesh(name);
-
 	semicircle->SetDrawMode(GL_TRIANGLE_FAN);
 	semicircle->InitFromData(vertices, indices);
 	return semicircle;
@@ -207,9 +204,34 @@ Mesh* objects::CreateLifeBar(const std::string& name, float length, float width,
 }
 
 
+Mesh* objects::CreateCircle(const std::string& name, float radius, glm::vec3 color)
+{
+	glm::vec3 center = glm::vec3(0, 0, 0);
+
+	std::vector<VertexFormat> vertices = { VertexFormat(center, color) };
+	std::vector<unsigned int> indices = {0};
+
+	float angle_base = (2.0f * (float) M_PI) / (float)(NUM_VERTICES_CIRCLE - 1);
+
+	for (int i = 0; i < NUM_VERTICES_CIRCLE; i++) {
+		float angle = angle_base * i;
+
+		float x = radius * glm::cos(angle);
+		float y = radius * glm::sin(angle);
+
+		vertices.push_back(VertexFormat(glm::vec3(x, y, 0), color));
+		indices.push_back(i + 1);
+	}
+
+	Mesh* circle = new Mesh(name);
+	circle->SetDrawMode(GL_TRIANGLE_FAN);
+	circle->InitFromData(vertices, indices);
+	return circle;
+}
 
 
-/* Following seemed necessary but ended up not used. */
+
+/* Following seemed useful but ended up not used. */
 Mesh* objects::CreateSquare(const std::string& name, float length, glm::vec3 color, bool fill)
 {
 	float halfLength = length / 2.0f;

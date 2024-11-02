@@ -38,6 +38,10 @@ namespace tw
 	// For semicircle drawing.
 	constexpr int NUM_VERTICES_SEMICIRCLE = 70;
 
+	// For circle drawing.
+	constexpr int NUM_VERTICES_CIRCLE = 181;
+
+
 
 	// Tank measurements.
 	constexpr float TANK_UPPER_LENGTH = 80.0f;
@@ -75,11 +79,16 @@ namespace tw
 
 	// Life bar measurements.
 	constexpr float BAR_LEN = 80.0f;
-	constexpr float BAR_WIDTH = 30.0f;
+	constexpr float BAR_WIDTH = 20.0f;
 	constexpr float BAR_THICK = 5.0f;
 	constexpr float BAR_DELTA = 100.0f;
 
 
+	// Missile.
+	constexpr float MISSILE_RADIUS = 7.5f;
+
 	// Game logic params.
-	constexpr int INITIAL_LIVES = 6;
+	constexpr int INITIAL_LIVES = 5;
+	constexpr float MISSILE_POW = 50.0f;
+	constexpr float GRAVITY = 20.0f;
 }

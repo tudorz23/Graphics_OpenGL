@@ -4,6 +4,9 @@
 
 #include "lab_m1/TankWars/Terrain.h"
 #include "lab_m1/TankWars/Tank.h"
+#include "lab_m1/TankWars/Missile.h"
+
+#include <vector>
 
 
 namespace tw
@@ -29,6 +32,8 @@ namespace tw
         void DrawTerrain();
         void DrawTank(Tank* tank);
 
+        void DrawMissiles();
+
 
         // Callback functions.
         void OnInputUpdate(float deltaTime, int mods) override;
@@ -49,6 +54,10 @@ namespace tw
         Tank* tank1;
         Tank* tank2;
 
+        // Necessary because the sizes of the life bar are provided by this class.
         float LIFE_RECT_LEN;
+
+        // Collection of missiles.
+        std::vector<Missile*> missiles;
     };
 }   // namespace tw
