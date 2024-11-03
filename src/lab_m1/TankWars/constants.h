@@ -89,6 +89,6 @@ namespace tw
 
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 5;
-	constexpr float MISSILE_POW = 50.0f;
-	constexpr float GRAVITY = 20.0f;
+	constexpr float MISSILE_POW = 400.0f;
+	constexpr float GRAVITY = 480.0f;
 }

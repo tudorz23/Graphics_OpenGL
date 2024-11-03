@@ -13,8 +13,9 @@ Missile::Missile(float startingX, float startingY, float angle,
 	this->posX = startingX;
 	this->posY = startingY;
 
-	this->speedX = power + 100.f;
-	this->speedY = power;
+	// Power is distributed as speed to X and Y components, depending on the angle.
+	this->speedX = -power * glm::sin(angle);
+	this->speedY = power * glm::cos(angle);
 
 	this->gravity = gravity;
 

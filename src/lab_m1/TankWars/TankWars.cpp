@@ -129,21 +129,11 @@ void TankWars::Update(float deltaTimeSeconds)
     ApplyTransformationsToTank(tank1);
     ApplyTransformationsToTank(tank2);
 
-    if (tank1->lives > 0) {
-        DrawTank(tank1);
-    }
-
-    if (tank2->lives > 0) {
-        DrawTank(tank2);
-    }
-
-    DrawTerrain();
-
 
     for (Missile* missile : this->missiles) {
         if (missile->active) {
             missile->UpdatePosition(deltaTimeSeconds);
-            cout << "Missile update, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
+            //cout << "Missile update, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
         }
     }
 
@@ -163,11 +153,23 @@ void TankWars::Update(float deltaTimeSeconds)
         cout << "Lewis Hamilton\n";
     }
 
+
+    // Draw all the scene components.
+    if (tank1->lives > 0) {
+        DrawTank(tank1);
+    }
+
+    if (tank2->lives > 0) {
+        DrawTank(tank2);
+    }
+
+    DrawTerrain();
+
     DrawMissiles();
 
-    modelMatrix = glm::mat3(1);
+    /*modelMatrix = glm::mat3(1);
     modelMatrix *= transform::Translate(500, 500);
-    RenderMesh2D(meshes["missile"], shaders["VertexColor"], modelMatrix);
+    RenderMesh2D(meshes["missile"], shaders["VertexColor"], modelMatrix);*/
 }
 
 
