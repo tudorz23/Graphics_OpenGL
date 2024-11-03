@@ -130,10 +130,35 @@ void TankWars::Update(float deltaTimeSeconds)
     ApplyTransformationsToTank(tank2);
 
 
+    // Update the positions of the missiles.
     for (Missile* missile : this->missiles) {
         if (missile->active) {
             missile->UpdatePosition(deltaTimeSeconds);
-            //cout << "Missile update, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
+        }
+    }
+
+    // Check for collisions between missiles and the tanks.
+    for (Missile* missile : this->missiles) {
+        if (!missile->active) {
+            continue;
+        }
+
+        // Launched by 1, collision with 2.
+        if (missile->launcher == 1) {
+            if (CirclesCollide(missile->radius, missile->posX, missile->posY,
+                               TANK_RADIUS, tank2->posX, tank2->posY)) {
+                tank2->decrementLives();
+                missile->active = false;
+            }
+        }
+
+        // Launched by 2, collision with 1.
+        if (missile->launcher == 2) {
+            if (CirclesCollide(missile->radius, missile->posX, missile->posY,
+                               TANK_RADIUS, tank1->posX, tank1->posY)) {
+                tank1->decrementLives();
+                missile->active = false;
+            }
         }
     }
 
@@ -144,7 +169,8 @@ void TankWars::Update(float deltaTimeSeconds)
         if (!missile->active) {
             it = this->missiles.erase(it);
             delete missile;
-        } else {
+        }
+        else {
             it++;
         }
     }
@@ -166,10 +192,6 @@ void TankWars::Update(float deltaTimeSeconds)
     DrawTerrain();
 
     DrawMissiles();
-
-    /*modelMatrix = glm::mat3(1);
-    modelMatrix *= transform::Translate(500, 500);
-    RenderMesh2D(meshes["missile"], shaders["VertexColor"], modelMatrix);*/
 }
 
 
@@ -192,7 +214,7 @@ void TankWars::ApplyTransformationsToTank(Tank* tank)
     tank->headMatrix *= transform::Translate(0, TANK_TOTAL_HEIGHT);
 
 
-    // Rotate the pipe around its own center, than translate it
+    // Rotate the pipe around its own center, then translate it
     // to the head's center position.
     // Affected: pipe.
     tank->pipeMatrix *= transform::Translate(tank->pipeX, tank->pipeY);
@@ -201,6 +223,18 @@ void TankWars::ApplyTransformationsToTank(Tank* tank)
     // Translate the life bar above the tank.
     tank->barMatrix *= transform::Translate(tank->posX, tank->posY + BAR_DELTA);
 }
+
+
+bool TankWars::CirclesCollide(float radius1, float x1, float y1,
+                              float radius2, float x2, float y2)
+{
+    float a = (radius1 - radius2) * (radius1 - radius2);
+    float b = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    float c = (radius1 + radius2) * (radius1 + radius2);
+
+    return (a <= b && b <= c);
+}
+
 
 
 void TankWars::DrawTerrain()
@@ -318,18 +352,35 @@ void TankWars::OnKeyPress(int key, int mods)
         tank2->lives--;
     }
 
+    // Launch missile from tank1.
     if (key == GLFW_KEY_SPACE && tank1->isAlive()) {
         float pipeHeadX = tank1->posX + tank1->pipeX - glm::sin(tank1->pipeAngle) * TANK_PIPE_LENGTH;
         float pipeHeadY = tank1->posY + tank1->pipeY + glm::cos(tank1->pipeAngle) * TANK_PIPE_LENGTH;
 
         glm::ivec2 resolution = window->GetResolution();
 
-        Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank1->pipeAngle,
-                                       MISSILE_POW, GRAVITY, (float) resolution.x);
+        Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank1->pipeAngle, MISSILE_POW,
+                                       GRAVITY, (float) resolution.x, MISSILE_RADIUS, 1);
         missiles.push_back(missile);
 
         cout << "pipeAngle = " << tank1->pipeAngle << "\n";
         cout << "tank pipe x = " << tank1->pipeX << ", y = " << tank1->pipeY << "\n";
+        cout << "Missile here, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
+    }
+
+    // Launch missile from tank2.
+    if (key == GLFW_KEY_ENTER && tank2->isAlive()) {
+        float pipeHeadX = tank2->posX + tank2->pipeX - glm::sin(tank2->pipeAngle) * TANK_PIPE_LENGTH;
+        float pipeHeadY = tank2->posY + tank2->pipeY + glm::cos(tank2->pipeAngle) * TANK_PIPE_LENGTH;
+
+        glm::ivec2 resolution = window->GetResolution();
+
+        Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank2->pipeAngle, MISSILE_POW,
+                                       GRAVITY, (float)resolution.x, MISSILE_RADIUS, 2);
+        missiles.push_back(missile);
+
+        cout << "pipeAngle = " << tank2->pipeAngle << "\n";
+        cout << "tank pipe x = " << tank2->pipeX << ", y = " << tank2->pipeY << "\n";
         cout << "Missile here, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
     }
 }

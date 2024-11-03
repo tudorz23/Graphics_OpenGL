@@ -26,9 +26,17 @@ namespace tw
         void FrameEnd() override;
 
 
-        // Game logic functions.
+        // Game logic methods.
         void ApplyTransformationsToTank(Tank* tank);
 
+
+        // Check if two circles intersect. Used for collision detection between
+        // missiles and tanks.
+        bool CirclesCollide(float radius1, float centerX1, float centerY1,
+                            float radius2, float centerX2, float centerY2);
+
+
+        // Drawing methods.
         void DrawTerrain();
         void DrawTank(Tank* tank);
 

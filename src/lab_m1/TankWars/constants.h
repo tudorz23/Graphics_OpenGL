@@ -55,10 +55,16 @@ namespace tw
 	constexpr float TANK_TOTAL_HEIGHT = TANK_UPPER_HEIGHT + TANK_LOWER_HEIGHT;
 	constexpr float TANK_HEAD_RADIUS = 18.0f;
 
+	
+
 	constexpr float TANK_PIPE_LENGTH = 50.0f;
 	constexpr float TANK_PIPE_WIDTH = 10.0f;
 
 	constexpr float PLANTED_DEPTH = 3.0f;	// Makes the tank seem planted.
+
+	// For collision detection.
+	constexpr float TANK_LOW_TO_CENTER = TANK_LOWER_HEIGHT + TANK_UPPER_HEIGHT / 2.0f;
+	constexpr float TANK_RADIUS = TANK_UPPER_LENGTH / 2.0f;
 
 
 	// Tank movement parameters.
@@ -90,5 +96,5 @@ namespace tw
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 5;
 	constexpr float MISSILE_POW = 400.0f;
-	constexpr float GRAVITY = 480.0f;
+	constexpr float GRAVITY = 520.0f;
 }

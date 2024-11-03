@@ -109,3 +109,9 @@ bool Tank::isAlive()
 {
 	return this->lives > 0;
 }
+
+
+void Tank::decrementLives()
+{
+	this->lives--;
+}

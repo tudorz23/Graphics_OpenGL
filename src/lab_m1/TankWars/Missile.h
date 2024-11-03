@@ -8,7 +8,8 @@ namespace tw
 	 public:
 		// Constructor.
 		Missile(float startingX, float startingY, float angle,
-				float power, float gravity, float limit);
+				float power, float gravity, float limit, float radius,
+				short launcher);
 
 
 		// Updates the position and the speed of the missile after delta time seconds.
@@ -29,5 +30,11 @@ namespace tw
 
 		// The right-most point the missile can be at.
 		float limit;
+
+		// For colission detection.
+		float radius;
+
+		// 1 or 2, to know which tank launced it.
+		short launcher;
 	};
 }

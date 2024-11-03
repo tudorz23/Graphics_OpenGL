@@ -8,7 +8,8 @@ using namespace tw;
 
 // Constructor.
 Missile::Missile(float startingX, float startingY, float angle,
-				 float power, float gravity, float limit)
+				 float power, float gravity, float limit, float radius,
+				 short launcher)
 {
 	this->posX = startingX;
 	this->posY = startingY;
@@ -21,6 +22,10 @@ Missile::Missile(float startingX, float startingY, float angle,
 
 	this->limit = limit;
 	this->active = true;
+
+	this->radius = radius;
+
+	this->launcher = launcher;
 }
 
 

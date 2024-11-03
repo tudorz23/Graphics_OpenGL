@@ -39,6 +39,8 @@ namespace tw
 
 
 		bool isAlive();
+
+		void decrementLives();
 		 
 
 		// Names.
