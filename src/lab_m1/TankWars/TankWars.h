@@ -75,9 +75,6 @@ namespace tw
         Tank* tank1;
         Tank* tank2;
 
-        // Necessary because the sizes of the life bar are provided by this class.
-        float LIFE_RECT_LEN;
-
         // Collection of missiles.
         std::vector<Missile*> missiles;
     };

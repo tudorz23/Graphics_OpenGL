@@ -80,6 +80,7 @@ void Tank::rotate(float angle)
 
 void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap)
 {
+	// TODO: Get the index directly, without the loop.
 	for (int i = 0; i < heightMap.size() - 1; i++) {
 		const auto& pointA = heightMap[i];
 		const auto& pointB = heightMap[i + 1];
@@ -119,7 +120,6 @@ void Tank::decrementLives()
 
 void Tank::computeTrajectory(float limit)
 {
-	std::cout << "computing trajectory\n";
 	this->trajectory.clear();
 
 	float currX = this->posX + this->pipeX - glm::sin(this->pipeAngle) * TANK_PIPE_LENGTH;
@@ -138,6 +138,4 @@ void Tank::computeTrajectory(float limit)
 
 		speedY -= GRAVITY * deltaTime;
 	}
-
-	cout << "size is " << trajectory.size() << "\n\n";
 }

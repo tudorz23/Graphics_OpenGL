@@ -15,6 +15,8 @@ namespace tw
 		// Updates the position and the speed of the missile after delta time seconds.
 		void UpdatePosition(float deltaTime);
 
+		void MarkInactive();
+
 
 		// Position and movement attributes.
 		float posX;

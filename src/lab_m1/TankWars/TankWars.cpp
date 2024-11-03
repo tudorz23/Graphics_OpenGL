@@ -18,8 +18,6 @@ TankWars::TankWars()
     this->tank1 = NULL;
     this->tank2 = NULL;
 
-    this->LIFE_RECT_LEN = 0.0f;
-
     this->modelMatrix = glm::mat3(1);
 }
 
@@ -93,7 +91,6 @@ void TankWars::Init()
 
     
     // Add a rectangle mesh for lives.
-    this->LIFE_RECT_LEN = BAR_LEN / INITIAL_LIVES;
     Mesh* lifeRectangle = objects::CreatePipe("lifeRectangle", LIFE_RECT_LEN, BAR_WIDTH, COLOR_DARK_GREEN);
     AddMeshToList(lifeRectangle);
 
@@ -216,7 +213,7 @@ void TankWars::CheckMissileTankCollisions()
             if (CirclesCollide(missile->radius, missile->posX, missile->posY,
                                TANK_RADIUS, tank2->posX, tank2->posY)) {
                 tank2->decrementLives();
-                missile->active = false;
+                missile->MarkInactive();
             }
         }
 
@@ -225,7 +222,7 @@ void TankWars::CheckMissileTankCollisions()
             if (CirclesCollide(missile->radius, missile->posX, missile->posY,
                                TANK_RADIUS, tank1->posX, tank1->posY)) {
                 tank1->decrementLives();
-                missile->active = false;
+                missile->MarkInactive();
             }
         }
     }
@@ -267,6 +264,8 @@ void TankWars::CheckMissileTerrainCollisions()
         std::cout << "point1.x = " << point1.first << ", point1.y = " << point1.second << "\n";
         std::cout << "point2.x = " << point2.first << ", point2.y = " << point2.second << "\n";*/
 
+        // TODO: point2.first - missile->posX <= 0.05f can lead to problems when dividing.
+
         // Get interpolation coefficient.
         float t = (missile->posX - point1.first) / (point2.first - missile->posX);
 
@@ -278,9 +277,12 @@ void TankWars::CheckMissileTerrainCollisions()
 
         //std::cout << "proj.x = " << projX << ", proj.y = " << projY << "\n\n";
 
-        if (missile->posY - projY <= MISSILE_RADIUS) {
-            std::cout << "Collision at missile.y = " << missile->posY << ", and projY = " << projY << "\n\n";
-            missile->active = false;
+        if (glm::abs(missile->posY - projY) <= MISSILE_RADIUS) {
+            /*std::cout << "point1.x = " << point1.first << ", point1.y = " << point1.second << "\n";
+            std::cout << "point2.x = " << point2.first << ", point2.y = " << point2.second << "\n";
+            std::cout << "Collision at missile.y = " << missile->posY << ", and projY = " << projY << "\n";
+            std::cout << "Collision at missile.x = " << missile->posX << ", and projX = " << projX << "\n\n";*/
+            missile->MarkInactive();
         }
     }
 }
@@ -290,7 +292,6 @@ void TankWars::CheckMissileTerrainCollisions()
 void TankWars::RemoveInactiveMissiles()
 {
     if (this->missiles.empty()) {
-        std::cout << "Already empty\n";
         return;
     }
 

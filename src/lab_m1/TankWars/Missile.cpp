@@ -37,6 +37,12 @@ void Missile::UpdatePosition(float deltaTime)
 	this->speedY -= this->gravity * deltaTime;
 
 	if (this->posX <= 0 || this->posX >= limit || this->posY <= 0) {
-		this->active = false;
+		this->MarkInactive();
 	}
+}
+
+
+void Missile::MarkInactive()
+{
+	this->active = false;
 }

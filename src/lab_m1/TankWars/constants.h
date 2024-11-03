@@ -85,14 +85,6 @@ namespace tw
 	constexpr float RIGHT_LIMIT = 1225.0f;
 	constexpr float LEFT_LIMIT = 55.0f;
 
-
-	// Life bar measurements.
-	constexpr float BAR_LEN = 80.0f;
-	constexpr float BAR_WIDTH = 20.0f;
-	constexpr float BAR_THICK = 5.0f;
-	constexpr float BAR_DELTA = 100.0f;
-
-
 	// Missile.
 	constexpr float MISSILE_RADIUS = 7.5f;
 	constexpr float TRAJ_RADIUS = 4.5f;
@@ -101,5 +93,12 @@ namespace tw
 	constexpr float GRAVITY = 520.0f;
 
 	// Game logic params.
-	constexpr int INITIAL_LIVES = 6;
+	constexpr int INITIAL_LIVES = 7;
+
+	// Life bar measurements.
+	constexpr float BAR_LEN = 80.0f;
+	constexpr float BAR_WIDTH = 20.0f;
+	constexpr float BAR_THICK = 5.0f;
+	constexpr float BAR_DELTA = 100.0f;
+	constexpr float LIFE_RECT_LEN = BAR_LEN / INITIAL_LIVES;
 }
