@@ -10,7 +10,7 @@ using namespace tw;
 
 
 // Constructor
-Terrain::Terrain(std::vector<std::pair<float, float>> sineWaveParams)
+Terrain::Terrain(std::vector<std::pair<float, float>> &sineWaveParams)
 {
 	this->sineWaveParams = sineWaveParams;
 }

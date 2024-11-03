@@ -128,7 +128,7 @@ void Tank::computeTrajectory(float limit)
 	float speedX = -MISSILE_POW * glm::sin(this->pipeAngle);
 	float speedY = MISSILE_POW * glm::cos(this->pipeAngle);
 
-	float deltaTime = 0.015f;
+	float deltaTime = TRAJ_DELTA_TIME;
 	
 	while (currX > 0 && currX < limit && currY > 0) {
 		this->trajectory.push_back({ currX, currY });

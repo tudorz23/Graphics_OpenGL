@@ -35,6 +35,8 @@ namespace tw
 	constexpr float OMEGA3 = 0.015f;
 	constexpr float OMEGA4 = 0.0355f;
 
+	constexpr float TERRAIN_POINT_INTERV = 1.5f;
+
 
 	// For semicircle drawing.
 	constexpr int NUM_VERTICES_SEMICIRCLE = 70;
@@ -73,7 +75,7 @@ namespace tw
 	constexpr float START_Y1 = 400.0f;
 	constexpr float SPEED1 = 150.f;
 
-	constexpr float START_X2 = 800.0f;
+	constexpr float START_X2 = 930.0f;
 	constexpr float START_Y2 = 400.0f;
 	constexpr float SPEED2 = 150.0f;
 
@@ -94,9 +96,10 @@ namespace tw
 	// Missile.
 	constexpr float MISSILE_RADIUS = 7.5f;
 	constexpr float TRAJ_RADIUS = 4.5f;
-
-	// Game logic params.
-	constexpr int INITIAL_LIVES = 5;
+	constexpr float TRAJ_DELTA_TIME = 0.015f;
 	constexpr float MISSILE_POW = 400.0f;
 	constexpr float GRAVITY = 520.0f;
+
+	// Game logic params.
+	constexpr int INITIAL_LIVES = 6;
 }

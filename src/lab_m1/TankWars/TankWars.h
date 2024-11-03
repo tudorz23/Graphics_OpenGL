@@ -41,6 +41,9 @@ namespace tw
                             float radius2, float centerX2, float centerY2);
 
 
+        void CheckMissileTerrainCollisions();
+
+
         void RemoveInactiveMissiles();
 
 

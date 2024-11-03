@@ -48,7 +48,7 @@ void TankWars::Init()
     vector<pair<float, float>> sineWaveParams = { {A1, OMEGA1}, {A2, OMEGA2},
                                                   {A3, OMEGA3}, {A4, OMEGA4} };
     this->terrain = new Terrain(sineWaveParams);
-    this->terrain->computeHeights(0.0, (float)resolution.x, 1.5f);
+    this->terrain->computeHeights(0.0, (float)resolution.x, TERRAIN_POINT_INTERV);
 
 
     // Add the terrain mesh.
@@ -106,8 +106,8 @@ void TankWars::Init()
     Mesh* trajMesh = objects::CreateCircle("traj", TRAJ_RADIUS, COLOR_WHITE);
     AddMeshToList(trajMesh);
 
-    tank1->computeTrajectory(resolution.x);
-    tank2->computeTrajectory(resolution.x);
+    tank1->computeTrajectory((float)resolution.x);
+    tank2->computeTrajectory((float)resolution.x);
 }
 
 
@@ -145,6 +145,9 @@ void TankWars::Update(float deltaTimeSeconds)
     }
 
     CheckMissileTankCollisions();
+
+    CheckMissileTerrainCollisions();
+
 
     // Remove inactive missiles.
     RemoveInactiveMissiles();
@@ -240,8 +243,57 @@ bool TankWars::CirclesCollide(float radius1, float x1, float y1,
 }
 
 
+
+void TankWars::CheckMissileTerrainCollisions()
+{
+    for (Missile* missile : this->missiles) {
+        if (!missile->active) {
+            continue;
+        }
+
+        // Get the index of the point from terrain->heightMap that has
+        // the closest x coord to the left to the x coord of the missile.
+        int index = (int) (missile->posX / TERRAIN_POINT_INTERV);
+
+        if (index + 1 == this->terrain->heightMap.size()) {
+            continue;
+        }
+
+        pair<float, float>& point1 = this->terrain->heightMap[index];
+        pair<float, float>& point2 = this->terrain->heightMap[index + 1];
+
+        //std::cout << "Collision at index: " << index << "\n";
+        /*std::cout << "Missile.x = " << missile->posX << ", Missile.y = " << missile->posY << "\n";
+        std::cout << "point1.x = " << point1.first << ", point1.y = " << point1.second << "\n";
+        std::cout << "point2.x = " << point2.first << ", point2.y = " << point2.second << "\n";*/
+
+        // Get interpolation coefficient.
+        float t = (missile->posX - point1.first) / (point2.first - missile->posX);
+
+        //std::cout << "Interpolation coef = " << t << "\n";
+
+        // Get coords of the projection of the missile on the terrain.
+        float projX = point1.first * (1.0f - t) + point2.first * t;
+        float projY = point1.second * (1.0f - t) + point2.second * t;
+
+        //std::cout << "proj.x = " << projX << ", proj.y = " << projY << "\n\n";
+
+        if (missile->posY - projY <= MISSILE_RADIUS) {
+            std::cout << "Collision at missile.y = " << missile->posY << ", and projY = " << projY << "\n\n";
+            missile->active = false;
+        }
+    }
+}
+
+
+
 void TankWars::RemoveInactiveMissiles()
 {
+    if (this->missiles.empty()) {
+        std::cout << "Already empty\n";
+        return;
+    }
+
     vector<Missile*>::iterator it = this->missiles.begin();
 
     while (it != this->missiles.end()) {
@@ -425,10 +477,6 @@ void TankWars::OnKeyPress(int key, int mods)
         Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank1->pipeAngle, MISSILE_POW,
                                        GRAVITY, (float) resolution.x, MISSILE_RADIUS, 1);
         missiles.push_back(missile);
-
-        cout << "pipeAngle = " << tank1->pipeAngle << "\n";
-        cout << "tank pipe x = " << tank1->pipeX << ", y = " << tank1->pipeY << "\n";
-        cout << "Missile here, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
     }
 
     // Launch missile from tank2.
@@ -441,10 +489,6 @@ void TankWars::OnKeyPress(int key, int mods)
         Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank2->pipeAngle, MISSILE_POW,
                                        GRAVITY, (float)resolution.x, MISSILE_RADIUS, 2);
         missiles.push_back(missile);
-
-        cout << "pipeAngle = " << tank2->pipeAngle << "\n";
-        cout << "tank pipe x = " << tank2->pipeX << ", y = " << tank2->pipeY << "\n";
-        cout << "Missile here, x = " << missile->posX << ", y = " << missile->posY << "\n\n";
     }
 }
 

@@ -7,7 +7,7 @@ namespace tw
 	class Terrain
 	{
 	 public:
-		 Terrain(std::vector<std::pair<float, float>> sineWaveParams);
+		 Terrain(std::vector<std::pair<float, float>> &sineWaveParams);
 
 		 /**
 		  * Calculates the heights for each point x from start to end,
