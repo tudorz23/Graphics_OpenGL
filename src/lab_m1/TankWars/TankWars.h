@@ -30,10 +30,18 @@ namespace tw
         void ApplyTransformationsToTank(Tank* tank);
 
 
+        // Consider that the missile and the tank are each surrounded by a circle
+        // and check if those two circles intersect.
+        void CheckMissileTankCollisions();
+
+
         // Check if two circles intersect. Used for collision detection between
         // missiles and tanks.
         bool CirclesCollide(float radius1, float centerX1, float centerY1,
                             float radius2, float centerX2, float centerY2);
+
+
+        void RemoveInactiveMissiles();
 
 
         // Drawing methods.

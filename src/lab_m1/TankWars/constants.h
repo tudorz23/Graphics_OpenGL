@@ -64,7 +64,7 @@ namespace tw
 
 	// For collision detection.
 	constexpr float TANK_LOW_TO_CENTER = TANK_LOWER_HEIGHT + TANK_UPPER_HEIGHT / 2.0f;
-	constexpr float TANK_RADIUS = TANK_UPPER_LENGTH / 2.0f;
+	constexpr float TANK_RADIUS = TANK_UPPER_LENGTH / 2.0f + TANK_UPPER_TR_LEN;
 
 
 	// Tank movement parameters.

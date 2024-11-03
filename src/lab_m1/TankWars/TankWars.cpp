@@ -137,57 +137,19 @@ void TankWars::Update(float deltaTimeSeconds)
         }
     }
 
-    // Check for collisions between missiles and the tanks.
-    for (Missile* missile : this->missiles) {
-        if (!missile->active) {
-            continue;
-        }
-
-        // Launched by 1, collision with 2.
-        if (missile->launcher == 1) {
-            if (CirclesCollide(missile->radius, missile->posX, missile->posY,
-                               TANK_RADIUS, tank2->posX, tank2->posY)) {
-                tank2->decrementLives();
-                missile->active = false;
-            }
-        }
-
-        // Launched by 2, collision with 1.
-        if (missile->launcher == 2) {
-            if (CirclesCollide(missile->radius, missile->posX, missile->posY,
-                               TANK_RADIUS, tank1->posX, tank1->posY)) {
-                tank1->decrementLives();
-                missile->active = false;
-            }
-        }
-    }
+    CheckMissileTankCollisions();
 
     // Remove inactive missiles.
-    vector<Missile*>::iterator it = this->missiles.begin();
-    while (it != this->missiles.end()) {
-        Missile* missile = *it;
-        if (!missile->active) {
-            it = this->missiles.erase(it);
-            delete missile;
-        }
-        else {
-            it++;
-        }
-    }
+    RemoveInactiveMissiles();
 
     if (missiles.empty()) {
-        cout << "Lewis Hamilton\n";
+        std::cout << "Lewis Hamilton\n";
     }
 
 
     // Draw all the scene components.
-    if (tank1->lives > 0) {
-        DrawTank(tank1);
-    }
-
-    if (tank2->lives > 0) {
-        DrawTank(tank2);
-    }
+    DrawTank(tank1);
+    DrawTank(tank2);
 
     DrawTerrain();
 
@@ -202,6 +164,10 @@ void TankWars::FrameEnd()
 
 void TankWars::ApplyTransformationsToTank(Tank* tank)
 {
+    if (!tank->isAlive()) {
+        return;
+    }
+
     // Rotate the tank with slopeAngle.
     // Translate the tank to its current position.
     // Affected: body, head, pipe.
@@ -213,7 +179,6 @@ void TankWars::ApplyTransformationsToTank(Tank* tank)
     // Affected: head.
     tank->headMatrix *= transform::Translate(0, TANK_TOTAL_HEIGHT);
 
-
     // Rotate the pipe around its own center, then translate it
     // to the head's center position.
     // Affected: pipe.
@@ -222,6 +187,35 @@ void TankWars::ApplyTransformationsToTank(Tank* tank)
 
     // Translate the life bar above the tank.
     tank->barMatrix *= transform::Translate(tank->posX, tank->posY + BAR_DELTA);
+}
+
+
+void TankWars::CheckMissileTankCollisions()
+{
+    // Check for collisions between missiles and the tanks.
+    for (Missile* missile : this->missiles) {
+        if (!missile->active) {
+            continue;
+        }
+
+        // Launched by 1, collision with 2.
+        if (missile->launcher == 1 && tank2->isAlive()) {
+            if (CirclesCollide(missile->radius, missile->posX, missile->posY,
+                               TANK_RADIUS, tank2->posX, tank2->posY)) {
+                tank2->decrementLives();
+                missile->active = false;
+            }
+        }
+
+        // Launched by 2, collision with 1.
+        if (missile->launcher == 2 && tank1->isAlive()) {
+            if (CirclesCollide(missile->radius, missile->posX, missile->posY,
+                               TANK_RADIUS, tank1->posX, tank1->posY)) {
+                tank1->decrementLives();
+                missile->active = false;
+            }
+        }
+    }
 }
 
 
@@ -236,6 +230,24 @@ bool TankWars::CirclesCollide(float radius1, float x1, float y1,
 }
 
 
+void TankWars::RemoveInactiveMissiles()
+{
+    vector<Missile*>::iterator it = this->missiles.begin();
+
+    while (it != this->missiles.end()) {
+        Missile* missile = *it;
+        if (!missile->active) {
+            it = this->missiles.erase(it);
+            delete missile;
+        }
+        else {
+            it++;
+        }
+    }
+}
+
+
+/* Draw methods */
 
 void TankWars::DrawTerrain()
 {
@@ -246,6 +258,10 @@ void TankWars::DrawTerrain()
 
 void TankWars::DrawTank(Tank* tank)
 {
+    if (!tank->isAlive()) {
+        return;
+    }
+
     // Render body.
     RenderMesh2D(meshes[tank->bodyName], shaders["VertexColor"], tank->bodyMatrix);
     
@@ -292,14 +308,14 @@ void TankWars::DrawMissiles()
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
     // Move first tank.
-    if (window->KeyHold(GLFW_KEY_A)) {
+    if (window->KeyHold(GLFW_KEY_A) && tank1->isAlive()) {
         if (tank1->posX > LEFT_LIMIT) {
             tank1->posX -= tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
         }
     }
 
-    if (window->KeyHold(GLFW_KEY_D)) {
+    if (window->KeyHold(GLFW_KEY_D) && tank1->isAlive()) {
         if (tank1->posX < RIGHT_LIMIT) {
             tank1->posX += tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
@@ -307,23 +323,23 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
     }
 
     // Rotate first tank's pipe.
-    if (window->KeyHold(GLFW_KEY_W)) {
+    if (window->KeyHold(GLFW_KEY_W) && tank1->isAlive()) {
         tank1->pipeAngle -= tank1->pipeRotationSpeed * deltaTime;
     }
 
-    if (window->KeyHold(GLFW_KEY_S)) {
+    if (window->KeyHold(GLFW_KEY_S) && tank1->isAlive()) {
         tank1->pipeAngle += tank1->pipeRotationSpeed * deltaTime;
     }
 
     // Move second tank.
-    if (window->KeyHold(GLFW_KEY_LEFT)) {
+    if (window->KeyHold(GLFW_KEY_LEFT) && tank2->isAlive()) {
         if (tank2->posX > LEFT_LIMIT) {
             tank2->posX -= tank2->moveSpeed * deltaTime;
             tank2->orientate(terrain->heightMap);
         }
     }
 
-    if (window->KeyHold(GLFW_KEY_RIGHT)) {
+    if (window->KeyHold(GLFW_KEY_RIGHT) && tank2->isAlive()) {
         if (tank2->posX < RIGHT_LIMIT) {
             tank2->posX += tank2->moveSpeed * deltaTime;
             tank2->orientate(terrain->heightMap);
@@ -331,11 +347,11 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
     }
 
     // Rotate second tank's pipe.
-    if (window->KeyHold(GLFW_KEY_UP)) {
+    if (window->KeyHold(GLFW_KEY_UP) && tank2->isAlive()) {
         tank2->pipeAngle -= tank2->pipeRotationSpeed * deltaTime;
     }
 
-    if (window->KeyHold(GLFW_KEY_DOWN)) {
+    if (window->KeyHold(GLFW_KEY_DOWN) && tank2->isAlive()) {
         tank2->pipeAngle += tank2->pipeRotationSpeed * deltaTime;
     }
 }
@@ -345,11 +361,11 @@ void TankWars::OnKeyPress(int key, int mods)
 {
     // Add key press event
     if (key == GLFW_KEY_G) {
-        tank1->lives--;
+        tank1->lives = INITIAL_LIVES;
     }
 
     if (key == GLFW_KEY_H) {
-        tank2->lives--;
+        tank2->lives = INITIAL_LIVES;
     }
 
     // Launch missile from tank1.
