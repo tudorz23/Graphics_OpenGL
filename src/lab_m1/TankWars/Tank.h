@@ -41,6 +41,8 @@ namespace tw
 		bool isAlive();
 
 		void decrementLives();
+
+		void computeTrajectory(float limit);
 		 
 
 		// Names.
@@ -71,5 +73,8 @@ namespace tw
 		glm::mat3 barMatrix;
 
 		int lives;
+
+		// For Trajectory hint.
+		std::vector<std::pair<float, float>> trajectory;
 	};
 }

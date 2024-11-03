@@ -101,6 +101,13 @@ void TankWars::Init()
     // Add the missile mesh.
     Mesh* missileMesh = objects::CreateCircle("missile", MISSILE_RADIUS, COLOR_BLACK);
     AddMeshToList(missileMesh);
+
+    // Add trajectory guidance circle mesh.
+    Mesh* trajMesh = objects::CreateCircle("traj", TRAJ_RADIUS, COLOR_WHITE);
+    AddMeshToList(trajMesh);
+
+    tank1->computeTrajectory(resolution.x);
+    tank2->computeTrajectory(resolution.x);
 }
 
 
@@ -142,9 +149,9 @@ void TankWars::Update(float deltaTimeSeconds)
     // Remove inactive missiles.
     RemoveInactiveMissiles();
 
-    if (missiles.empty()) {
+    /*if (missiles.empty()) {
         std::cout << "Lewis Hamilton\n";
-    }
+    }*/
 
 
     // Draw all the scene components.
@@ -154,6 +161,9 @@ void TankWars::Update(float deltaTimeSeconds)
     DrawTerrain();
 
     DrawMissiles();
+
+    DrawTrajectory(tank1);
+    DrawTrajectory(tank2);
 }
 
 
@@ -297,6 +307,19 @@ void TankWars::DrawMissiles()
 }
 
 
+void TankWars::DrawTrajectory(Tank* tank)
+{
+    if (!tank->isAlive()) {
+        return;
+    }
+
+    // Render trajectory guidance.
+    for (const auto& point : tank->trajectory) {
+        modelMatrix = glm::mat3(1);
+        modelMatrix *= transform::Translate(point.first, point.second);
+        RenderMesh2D(meshes["traj"], shaders["VertexColor"], modelMatrix);
+    }
+}
 
 
 /*
@@ -312,6 +335,9 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
         if (tank1->posX > LEFT_LIMIT) {
             tank1->posX -= tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
+
+            glm::ivec2 resolution = window->GetResolution();
+            tank1->computeTrajectory((float)resolution.x);
         }
     }
 
@@ -319,16 +345,25 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
         if (tank1->posX < RIGHT_LIMIT) {
             tank1->posX += tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
+
+            glm::ivec2 resolution = window->GetResolution();
+            tank1->computeTrajectory((float)resolution.x);
         }
     }
 
     // Rotate first tank's pipe.
     if (window->KeyHold(GLFW_KEY_W) && tank1->isAlive()) {
         tank1->pipeAngle -= tank1->pipeRotationSpeed * deltaTime;
+
+        glm::ivec2 resolution = window->GetResolution();
+        tank1->computeTrajectory((float) resolution.x);
     }
 
     if (window->KeyHold(GLFW_KEY_S) && tank1->isAlive()) {
         tank1->pipeAngle += tank1->pipeRotationSpeed * deltaTime;
+
+        glm::ivec2 resolution = window->GetResolution();
+        tank1->computeTrajectory((float)resolution.x);
     }
 
     // Move second tank.
@@ -337,6 +372,9 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank2->posX -= tank2->moveSpeed * deltaTime;
             tank2->orientate(terrain->heightMap);
         }
+
+        glm::ivec2 resolution = window->GetResolution();
+        tank2->computeTrajectory((float)resolution.x);
     }
 
     if (window->KeyHold(GLFW_KEY_RIGHT) && tank2->isAlive()) {
@@ -344,15 +382,24 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank2->posX += tank2->moveSpeed * deltaTime;
             tank2->orientate(terrain->heightMap);
         }
+
+        glm::ivec2 resolution = window->GetResolution();
+        tank2->computeTrajectory((float)resolution.x);
     }
 
     // Rotate second tank's pipe.
     if (window->KeyHold(GLFW_KEY_UP) && tank2->isAlive()) {
         tank2->pipeAngle -= tank2->pipeRotationSpeed * deltaTime;
+
+        glm::ivec2 resolution = window->GetResolution();
+        tank2->computeTrajectory((float)resolution.x);
     }
 
     if (window->KeyHold(GLFW_KEY_DOWN) && tank2->isAlive()) {
         tank2->pipeAngle += tank2->pipeRotationSpeed * deltaTime;
+
+        glm::ivec2 resolution = window->GetResolution();
+        tank2->computeTrajectory((float)resolution.x);
     }
 }
 

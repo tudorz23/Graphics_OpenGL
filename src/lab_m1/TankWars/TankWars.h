@@ -50,6 +50,8 @@ namespace tw
 
         void DrawMissiles();
 
+        void DrawTrajectory(Tank* tank);
+
 
         // Callback functions.
         void OnInputUpdate(float deltaTime, int mods) override;

@@ -115,3 +115,29 @@ void Tank::decrementLives()
 {
 	this->lives--;
 }
+
+
+void Tank::computeTrajectory(float limit)
+{
+	std::cout << "computing trajectory\n";
+	this->trajectory.clear();
+
+	float currX = this->posX + this->pipeX - glm::sin(this->pipeAngle) * TANK_PIPE_LENGTH;
+	float currY = this->posY + this->pipeY + glm::cos(this->pipeAngle) * TANK_PIPE_LENGTH;
+
+	float speedX = -MISSILE_POW * glm::sin(this->pipeAngle);
+	float speedY = MISSILE_POW * glm::cos(this->pipeAngle);
+
+	float deltaTime = 0.015f;
+	
+	while (currX > 0 && currX < limit && currY > 0) {
+		this->trajectory.push_back({ currX, currY });
+
+		currX += speedX * deltaTime;
+		currY += speedY * deltaTime;
+
+		speedY -= GRAVITY * deltaTime;
+	}
+
+	cout << "size is " << trajectory.size() << "\n\n";
+}

@@ -22,6 +22,7 @@ namespace tw
 	constexpr glm::vec3 COLOR_BLACK = glm::vec3(0.0f, 0.0f, 0.0f);
 	constexpr glm::vec3 COLOR_YELLOW = glm::vec3(1.0f, 1.0f, 0.0f);
 	constexpr glm::vec3 COLOR_DARK_GREEN = glm::vec3(0.05f, 0.52f, 0.03f);
+	constexpr glm::vec3 COLOR_WHITE = glm::vec3(1.0f, 1.0f, 1.0f);
 	
 
 	// Params for the sine wave of the terrain.
@@ -92,6 +93,7 @@ namespace tw
 
 	// Missile.
 	constexpr float MISSILE_RADIUS = 7.5f;
+	constexpr float TRAJ_RADIUS = 4.5f;
 
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 5;
