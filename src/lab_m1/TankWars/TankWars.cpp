@@ -123,14 +123,6 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    // Update the slopes of the tanks gradually at each frame, so there is no lag.
-    tank1->updateOrientation(deltaTimeSeconds);
-    tank2->updateOrientation(deltaTimeSeconds);
-
-    ApplyTransformationsToTank(tank1);
-    ApplyTransformationsToTank(tank2);
-
-
     // Update the positions of the missiles.
     for (Missile* missile : this->missiles) {
         if (missile->active) {
@@ -142,7 +134,6 @@ void TankWars::Update(float deltaTimeSeconds)
 
     CheckMissileTerrainCollisions();
 
-
     // Remove inactive missiles.
     RemoveInactiveMissiles();
 
@@ -150,21 +141,31 @@ void TankWars::Update(float deltaTimeSeconds)
         std::cout << "Lewis Hamilton\n";
     }*/
 
-
-    if (tank1->hasMoved) {
-        tank1->computeTrajectory((float) window->GetResolution().x);
-    }
-
-    if (tank2->hasMoved) {
-        tank2->computeTrajectory((float) window->GetResolution().x);
-    }
-
     if (terrain->hasChanged) {
         Mesh* oldTerrainMesh = meshes["terrain"];
         //delete oldTerrainMesh;
         
         Mesh* newTerrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
         AddMeshToList(newTerrainMesh);
+
+        tank1->orientate(terrain->heightMap);
+        tank2->orientate(terrain->heightMap);
+    }
+
+    // Update the slopes of the tanks gradually at each frame, so there is no lag.
+    tank1->updateOrientation(deltaTimeSeconds);
+    tank2->updateOrientation(deltaTimeSeconds);
+
+    // Prepare the model matrixes of the tanks.
+    ApplyTransformationsToTank(tank1);
+    ApplyTransformationsToTank(tank2);
+
+    if (tank1->hasMoved) {
+        tank1->computeTrajectory((float)window->GetResolution().x);
+    }
+
+    if (tank2->hasMoved) {
+        tank2->computeTrajectory((float)window->GetResolution().x);
     }
 
 
@@ -310,6 +311,7 @@ void TankWars::DeformTerrainCircular(float centerX, float centerY, float radius)
     int leftIndex = max(0.0f, (centerX - radius) / TERRAIN_POINT_INTERV);
     int rightIndex = min((float)window->GetResolution().x, (centerX + radius) / TERRAIN_POINT_INTERV);
 
+    // Start from leftIndex + 1, because leftIndex is out of circle scope.
     for (int idx = leftIndex + 1; idx <= rightIndex; idx++) {
         float x = terrain->heightMap[idx].first;
 
@@ -318,6 +320,11 @@ void TankWars::DeformTerrainCircular(float centerX, float centerY, float radius)
         // y = -sqrt(radius ^ 2 - (x - centerX) ^ 2) + centerY
         float deltaX = x - centerX;
         float y = -glm::sqrt(radius * radius - deltaX * deltaX) + centerY;
+
+        // Check that terrain is not somehow "added" (encountered this in testing).
+        if (y > terrain->heightMap[idx].second) {
+            continue;
+        }
 
         terrain->heightMap[idx] = { x, max(0.0f, y) };
     }
@@ -427,7 +434,7 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank1->posX -= tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
 
-            tank1->hasMoved = true;
+            //tank1->hasMoved = true;
         }
     }
 
@@ -436,7 +443,7 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank1->posX += tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
 
-            tank1->hasMoved = true;
+            //tank1->hasMoved = true;
         }
     }
 
@@ -460,7 +467,7 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank2->orientate(terrain->heightMap);
         }
 
-        tank2->hasMoved = true;
+        //tank2->hasMoved = true;
     }
 
     if (window->KeyHold(GLFW_KEY_RIGHT) && tank2->isAlive()) {
@@ -469,7 +476,7 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank2->orientate(terrain->heightMap);
         }
 
-        tank2->hasMoved = true;
+        //tank2->hasMoved = true;
     }
 
     // Rotate second tank's pipe.

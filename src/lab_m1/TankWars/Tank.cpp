@@ -100,6 +100,9 @@ void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap)
 	float deltaY = pointB.second - pointA.second;
 
 	this->nextAngle = glm::atan2(deltaY, deltaX);
+
+	// Mark that the tank has moved.
+	this->hasMoved = true;
 }
 
 
@@ -108,7 +111,7 @@ void Tank::updateOrientation(float deltaTime)
 	if (glm::abs(this->nextAngle - this->slopeAngle) < TANK_ANGLE_EPSILON) {
 		return;
 	}
-	cout << "GOT HERE\n";
+	//cout << "GOT HERE\n";
 
 	this->slopeAngle += (this->nextAngle - this->slopeAngle) * this->rotationSpeed * deltaTime;
 
