@@ -14,6 +14,8 @@ using namespace tw;
 Mesh* objects::CreateTerrain(const std::string& name, glm::vec3 color,
 							 std::vector<std::pair<float, float>> heightMap)
 {
+	std::cout << "CREATE TERRAIN\n";
+
 	std::vector<VertexFormat> vertices;
 
 	for (const auto& point : heightMap) {

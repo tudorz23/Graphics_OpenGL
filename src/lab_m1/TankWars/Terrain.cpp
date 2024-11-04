@@ -13,6 +13,7 @@ using namespace tw;
 Terrain::Terrain(std::vector<std::pair<float, float>> &sineWaveParams)
 {
 	this->sineWaveParams = sineWaveParams;
+	this->hasChanged = false;
 }
 
 

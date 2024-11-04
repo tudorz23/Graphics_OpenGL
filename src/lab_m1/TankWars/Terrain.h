@@ -26,5 +26,7 @@ namespace tw
 	 public:
 		std::vector<std::pair<float, float>> heightMap;
 
+		// To know if the terrain should be recomputed.
+		bool hasChanged;
 	};
 }

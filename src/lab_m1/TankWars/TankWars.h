@@ -47,6 +47,9 @@ namespace tw
         void RemoveInactiveMissiles();
 
 
+        void DeformTerrainCircular(float centerX, float centerY, float radius);
+
+
         // Drawing methods.
         void DrawTerrain();
         void DrawTank(Tank* tank);

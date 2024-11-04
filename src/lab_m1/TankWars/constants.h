@@ -95,6 +95,7 @@ namespace tw
 
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 7;
+	constexpr float EXPLOSION_RADIUS = 60.0f;
 
 	// Life bar measurements.
 	constexpr float BAR_LEN = 80.0f;

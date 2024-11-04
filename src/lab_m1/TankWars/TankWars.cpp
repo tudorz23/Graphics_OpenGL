@@ -159,6 +159,14 @@ void TankWars::Update(float deltaTimeSeconds)
         tank2->computeTrajectory((float) window->GetResolution().x);
     }
 
+    if (terrain->hasChanged) {
+        Mesh* oldTerrainMesh = meshes["terrain"];
+        //delete oldTerrainMesh;
+        
+        Mesh* newTerrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
+        AddMeshToList(newTerrainMesh);
+    }
+
 
     // Draw all the scene components.
     DrawTank(tank1);
@@ -179,6 +187,8 @@ void TankWars::FrameEnd()
     // before FrameStart(), and this variables can be altered there.
     tank1->hasMoved = false;
     tank2->hasMoved = false;
+
+    terrain->hasChanged = false;
 }
 
 
@@ -286,10 +296,33 @@ void TankWars::CheckMissileTerrainCollisions()
             std::cout << "Collision at missile.y = " << missile->posY << ", and projY = " << projY << "\n";
             std::cout << "Collision at missile.x = " << missile->posX << ", and projX = " << projX << "\n\n";
 
-
+            DeformTerrainCircular(missile->posX, missile->posY, EXPLOSION_RADIUS);
             missile->MarkInactive();
         }
     }
+}
+
+
+void TankWars::DeformTerrainCircular(float centerX, float centerY, float radius)
+{
+    // Get the leftmost and rightmost affected indexes from the heightMap,
+    // then decrease the y's of their attached points.
+    int leftIndex = max(0.0f, (centerX - radius) / TERRAIN_POINT_INTERV);
+    int rightIndex = min((float)window->GetResolution().x, (centerX + radius) / TERRAIN_POINT_INTERV);
+
+    for (int idx = leftIndex + 1; idx <= rightIndex; idx++) {
+        float x = terrain->heightMap[idx].first;
+
+        // Eq. (x - centerX) ^ 2 + (y - centerY) ^ 2 = radius ^ 2
+        // Two values for Y will be obtained, choose the smaller one.
+        // y = -sqrt(radius ^ 2 - (x - centerX) ^ 2) + centerY
+        float deltaX = x - centerX;
+        float y = -glm::sqrt(radius * radius - deltaX * deltaX) + centerY;
+
+        terrain->heightMap[idx] = { x, max(0.0f, y) };
+    }
+
+    terrain->hasChanged = true;
 }
 
 
