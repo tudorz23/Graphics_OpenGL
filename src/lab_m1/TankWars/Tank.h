@@ -76,5 +76,8 @@ namespace tw
 
 		// For Trajectory hint.
 		std::vector<std::pair<float, float>> trajectory;
+
+		// To know when to recompute the trajectory.
+		bool hasMoved;
 	};
 }

@@ -42,6 +42,8 @@ Tank::Tank(const std::string& bodyName, const std::string& headName,
 
 	// Initial number of lives.
 	this->lives = INITIAL_LIVES;
+
+	this->hasMoved = false;
 }
 
 
@@ -103,7 +105,14 @@ void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap)
 
 void Tank::updateOrientation(float deltaTime)
 {
+	if (glm::abs(this->nextAngle - this->slopeAngle) < TANK_ANGLE_EPSILON) {
+		return;
+	}
+	cout << "GOT HERE\n";
+
 	this->slopeAngle += (this->nextAngle - this->slopeAngle) * this->rotationSpeed * deltaTime;
+
+	this->hasMoved = true;
 }
 
 

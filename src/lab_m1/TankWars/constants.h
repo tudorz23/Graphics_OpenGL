@@ -46,7 +46,6 @@ namespace tw
 	constexpr int NUM_VERTICES_CIRCLE = 181;
 
 
-
 	// Tank measurements.
 	constexpr float TANK_UPPER_LENGTH = 80.0f;
 	constexpr float TANK_UPPER_HEIGHT = 20.0f;
@@ -60,15 +59,10 @@ namespace tw
 	constexpr float TANK_HEAD_RADIUS = 18.0f;
 
 	
-
 	constexpr float TANK_PIPE_LENGTH = 50.0f;
 	constexpr float TANK_PIPE_WIDTH = 10.0f;
 
 	constexpr float PLANTED_DEPTH = 3.0f;	// Makes the tank seem planted.
-
-	// For collision detection.
-	constexpr float TANK_LOW_TO_CENTER = TANK_LOWER_HEIGHT + TANK_UPPER_HEIGHT / 2.0f;
-	constexpr float TANK_RADIUS = TANK_UPPER_LENGTH / 2.0f + TANK_UPPER_TR_LEN;
 
 
 	// Tank movement parameters.
@@ -80,11 +74,13 @@ namespace tw
 	constexpr float START_Y2 = 400.0f;
 	constexpr float SPEED2 = 150.0f;
 
-	constexpr float ROTATE_SPEED = 12.f;
+	constexpr float ROTATE_SPEED = 15.f;
 	constexpr float PIPE_ROTATE_SPEED = 2.f;
 
 	constexpr float RIGHT_LIMIT = 1225.0f;
 	constexpr float LEFT_LIMIT = 55.0f;
+
+	constexpr float TANK_ANGLE_EPSILON = 0.005f;
 
 	// Missile.
 	constexpr float MISSILE_RADIUS = 7.5f;
@@ -92,6 +88,10 @@ namespace tw
 	constexpr float TRAJ_DELTA_TIME = 0.01f;
 	constexpr float MISSILE_POW = 500.0f;
 	constexpr float GRAVITY = 900.0f;
+
+	// For collision detection.
+	constexpr float TANK_LOW_TO_CENTER = TANK_LOWER_HEIGHT + TANK_UPPER_HEIGHT / 2.0f;
+	constexpr float TANK_RADIUS = TANK_UPPER_LENGTH / 2.0f + TANK_UPPER_TR_LEN;
 
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 7;
