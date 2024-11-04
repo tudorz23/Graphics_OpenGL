@@ -35,7 +35,8 @@ namespace tw
 	constexpr float OMEGA3 = 0.015f;
 	constexpr float OMEGA4 = 0.0355f;
 
-	constexpr float TERRAIN_POINT_INTERV = 1.5f;
+	// How often (on the Ox axis) there is a point in the heightMap.
+	constexpr float TERRAIN_POINT_INTERV = 1.0f;
 
 
 	// For semicircle drawing.
@@ -88,9 +89,9 @@ namespace tw
 	// Missile.
 	constexpr float MISSILE_RADIUS = 7.5f;
 	constexpr float TRAJ_RADIUS = 4.5f;
-	constexpr float TRAJ_DELTA_TIME = 0.015f;
-	constexpr float MISSILE_POW = 400.0f;
-	constexpr float GRAVITY = 520.0f;
+	constexpr float TRAJ_DELTA_TIME = 0.01f;
+	constexpr float MISSILE_POW = 500.0f;
+	constexpr float GRAVITY = 900.0f;
 
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 7;

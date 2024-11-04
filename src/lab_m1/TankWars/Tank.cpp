@@ -80,23 +80,24 @@ void Tank::rotate(float angle)
 
 void Tank::orientate(const std::vector<std::pair<float, float>> &heightMap)
 {
-	// TODO: Get the index directly, without the loop.
-	for (int i = 0; i < heightMap.size() - 1; i++) {
-		const auto& pointA = heightMap[i];
-		const auto& pointB = heightMap[i + 1];
-
-		if (this->posX >= pointA.first && this->posX <= pointB.first) {
-			float t = (this->posX - pointA.first) / (pointB.first - pointA.first);
-
-			this->posY = pointA.second + t * (pointB.second - pointA.second) - PLANTED_DEPTH;
-			
-			float deltaX = pointB.first - pointA.first;
-			float deltaY = pointB.second - pointA.second;
-
-			this->nextAngle = glm::atan2(deltaY, deltaX);
-			return;
-		}
+	// Get the index of the point from the heightMap that has
+	// the closest x coord to the left to the x coord of the tank.
+	int index = (int)(this->posX / TERRAIN_POINT_INTERV);
+	if (index + 1 == heightMap.size()) {
+		return;
 	}
+
+	const auto& pointA = heightMap[index];
+	const auto& pointB = heightMap[index + 1];
+
+	float t = (this->posX - pointA.first) / (pointB.first - pointA.first);
+
+	this->posY = pointA.second + t * (pointB.second - pointA.second) - PLANTED_DEPTH;
+
+	float deltaX = pointB.first - pointA.first;
+	float deltaY = pointB.second - pointA.second;
+
+	this->nextAngle = glm::atan2(deltaY, deltaX);
 }
 
 

@@ -259,29 +259,24 @@ void TankWars::CheckMissileTerrainCollisions()
         pair<float, float>& point1 = this->terrain->heightMap[index];
         pair<float, float>& point2 = this->terrain->heightMap[index + 1];
 
-        //std::cout << "Collision at index: " << index << "\n";
-        /*std::cout << "Missile.x = " << missile->posX << ", Missile.y = " << missile->posY << "\n";
-        std::cout << "point1.x = " << point1.first << ", point1.y = " << point1.second << "\n";
-        std::cout << "point2.x = " << point2.first << ", point2.y = " << point2.second << "\n";*/
-
-        // TODO: point2.first - missile->posX <= 0.05f can lead to problems when dividing.
-
         // Get interpolation coefficient.
-        float t = (missile->posX - point1.first) / (point2.first - missile->posX);
-
-        //std::cout << "Interpolation coef = " << t << "\n";
+        float t = (missile->posX - point1.first) / TERRAIN_POINT_INTERV;
 
         // Get coords of the projection of the missile on the terrain.
         float projX = point1.first * (1.0f - t) + point2.first * t;
         float projY = point1.second * (1.0f - t) + point2.second * t;
 
-        //std::cout << "proj.x = " << projX << ", proj.y = " << projY << "\n\n";
-
         if (glm::abs(missile->posY - projY) <= MISSILE_RADIUS) {
-            /*std::cout << "point1.x = " << point1.first << ", point1.y = " << point1.second << "\n";
+
+            // Debug stuff.
+            std::cout << "Collision at index: " << index << "\n";
+            std::cout << "Interpolation coef = " << t << "\n";
+            std::cout << "point1.x = " << point1.first << ", point1.y = " << point1.second << "\n";
             std::cout << "point2.x = " << point2.first << ", point2.y = " << point2.second << "\n";
             std::cout << "Collision at missile.y = " << missile->posY << ", and projY = " << projY << "\n";
-            std::cout << "Collision at missile.x = " << missile->posX << ", and projX = " << projX << "\n\n";*/
+            std::cout << "Collision at missile.x = " << missile->posX << ", and projX = " << projX << "\n\n";
+
+
             missile->MarkInactive();
         }
     }
