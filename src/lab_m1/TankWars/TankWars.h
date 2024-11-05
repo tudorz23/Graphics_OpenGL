@@ -20,13 +20,13 @@ namespace tw
         void Init() override;
 
      private:
-        // Frame handling functions.
+        /* Frame handling methods. */
         void FrameStart() override;
         void Update(float deltaTimeSeconds) override;
         void FrameEnd() override;
 
 
-        // Game logic methods.
+        /* Game logic methods. */
         void ApplyTransformationsToTank(Tank* tank);
 
 
@@ -41,20 +41,28 @@ namespace tw
                             float radius2, float centerX2, float centerY2);
 
 
+        // Uses interpolation to determine if a missile is close enough to
+        // the surface of the terrain to consider that they collide.
         void CheckMissileTerrainCollisions();
 
 
         void RemoveInactiveMissiles();
 
 
+        // Creates a deformation in the terrain, with the form a circle with
+        // the specified params. Uses the circle equation to determine the new height
+        // for every affected point.
         void DeformTerrainCircular(float centerX, float centerY, float radius);
 
 
+        // Iterates the heightMap and if, for two adjacent points, the heights differ
+        // by more than a limit, transfer an epsilon from the higher to the lower.
         void CheckTerrainSlide(float deltaTime);
 
 
-        // Drawing methods.
+        /* Drawing methods. */
         void DrawTerrain();
+
         void DrawTank(Tank* tank);
 
         void DrawMissiles();
@@ -62,7 +70,7 @@ namespace tw
         void DrawTrajectory(Tank* tank);
 
 
-        // Callback functions.
+        /* Callback methods. */
         void OnInputUpdate(float deltaTime, int mods) override;
         void OnKeyPress(int key, int mods) override;
         void OnKeyRelease(int key, int mods) override;
@@ -73,7 +81,7 @@ namespace tw
         void OnWindowResize(int width, int height) override;
 
 
-     protected:
+     private:
         glm::mat3 modelMatrix;
 
         Terrain *terrain;

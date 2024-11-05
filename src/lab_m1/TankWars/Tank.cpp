@@ -5,22 +5,19 @@
 
 #include "utils/glm_utils.h"
 
-#include <iostream>
-
 using namespace std;
 using namespace tw;
 
 
 // Constructor.
 Tank::Tank(const std::string& bodyName, const std::string& headName,
-		   const std::string& pipeName, const std::string& barName,
+		   const std::string& pipeName,
 		   float posX, float posY, float moveSpeed, float rotationSpeed)
 {
 	// Names.
 	this->bodyName = bodyName;
 	this->headName = headName;
 	this->pipeName = pipeName;
-	this->barName = barName;
 
 	// Body and head params.
 	this->posX = posX;
@@ -57,12 +54,13 @@ void Tank::resetMatrixes()
 
 
 // Translates the whole tank with the given params.
-// Affects: body, head, pipe.
+// Affects: body, head, pipe, bar.
 void Tank::translate(float translateX, float translateY)
 {
 	this->bodyMatrix *= transform::Translate(translateX, translateY);
 	this->headMatrix *= transform::Translate(translateX, translateY);
 	this->pipeMatrix *= transform::Translate(translateX, translateY);
+	this->barMatrix *= transform::Translate(translateX, translateY);
 }
 
 
@@ -111,7 +109,6 @@ void Tank::updateOrientation(float deltaTime)
 	if (glm::abs(this->nextAngle - this->slopeAngle) < TANK_ANGLE_EPSILON) {
 		return;
 	}
-	//cout << "GOT HERE\n";
 
 	this->slopeAngle += (this->nextAngle - this->slopeAngle) * this->rotationSpeed * deltaTime;
 
@@ -135,8 +132,10 @@ void Tank::computeTrajectory(float limit)
 {
 	this->trajectory.clear();
 
-	float currX = this->posX + this->pipeX - glm::sin(this->pipeAngle) * TANK_PIPE_LENGTH;
-	float currY = this->posY + this->pipeY + glm::cos(this->pipeAngle) * TANK_PIPE_LENGTH;
+	pair<float, float> pipeHeadPos = this->getPipeHeadPos();
+
+	float currX = pipeHeadPos.first;
+	float currY = pipeHeadPos.second;
 
 	float speedX = -MISSILE_POW * glm::sin(this->pipeAngle);
 	float speedY = MISSILE_POW * glm::cos(this->pipeAngle);
@@ -151,4 +150,13 @@ void Tank::computeTrajectory(float limit)
 
 		speedY -= GRAVITY * deltaTime;
 	}
+}
+
+
+std::pair<float, float> Tank::getPipeHeadPos()
+{
+	float x = this->posX + this->pipeX - glm::sin(this->pipeAngle) * TANK_PIPE_LENGTH;
+	float y = this->posY + this->pipeY + glm::cos(this->pipeAngle) * TANK_PIPE_LENGTH;
+
+	return { x, y };
 }

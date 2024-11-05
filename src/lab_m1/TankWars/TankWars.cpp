@@ -61,13 +61,10 @@ void TankWars::Init()
     Mesh* tankHeadMesh1 = objects::CreateSemiCircle("head1", TANK_HEAD_RADIUS, COLOR_BLACK);
     AddMeshToList(tankHeadMesh1);
 
-    Mesh* tankPipeMesh1 = objects::CreatePipe("pipe1", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
+    Mesh* tankPipeMesh1 = objects::CreateRectangle("pipe1", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
     AddMeshToList(tankPipeMesh1);
 
-    Mesh* tankBarMesh1 = objects::CreateLifeBar("bar1", BAR_LEN, BAR_WIDTH, BAR_THICK, COLOR_BLACK);
-    AddMeshToList(tankBarMesh1);
-
-    this->tank1 = new Tank("body1", "head1", "pipe1", "bar1",
+    this->tank1 = new Tank("body1", "head1", "pipe1",
                             START_X1, START_Y1, SPEED1, ROTATE_SPEED);
 
     // Add meshes for tank2.
@@ -77,21 +74,21 @@ void TankWars::Init()
     Mesh* tankHeadMesh2 = objects::CreateSemiCircle("head2", TANK_HEAD_RADIUS, COLOR_RED);
     AddMeshToList(tankHeadMesh2);
 
-    Mesh* tankPipeMesh2 = objects::CreatePipe("pipe2", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
+    Mesh* tankPipeMesh2 = objects::CreateRectangle("pipe2", TANK_PIPE_WIDTH, TANK_PIPE_LENGTH, COLOR_BLACK);
     AddMeshToList(tankPipeMesh2);
 
-    Mesh* tankBarMesh2 = objects::CreateLifeBar("bar2", BAR_LEN, BAR_WIDTH, BAR_THICK, COLOR_BLACK);
-    AddMeshToList(tankBarMesh2);
-
-    this->tank2 = new Tank("body2", "head2", "pipe2", "bar2",
+    this->tank2 = new Tank("body2", "head2", "pipe2",
                             START_X2, START_Y2, SPEED2, ROTATE_SPEED);
 
     tank1->orientate(terrain->heightMap);
     tank2->orientate(terrain->heightMap);
 
+    // Add lifeBar mesh.
+    Mesh* tankBarMesh = objects::CreateLifeBar("lifeBar", BAR_LEN, BAR_WIDTH, BAR_THICK, COLOR_BLACK);
+    AddMeshToList(tankBarMesh);
     
     // Add a rectangle mesh for lives.
-    Mesh* lifeRectangle = objects::CreatePipe("lifeRectangle", LIFE_RECT_LEN, BAR_WIDTH, COLOR_DARK_GREEN);
+    Mesh* lifeRectangle = objects::CreateRectangle("lifeRectangle", LIFE_RECT_LEN, BAR_WIDTH, COLOR_DARK_GREEN);
     AddMeshToList(lifeRectangle);
 
 
@@ -182,8 +179,8 @@ void TankWars::Update(float deltaTimeSeconds)
 
 void TankWars::FrameEnd()
 {
-    // Reset it at the end of the frame, because OnInputUpdate() is called
-    // before FrameStart(), and this variables can be altered there.
+    // Reset these at the end of the frame, because OnInputUpdate() is called
+    // before FrameStart(), and these variables can be altered there.
     tank1->hasMoved = false;
     tank2->hasMoved = false;
 
@@ -199,7 +196,7 @@ void TankWars::ApplyTransformationsToTank(Tank* tank)
 
     // Rotate the tank with slopeAngle.
     // Translate the tank to its current position.
-    // Affected: body, head, pipe.
+    // Affected: body, head, pipe, bar.
     tank->translate(tank->posX, tank->posY);
     tank->rotate(tank->slopeAngle);
 
@@ -215,7 +212,7 @@ void TankWars::ApplyTransformationsToTank(Tank* tank)
     tank->pipeMatrix *= transform::Rotate(tank->pipeAngle);
 
     // Translate the life bar above the tank.
-    tank->barMatrix *= transform::Translate(tank->posX, tank->posY + BAR_DELTA);
+    tank->barMatrix *= transform::Translate(0, BAR_DELTA);
 }
 
 
@@ -344,8 +341,6 @@ void TankWars::CheckTerrainSlide(float deltaTime)
             continue;
         }
 
-        //cout << "GOT HERE, deltaTime is: " << deltaTime << "\n";
-
         int minIdx = -1;
         int maxIdx = -1;
 
@@ -357,8 +352,8 @@ void TankWars::CheckTerrainSlide(float deltaTime)
             maxIdx = i;
         }
 
-        terrain->heightMap[minIdx].second += TERRAIN_SLIDE_EPSILON;
-        terrain->heightMap[maxIdx].second -= TERRAIN_SLIDE_EPSILON;
+        terrain->heightMap[minIdx].second += TERRAIN_SLIDE_EPSILON * deltaTime;
+        terrain->heightMap[maxIdx].second -= TERRAIN_SLIDE_EPSILON * deltaTime;
 
         terrain->hasChanged = true;
     }
@@ -412,7 +407,7 @@ void TankWars::DrawTank(Tank* tank)
     RenderMesh2D(meshes[tank->pipeName], shaders["VertexColor"], tank->pipeMatrix);
 
     // Render life bar.
-    RenderMesh2D(meshes[tank->barName], shaders["VertexColor"], tank->barMatrix);
+    RenderMesh2D(meshes["lifeBar"], shaders["VertexColor"], tank->barMatrix);
 
     // Render life rectangles.
     float firstX = tank->posX - BAR_LEN / 2.0f + LIFE_RECT_LEN / 2.0f;
@@ -465,8 +460,6 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
         if (tank1->posX > LEFT_LIMIT) {
             tank1->posX -= tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
-
-            //tank1->hasMoved = true;
         }
     }
 
@@ -474,8 +467,6 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
         if (tank1->posX < RIGHT_LIMIT) {
             tank1->posX += tank1->moveSpeed * deltaTime;
             tank1->orientate(terrain->heightMap);
-
-            //tank1->hasMoved = true;
         }
     }
 
@@ -498,8 +489,6 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank2->posX -= tank2->moveSpeed * deltaTime;
             tank2->orientate(terrain->heightMap);
         }
-
-        //tank2->hasMoved = true;
     }
 
     if (window->KeyHold(GLFW_KEY_RIGHT) && tank2->isAlive()) {
@@ -507,8 +496,6 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
             tank2->posX += tank2->moveSpeed * deltaTime;
             tank2->orientate(terrain->heightMap);
         }
-
-        //tank2->hasMoved = true;
     }
 
     // Rotate second tank's pipe.
@@ -539,25 +526,21 @@ void TankWars::OnKeyPress(int key, int mods)
 
     // Launch missile from tank1.
     if (key == GLFW_KEY_SPACE && tank1->isAlive()) {
-        float pipeHeadX = tank1->posX + tank1->pipeX - glm::sin(tank1->pipeAngle) * TANK_PIPE_LENGTH;
-        float pipeHeadY = tank1->posY + tank1->pipeY + glm::cos(tank1->pipeAngle) * TANK_PIPE_LENGTH;
-
+        pair<float, float> pipeHeadPos = tank1->getPipeHeadPos();
         glm::ivec2 resolution = window->GetResolution();
 
-        Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank1->pipeAngle, MISSILE_POW,
-                                       GRAVITY, (float) resolution.x, MISSILE_RADIUS, 1);
+        Missile* missile = new Missile(pipeHeadPos.first, pipeHeadPos.second, tank1->pipeAngle,
+                                       MISSILE_POW, GRAVITY, (float) resolution.x, MISSILE_RADIUS, 1);
         missiles.push_back(missile);
     }
 
     // Launch missile from tank2.
     if (key == GLFW_KEY_ENTER && tank2->isAlive()) {
-        float pipeHeadX = tank2->posX + tank2->pipeX - glm::sin(tank2->pipeAngle) * TANK_PIPE_LENGTH;
-        float pipeHeadY = tank2->posY + tank2->pipeY + glm::cos(tank2->pipeAngle) * TANK_PIPE_LENGTH;
-
+        pair<float, float> pipeHeadPos = tank2->getPipeHeadPos();
         glm::ivec2 resolution = window->GetResolution();
 
-        Missile* missile = new Missile(pipeHeadX, pipeHeadY, tank2->pipeAngle, MISSILE_POW,
-                                       GRAVITY, (float)resolution.x, MISSILE_RADIUS, 2);
+        Missile* missile = new Missile(pipeHeadPos.first, pipeHeadPos.second, tank2->pipeAngle,
+                                       MISSILE_POW, GRAVITY, (float)resolution.x, MISSILE_RADIUS, 2);
         missiles.push_back(missile);
     }
 }

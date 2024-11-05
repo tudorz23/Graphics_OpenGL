@@ -24,7 +24,7 @@ namespace tw
 
 
 		// Create a rectangle, with the center of the base line (the width) in (0, 0).
-		Mesh* CreatePipe(const std::string& name, float width, float length, glm::vec3 color);
+		Mesh* CreateRectangle(const std::string& name, float width, float length, glm::vec3 color);
 
 
 		// Create a life bar, with the center of the base line in (0, 0).

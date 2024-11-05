@@ -13,7 +13,7 @@ namespace tw
 	 public:
 		// Constructor.
 		Tank(const std::string& bodyName, const std::string& headName,
-			 const std::string& pipeName, const std::string& barName,
+			 const std::string& pipeName,
 			 float posX, float posY, float moveSpeed, float rotationSpeed);
 
 
@@ -42,14 +42,20 @@ namespace tw
 
 		void decrementLives();
 
+
+		// Populates the trajectory vector with points that a missile
+		// would follow if fired.
 		void computeTrajectory(float limit);
+
+
+		// Returns the position of the head of the pipe.
+		std::pair<float, float> getPipeHeadPos();
 		 
 
 		// Names.
 		std::string bodyName;
 		std::string headName;
 		std::string pipeName;
-		std::string barName;
 
 		// Body and head params.
 		float posX;

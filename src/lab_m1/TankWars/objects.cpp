@@ -95,7 +95,7 @@ Mesh* objects::CreateTankBody(const std::string& name, glm::vec3 low_color, glm:
 }
 
 
-Mesh* objects::CreatePipe(const std::string& name, float width, float length, glm::vec3 color)
+Mesh* objects::CreateRectangle(const std::string& name, float width, float length, glm::vec3 color)
 {
 	float halfWidth = width / 2.0f;
 	glm::vec3 bottomLeft = glm::vec3(-halfWidth, 0, 0);

@@ -68,11 +68,11 @@ namespace tw
 	// Tank movement parameters.
 	constexpr float START_X1 = 400.0f;
 	constexpr float START_Y1 = 400.0f;
-	constexpr float SPEED1 = 150.f;
+	constexpr float SPEED1 = 175.0f;
 
 	constexpr float START_X2 = 930.0f;
 	constexpr float START_Y2 = 400.0f;
-	constexpr float SPEED2 = 150.0f;
+	constexpr float SPEED2 = 175.0f;
 
 	constexpr float ROTATE_SPEED = 15.f;
 	constexpr float PIPE_ROTATE_SPEED = 2.f;
@@ -85,7 +85,7 @@ namespace tw
 	// Missile.
 	constexpr float MISSILE_RADIUS = 7.5f;
 	constexpr float TRAJ_RADIUS = 4.5f;
-	constexpr float TRAJ_DELTA_TIME = 0.01f;
+	constexpr float TRAJ_DELTA_TIME = 0.005f;
 	constexpr float MISSILE_POW = 500.0f;
 	constexpr float GRAVITY = 900.0f;
 
@@ -99,7 +99,7 @@ namespace tw
 
 	// Terrain sliding params.
 	constexpr float TERRAIN_SLIDE_LIMIT = 10.0f;
-	constexpr float TERRAIN_SLIDE_EPSILON = 2.0f;
+	constexpr float TERRAIN_SLIDE_EPSILON = 100.0f;
 
 	// Life bar measurements.
 	constexpr float BAR_LEN = 80.0f;
