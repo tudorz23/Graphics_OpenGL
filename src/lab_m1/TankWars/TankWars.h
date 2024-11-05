@@ -50,6 +50,9 @@ namespace tw
         void DeformTerrainCircular(float centerX, float centerY, float radius);
 
 
+        void CheckTerrainSlide(float deltaTime);
+
+
         // Drawing methods.
         void DrawTerrain();
         void DrawTank(Tank* tank);

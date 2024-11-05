@@ -36,7 +36,7 @@ namespace tw
 	constexpr float OMEGA4 = 0.0355f;
 
 	// How often (on the Ox axis) there is a point in the heightMap.
-	constexpr float TERRAIN_POINT_INTERV = 1.0f;
+	constexpr float TERRAIN_POINT_INTERV = 4.0f;
 
 
 	// For semicircle drawing.
@@ -95,7 +95,11 @@ namespace tw
 
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 7;
-	constexpr float EXPLOSION_RADIUS = 60.0f;
+	constexpr float EXPLOSION_RADIUS = 40.0f;
+
+	// Terrain sliding params.
+	constexpr float TERRAIN_SLIDE_LIMIT = 10.0f;
+	constexpr float TERRAIN_SLIDE_EPSILON = 2.0f;
 
 	// Life bar measurements.
 	constexpr float BAR_LEN = 80.0f;

@@ -137,9 +137,7 @@ void TankWars::Update(float deltaTimeSeconds)
     // Remove inactive missiles.
     RemoveInactiveMissiles();
 
-    /*if (missiles.empty()) {
-        std::cout << "Lewis Hamilton\n";
-    }*/
+    CheckTerrainSlide(deltaTimeSeconds);
 
     if (terrain->hasChanged) {
         Mesh* oldTerrainMesh = meshes["terrain"];
@@ -308,8 +306,11 @@ void TankWars::DeformTerrainCircular(float centerX, float centerY, float radius)
 {
     // Get the leftmost and rightmost affected indexes from the heightMap,
     // then decrease the y's of their attached points.
-    int leftIndex = max(0.0f, (centerX - radius) / TERRAIN_POINT_INTERV);
-    int rightIndex = min((float)window->GetResolution().x, (centerX + radius) / TERRAIN_POINT_INTERV);
+    int leftIndex = (int) ((centerX - radius) / TERRAIN_POINT_INTERV);
+    leftIndex = max(0, leftIndex);
+
+    int rightIndex = (int) ((centerX + radius) / TERRAIN_POINT_INTERV);
+    rightIndex = min((int) (terrain->heightMap.size() - 1), rightIndex);
 
     // Start from leftIndex + 1, because leftIndex is out of circle scope.
     for (int idx = leftIndex + 1; idx <= rightIndex; idx++) {
@@ -330,6 +331,37 @@ void TankWars::DeformTerrainCircular(float centerX, float centerY, float radius)
     }
 
     terrain->hasChanged = true;
+}
+
+
+void TankWars::CheckTerrainSlide(float deltaTime)
+{
+    for (int i = 0; i < this->terrain->heightMap.size() - 1; i++) {
+        auto& point1 = this->terrain->heightMap[i];
+        auto& point2 = this->terrain->heightMap[i + 1];
+
+        if (glm::abs(point1.second - point2.second) < TERRAIN_SLIDE_LIMIT) {
+            continue;
+        }
+
+        //cout << "GOT HERE, deltaTime is: " << deltaTime << "\n";
+
+        int minIdx = -1;
+        int maxIdx = -1;
+
+        if (point1.second <= point2.second) {
+            minIdx = i;
+            maxIdx = i + 1;
+        } else {
+            minIdx = i + 1;
+            maxIdx = i;
+        }
+
+        terrain->heightMap[minIdx].second += TERRAIN_SLIDE_EPSILON;
+        terrain->heightMap[maxIdx].second -= TERRAIN_SLIDE_EPSILON;
+
+        terrain->hasChanged = true;
+    }
 }
 
 
