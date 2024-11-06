@@ -5,6 +5,7 @@
 #include "lab_m1/TankWars/Terrain.h"
 #include "lab_m1/TankWars/Tank.h"
 #include "lab_m1/TankWars/Missile.h"
+#include "lab_m1/TankWars/Bird.h"
 
 #include <vector>
 
@@ -69,6 +70,8 @@ namespace tw
 
         void DrawTrajectory(Tank* tank);
 
+        void DrawBirds();
+
 
         /* Callback methods. */
         void OnInputUpdate(float deltaTime, int mods) override;
@@ -91,5 +94,8 @@ namespace tw
 
         // Collection of missiles.
         std::vector<Missile*> missiles;
+
+        // Collection of birds.
+        std::vector<Bird*> birds;
     };
 }   // namespace tw

@@ -36,6 +36,10 @@ namespace tw
 		Mesh* CreateCircle(const std::string& name, float radius, glm::vec3 color);
 
 
+		// Create a bird.
+		Mesh* CreateBird(const std::string& name, float x, float y, float z, glm::vec3 color);
+
+
 		/* Following seemed necessary but ended up not used. */
 
 		// Create square with center in the origin with given length an color.

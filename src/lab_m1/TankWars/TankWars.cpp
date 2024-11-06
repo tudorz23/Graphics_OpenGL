@@ -4,6 +4,7 @@
 #include "lab_m1/TankWars/objects.h"
 #include "lab_m1/TankWars/transform2D.h"
 
+
 #include <vector>
 #include <iostream>
 
@@ -99,6 +100,29 @@ void TankWars::Init()
     // Add trajectory guidance circle mesh.
     Mesh* trajMesh = objects::CreateCircle("traj", TRAJ_RADIUS, COLOR_WHITE);
     AddMeshToList(trajMesh);
+
+
+    // Add bird mesh.
+    Mesh* birdMesh = objects::CreateBird("bird", BIRD_X, BIRD_Y, BIRD_Z, COLOR_BLACK);
+    AddMeshToList(birdMesh);
+
+    // Add birds to the vector.
+    vector<pair<float, float>> params = { {150.0f, 0.005f}, {60.0f, 0.001f}, {25.0f, 0.0015f}, {10.0f, 0.035f} };
+    Bird* b1 = new Bird(0.0f, BIRD_SPEED, (float)resolution.x, params);
+
+    params = { {150.0f, 0.005f}, {90.0f, 0.008f}, {25.0f, 0.01f}, {18.0f, 0.035f} };
+    Bird* b2 = new Bird(300.0f, BIRD_SPEED, (float)resolution.x, params);
+
+    params = { {-60.0f, 0.005f}, {90.0f, 0.002f}, {-25.0f, 0.01f}, {18.0f, 0.035f} };
+    Bird* b3 = new Bird(120.0f, BIRD_SPEED, (float)resolution.x, params);
+
+    params = { {70.0f, 0.004f}, {90.0f, 0.009f}, {-25.0f, 0.01f}, {18.0f, 0.05f} };
+    Bird* b4 = new Bird(600.0f, BIRD_SPEED, (float)resolution.x, params);
+
+    this->birds.push_back(b1);
+    this->birds.push_back(b2);
+    this->birds.push_back(b3);
+    this->birds.push_back(b4);
 }
 
 
@@ -164,6 +188,12 @@ void TankWars::Update(float deltaTimeSeconds)
     }
 
 
+    // Update birds.
+    for (Bird* bird : this->birds) {
+        bird->UpdatePosition(deltaTimeSeconds);
+    }
+
+
     // Draw all the scene components.
     DrawTank(tank1);
     DrawTank(tank2);
@@ -174,6 +204,8 @@ void TankWars::Update(float deltaTimeSeconds)
 
     DrawTrajectory(tank1);
     DrawTrajectory(tank2);
+
+    DrawBirds();
 }
 
 
@@ -268,7 +300,7 @@ void TankWars::CheckMissileTerrainCollisions()
         // the closest x coord to the left to the x coord of the missile.
         int index = (int) (missile->posX / TERRAIN_POINT_INTERV);
 
-        if (index + 1 == this->terrain->heightMap.size()) {
+        if (index + 1 >= this->terrain->heightMap.size()) {
             continue;
         }
 
@@ -443,6 +475,16 @@ void TankWars::DrawTrajectory(Tank* tank)
         modelMatrix = glm::mat3(1);
         modelMatrix *= transform::Translate(point.first, point.second);
         RenderMesh2D(meshes["traj"], shaders["VertexColor"], modelMatrix);
+    }
+}
+
+
+void TankWars::DrawBirds()
+{
+    for (Bird* bird : this->birds) {
+        modelMatrix = glm::mat3(1);
+        modelMatrix *= transform::Translate(bird->posX, bird->posY);
+        RenderMesh2D(meshes["bird"], shaders["VertexColor"], modelMatrix);
     }
 }
 

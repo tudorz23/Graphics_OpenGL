@@ -107,4 +107,13 @@ namespace tw
 	constexpr float BAR_THICK = 5.0f;
 	constexpr float BAR_DELTA = 100.0f;
 	constexpr float LIFE_RECT_LEN = BAR_LEN / INITIAL_LIVES;
+
+
+	// Birds.
+	constexpr float BIRD_BASE_HEIGHT = 440.0f;
+	constexpr float BIRD_SPEED = 80.0f;
+
+	constexpr float BIRD_X = 15.0f;
+	constexpr float BIRD_Y = 20.0f;
+	constexpr float BIRD_Z = 30.0f;
 }

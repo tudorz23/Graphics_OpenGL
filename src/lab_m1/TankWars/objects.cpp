@@ -230,6 +230,37 @@ Mesh* objects::CreateCircle(const std::string& name, float radius, glm::vec3 col
 }
 
 
+/**
+*		*
+*	x
+*		*   *		*
+*	x
+*		*
+*		  y		z
+*/
+
+Mesh* objects::CreateBird(const std::string& name, float x, float y, float z, glm::vec3 color)
+{
+	glm::vec3 center = glm::vec3(0, 0, 0);
+	glm::vec3 up = center + glm::vec3(-y, x, 0);
+	glm::vec3 down = center + glm::vec3(-y, -x, 0);
+	glm::vec3 right = center + glm::vec3(z, 0, 0);
+
+	std::vector<VertexFormat> vertices =
+	{
+		VertexFormat(center, color),
+		VertexFormat(up, color),
+		VertexFormat(down, color),
+		VertexFormat(right, color)
+	};
+
+	std::vector<unsigned int> indices = { 0, 3, 1, 0, 2, 3 };
+
+	Mesh* bird = new Mesh(name);
+	bird->InitFromData(vertices, indices);
+	return bird;
+}
+
 
 /* Following seemed useful but ended up not used. */
 Mesh* objects::CreateSquare(const std::string& name, float length, glm::vec3 color, bool fill)
