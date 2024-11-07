@@ -128,6 +128,14 @@ void Tank::decrementLives()
 }
 
 
+void Tank::incrementLives()
+{
+	if (this->lives < INITIAL_LIVES) {
+		this->lives++;
+	}
+}
+
+
 void Tank::computeTrajectory(float limit)
 {
 	this->trajectory.clear();

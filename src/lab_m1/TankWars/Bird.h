@@ -20,6 +20,8 @@ namespace tw
 		float moveSpeed;
 		float limit;
 
+		bool active;
+
 
 	 private:
 		 std::vector<std::pair<float, float>> sineWaveParams;

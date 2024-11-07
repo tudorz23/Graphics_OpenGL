@@ -42,6 +42,8 @@ namespace tw
 
 		void decrementLives();
 
+		void incrementLives();
+
 
 		// Populates the trajectory vector with points that a missile
 		// would follow if fired.

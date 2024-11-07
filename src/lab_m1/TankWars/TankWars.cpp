@@ -20,6 +20,11 @@ TankWars::TankWars()
     this->tank2 = NULL;
 
     this->modelMatrix = glm::mat3(1);
+
+    this->targetPosX = TARGET_INIT_X;
+    this->targetPosY = TARGET_INIT_Y;
+    this->targetSpeedX = TARGET_SPEED_X;
+    this->targetSpeedY = TARGET_SPEED_Y;
 }
 
 
@@ -84,6 +89,7 @@ void TankWars::Init()
     tank1->orientate(terrain->heightMap);
     tank2->orientate(terrain->heightMap);
 
+
     // Add lifeBar mesh.
     Mesh* tankBarMesh = objects::CreateLifeBar("lifeBar", BAR_LEN, BAR_WIDTH, BAR_THICK, COLOR_BLACK);
     AddMeshToList(tankBarMesh);
@@ -114,15 +120,23 @@ void TankWars::Init()
     Bird* b2 = new Bird(300.0f, BIRD_SPEED, (float)resolution.x, params);
 
     params = { {-60.0f, 0.005f}, {90.0f, 0.002f}, {-25.0f, 0.01f}, {18.0f, 0.035f} };
-    Bird* b3 = new Bird(120.0f, BIRD_SPEED, (float)resolution.x, params);
+    Bird* b3 = new Bird(0.0f, BIRD_SPEED, (float)resolution.x, params);
 
-    params = { {70.0f, 0.004f}, {90.0f, 0.009f}, {-25.0f, 0.01f}, {18.0f, 0.05f} };
+    params = { {70.0f, 0.004f}, {90.0f, 0.006f}, {-25.0f, 0.01f}, {18.0f, 0.05f} };
     Bird* b4 = new Bird(600.0f, BIRD_SPEED, (float)resolution.x, params);
 
-    this->birds.push_back(b1);
-    this->birds.push_back(b2);
-    this->birds.push_back(b3);
-    this->birds.push_back(b4);
+    params = { {-50.0f, 0.011f}, {40.0f, 0.009f}, {-25.0f, 0.09f}, {18.0f, 0.05f} };
+    Bird* b5 = new Bird(150.0f, BIRD_SPEED, (float)resolution.x, params);
+
+    this->birds = { b1, b2, b3, b4, b5 };
+
+
+    // Add the target meshes.
+    Mesh* redCircleMesh = objects::CreateCircle("redCircle", TARGET_IN_RADIUS, COLOR_RED);
+    AddMeshToList(redCircleMesh);
+
+    Mesh* whiteCircleMesh = objects::CreateCircle("whiteCircle", TARGET_MID_RADIUS, COLOR_WHITE);
+    AddMeshToList(whiteCircleMesh);
 }
 
 
@@ -151,6 +165,18 @@ void TankWars::Update(float deltaTimeSeconds)
         }
     }
 
+    // Update the positions of the birds.
+    for (Bird* bird : this->birds) {
+        bird->UpdatePosition(deltaTimeSeconds);
+    }
+
+    // Update the position of the target.
+    UpdateTargetPosition(deltaTimeSeconds);
+
+    CheckMissileTargetCollisions();
+
+    CheckMissileBirdCollisions();
+
     CheckMissileTankCollisions();
 
     CheckMissileTerrainCollisions();
@@ -161,7 +187,7 @@ void TankWars::Update(float deltaTimeSeconds)
     CheckTerrainSlide(deltaTimeSeconds);
 
     if (terrain->hasChanged) {
-        Mesh* oldTerrainMesh = meshes["terrain"];
+        //Mesh* oldTerrainMesh = meshes["terrain"];
         //delete oldTerrainMesh;
         
         Mesh* newTerrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
@@ -188,12 +214,6 @@ void TankWars::Update(float deltaTimeSeconds)
     }
 
 
-    // Update birds.
-    for (Bird* bird : this->birds) {
-        bird->UpdatePosition(deltaTimeSeconds);
-    }
-
-
     // Draw all the scene components.
     DrawTank(tank1);
     DrawTank(tank2);
@@ -204,6 +224,8 @@ void TankWars::Update(float deltaTimeSeconds)
 
     DrawTrajectory(tank1);
     DrawTrajectory(tank2);
+
+    DrawTarget();
 
     DrawBirds();
 }
@@ -277,6 +299,57 @@ void TankWars::CheckMissileTankCollisions()
 }
 
 
+void TankWars::CheckMissileBirdCollisions()
+{
+    for (Missile* missile : this->missiles) {
+        if (!missile->active) {
+            continue;
+        }
+
+        for (Bird* bird : this->birds) {
+            if (!bird->active) {
+                continue;
+            }
+
+            if (CirclesCollide(missile->radius, missile->posX, missile->posY,
+                               BIRD_RADIUS, bird->posX, bird->posY)) {
+                if (missile->launcher == 1) {
+                    tank1->decrementLives();
+                }
+                else {
+                    tank2->decrementLives();
+                }
+
+                bird->active = false;
+                missile->active = false;
+            }
+        }
+    }
+}
+
+
+void TankWars::CheckMissileTargetCollisions()
+{
+    for (Missile* missile : this->missiles) {
+        if (!missile->active) {
+            return;
+        }
+
+        if (CirclesCollide(missile->radius, missile->posX, missile->posY,
+                           TARGET_OUT_RADIUS, targetPosX, targetPosY)) {
+            if (missile->launcher == 1) {
+                tank1->incrementLives();
+            }
+            else {
+                tank2->incrementLives();
+            }
+
+            missile->active = false;
+        }
+    }
+}
+
+
 bool TankWars::CirclesCollide(float radius1, float x1, float y1,
                               float radius2, float x2, float y2)
 {
@@ -286,7 +359,6 @@ bool TankWars::CirclesCollide(float radius1, float x1, float y1,
 
     return (a <= b && b <= c);
 }
-
 
 
 void TankWars::CheckMissileTerrainCollisions()
@@ -392,7 +464,6 @@ void TankWars::CheckTerrainSlide(float deltaTime)
 }
 
 
-
 void TankWars::RemoveInactiveMissiles()
 {
     if (this->missiles.empty()) {
@@ -410,6 +481,24 @@ void TankWars::RemoveInactiveMissiles()
         else {
             it++;
         }
+    }
+}
+
+
+void TankWars::UpdateTargetPosition(float deltaTime)
+{
+    targetPosX += targetSpeedX * deltaTime;
+    targetPosY += targetSpeedY * deltaTime;
+
+    if (targetPosY <= TARGET_INIT_Y) {
+        targetSpeedY = TARGET_SPEED_Y;
+    }
+    else {
+        targetSpeedY -= TARGET_GRAVITY * deltaTime;
+    }
+
+    if (targetPosX >= TARGET_LIMIT) {
+        targetPosX = 0.0f;
     }
 }
 
@@ -482,10 +571,30 @@ void TankWars::DrawTrajectory(Tank* tank)
 void TankWars::DrawBirds()
 {
     for (Bird* bird : this->birds) {
+        if (!bird->active) {
+            continue;
+        }
         modelMatrix = glm::mat3(1);
         modelMatrix *= transform::Translate(bird->posX, bird->posY);
         RenderMesh2D(meshes["bird"], shaders["VertexColor"], modelMatrix);
     }
+}
+
+
+void TankWars::DrawTarget()
+{
+    modelMatrix = glm::mat3(1);
+    modelMatrix *= transform::Translate(targetPosX, targetPosY);
+
+    // Draw inner circle.
+    RenderMesh2D(meshes["redCircle"], shaders["VertexColor"], modelMatrix);
+
+    // Draw middle circle.
+    RenderMesh2D(meshes["whiteCircle"], shaders["VertexColor"], modelMatrix);
+
+    // Draw Outer circle.
+    modelMatrix *= transform::Scale(OUT_IN_SCALE, OUT_IN_SCALE);
+    RenderMesh2D(meshes["redCircle"], shaders["VertexColor"], modelMatrix);
 }
 
 

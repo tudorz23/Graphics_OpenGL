@@ -36,8 +36,14 @@ namespace tw
         void CheckMissileTankCollisions();
 
 
+        void CheckMissileBirdCollisions();
+
+
+        void CheckMissileTargetCollisions();
+
+
         // Check if two circles intersect. Used for collision detection between
-        // missiles and tanks.
+        // missiles and other objects.
         bool CirclesCollide(float radius1, float centerX1, float centerY1,
                             float radius2, float centerX2, float centerY2);
 
@@ -45,9 +51,6 @@ namespace tw
         // Uses interpolation to determine if a missile is close enough to
         // the surface of the terrain to consider that they collide.
         void CheckMissileTerrainCollisions();
-
-
-        void RemoveInactiveMissiles();
 
 
         // Creates a deformation in the terrain, with the form a circle with
@@ -61,6 +64,12 @@ namespace tw
         void CheckTerrainSlide(float deltaTime);
 
 
+        void RemoveInactiveMissiles();
+
+
+        void UpdateTargetPosition(float deltaTime);
+
+
         /* Drawing methods. */
         void DrawTerrain();
 
@@ -71,6 +80,8 @@ namespace tw
         void DrawTrajectory(Tank* tank);
 
         void DrawBirds();
+
+        void DrawTarget();
 
 
         /* Callback methods. */
@@ -97,5 +108,11 @@ namespace tw
 
         // Collection of birds.
         std::vector<Bird*> birds;
+
+        // For the moving target.
+        float targetPosX;
+        float targetPosY;
+        float targetSpeedX;
+        float targetSpeedY;
     };
 }   // namespace tw

@@ -86,7 +86,7 @@ namespace tw
 	constexpr float MISSILE_RADIUS = 7.5f;
 	constexpr float TRAJ_RADIUS = 4.5f;
 	constexpr float TRAJ_DELTA_TIME = 0.005f;
-	constexpr float MISSILE_POW = 500.0f;
+	constexpr float MISSILE_POW = 600.0f;
 	constexpr float GRAVITY = 900.0f;
 
 	// For collision detection.
@@ -116,4 +116,21 @@ namespace tw
 	constexpr float BIRD_X = 15.0f;
 	constexpr float BIRD_Y = 20.0f;
 	constexpr float BIRD_Z = 30.0f;
+
+	constexpr float BIRD_RADIUS = 30.0f;
+
+
+	// Target.
+	constexpr float TARGET_GRAVITY = 100.0f;
+	constexpr float TARGET_INIT_X = 100.0f;
+	constexpr float TARGET_INIT_Y = 400.0f;
+	constexpr float TARGET_SPEED_X = 100.0f;
+	constexpr float TARGET_SPEED_Y = 150.0f;
+	constexpr float TARGET_LIMIT = 1280.0f;
+
+	constexpr float TARGET_IN_RADIUS = 7.5f;
+	constexpr float TARGET_MID_RADIUS = 15.0f;
+	constexpr float TARGET_OUT_RADIUS = 20.0f;
+
+	constexpr float OUT_IN_SCALE = TARGET_OUT_RADIUS / TARGET_IN_RADIUS;
 }

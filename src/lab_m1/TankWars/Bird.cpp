@@ -17,11 +17,16 @@ Bird::Bird(float startingX, float moveSpeed, float limit,
 	this->moveSpeed = moveSpeed;
 	this->limit = limit;
 	this->sineWaveParams = sineWaveParams;
+	this->active = true;
 }
 
 
 void Bird::UpdatePosition(float deltaTime)
 {
+	if (!this->active) {
+		return;
+	}
+
 	this->posX += this->moveSpeed * deltaTime;
 	if (this->posX >= limit) {
 		this->posX = 0.0f;
