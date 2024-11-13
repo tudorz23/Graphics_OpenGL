@@ -7,7 +7,7 @@
 
 namespace tw
 {
-	// A tank is formed from a body and a head.
+	// A tank is formed from a body, a head, a pipe and a life bar.
 	class Tank
 	{
 	 public:

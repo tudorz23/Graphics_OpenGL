@@ -60,7 +60,7 @@ namespace tw
 
 
         // Iterates the heightMap and if, for two adjacent points, the heights differ
-        // by more than a limit, transfer an epsilon from the higher to the lower.
+        // by more than a limit, transfers an epsilon from the higher to the lower.
         void CheckTerrainSlide(float deltaTime);
 
 
@@ -106,10 +106,10 @@ namespace tw
         // Collection of missiles.
         std::vector<Missile*> missiles;
 
-        // Collection of birds.
+        // Collection of birds (if one of them is hit, the tank loses one life).
         std::vector<Bird*> birds;
 
-        // For the moving target.
+        // For the moving target (if it is hit, the tank gets an extra life).
         float targetPosX;
         float targetPosY;
         float targetSpeedX;

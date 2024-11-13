@@ -4,9 +4,7 @@
 #include "lab_m1/TankWars/objects.h"
 #include "lab_m1/TankWars/transform2D.h"
 
-
 #include <vector>
-#include <iostream>
 
 using namespace std;
 using namespace tw;
@@ -187,9 +185,6 @@ void TankWars::Update(float deltaTimeSeconds)
     CheckTerrainSlide(deltaTimeSeconds);
 
     if (terrain->hasChanged) {
-        //Mesh* oldTerrainMesh = meshes["terrain"];
-        //delete oldTerrainMesh;
-        
         Mesh* newTerrainMesh = objects::CreateTerrain("terrain", TERRAIN_COLOR, terrain->heightMap);
         AddMeshToList(newTerrainMesh);
 
@@ -386,16 +381,8 @@ void TankWars::CheckMissileTerrainCollisions()
         float projX = point1.first * (1.0f - t) + point2.first * t;
         float projY = point1.second * (1.0f - t) + point2.second * t;
 
-        if (glm::abs(missile->posY - projY) <= MISSILE_RADIUS) {
-
-            // Debug stuff.
-            std::cout << "Collision at index: " << index << "\n";
-            std::cout << "Interpolation coef = " << t << "\n";
-            std::cout << "point1.x = " << point1.first << ", point1.y = " << point1.second << "\n";
-            std::cout << "point2.x = " << point2.first << ", point2.y = " << point2.second << "\n";
-            std::cout << "Collision at missile.y = " << missile->posY << ", and projY = " << projY << "\n";
-            std::cout << "Collision at missile.x = " << missile->posX << ", and projX = " << projX << "\n\n";
-
+        if (glm::abs(missile->posY - projY) <= MISSILE_TERR_COL_EPSILON) {
+            // Collision detected.
             DeformTerrainCircular(missile->posX, missile->posY, EXPLOSION_RADIUS);
             missile->MarkInactive();
         }
@@ -668,10 +655,12 @@ void TankWars::OnKeyPress(int key, int mods)
 {
     // Add key press event
     if (key == GLFW_KEY_G) {
+        // For easier testing.
         tank1->lives = INITIAL_LIVES;
     }
 
     if (key == GLFW_KEY_H) {
+        // For easier testing.
         tank2->lives = INITIAL_LIVES;
     }
 
