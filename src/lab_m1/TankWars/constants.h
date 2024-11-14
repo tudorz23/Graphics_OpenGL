@@ -87,7 +87,7 @@ namespace tw
 	constexpr float TRAJ_RADIUS = 4.5f;
 	constexpr float TRAJ_DELTA_TIME = 0.005f;
 	constexpr float MISSILE_POW = 600.0f;
-	constexpr float GRAVITY = 900.0f;
+	constexpr float GRAVITY = 950.0f;
 	constexpr float MISSILE_TERR_COL_EPSILON = MISSILE_RADIUS + 5.0f;
 
 	// For missile-tank collision detection.
@@ -96,7 +96,7 @@ namespace tw
 
 	// Game logic params.
 	constexpr int INITIAL_LIVES = 8;
-	constexpr float EXPLOSION_RADIUS = 65.0f;
+	constexpr float EXPLOSION_RADIUS = 55.0f;
 
 	// Terrain sliding params.
 	constexpr float TERRAIN_SLIDE_LIMIT = 10.0f;
