@@ -6,7 +6,7 @@
 
 namespace drone_game
 {
-	class Game : public gfxc::SimpleScene
+	class Game final : public gfxc::SimpleScene
 	{
 	 public:
 		 Game();
@@ -32,7 +32,6 @@ namespace drone_game
 
         Camera* camera;
         glm::mat4 projectionMatrix;
-        bool renderCameraTarget;
 
         // TODO(student): If you need any other class variables, define them here.
         // Perspective projection params.
@@ -40,13 +39,5 @@ namespace drone_game
         float aspectRatio;
         float persp_zNear;
         float persp_zFar;
-
-        // Ortho projection params.
-        float ortho_left;
-        float ortho_right;
-        float ortho_bottom;
-        float ortho_top;
-        float ortho_zNear;
-        float ortho_zFar;
 	};
 }
