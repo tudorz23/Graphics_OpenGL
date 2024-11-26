@@ -25,8 +25,10 @@ constexpr glm::vec3 DRONE_START_POS = glm::vec3(0, 0, 0);
 constexpr float DRONE_BAR_INCL1 = glm::radians(40.0f);
 constexpr float DRONE_BAR_INCL2 = glm::radians(-40.0f);
 
-constexpr float DRONE_SPEED = 2.0f;
-constexpr float DRONE_SENSITIVITY_OX = 0.001f;
-constexpr float DRONE_SENSITIVITY_OY = 0.001f;
+constexpr float DRONE_SPEED = 3.0f;
+constexpr float DRONE_ROTATION_SPEED = 2.0f;
+
+constexpr float SENSITIVITY_OX = 0.001f;
+constexpr float SENSITIVITY_OY = 0.001f;
 
 constexpr float PROPELLER_ROTATION_SPEED = 25.0f;

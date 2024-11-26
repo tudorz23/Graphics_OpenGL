@@ -44,7 +44,7 @@ void Game::Init()
 
 
     Mesh* droneBodyMesh = objects3d::CreateParallelepiped("droneBody", DRONE_BODY_LEN, DRONE_BODY_WIDTH,
-													DRONE_BODY_HEIGHT, COLOR_GREY);
+															DRONE_BODY_HEIGHT, COLOR_GREY);
     AddMeshToList(droneBodyMesh);
 
     Mesh* droneCubeMesh = objects3d::CreateParallelepiped("droneCube", DRONE_CUBE_DIM, DRONE_CUBE_DIM,
@@ -55,7 +55,8 @@ void Game::Init()
 															  DRONE_PROP_HEIGHT, COLOR_GREEN);
     AddMeshToList(propellerMesh);
 
-    this->drone = new Drone(DRONE_START_POS, 0, DRONE_BAR_INCL1, DRONE_BAR_INCL2);
+    this->drone = new Drone(camera->GetTargetPosition(), 0, 
+							DRONE_BAR_INCL1, DRONE_BAR_INCL2);
 
 
 
@@ -121,6 +122,10 @@ void Game::Update(float deltaTimeSeconds)
 
     drone->updatePropellerAngle(deltaTimeSeconds);
 
+
+    // Update drone position based on camera position.
+    drone->position = camera->GetTargetPosition();
+
     // TEST DRONE.
     drone->prepareForRender();
     DrawDrone();
@@ -150,9 +155,7 @@ void Game::RenderMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix)
 
 
 
-
-
-
+/* Draw methods */
 void Game::DrawDrone()
 {
 	// Render bars.
@@ -178,64 +181,47 @@ void Game::DrawDrone()
 
 void Game::OnInputUpdate(float deltaTime, int mods)
 {
-    // move the camera only if MOUSE_RIGHT button is pressed
-    if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT))
-    {
-        float cameraSpeed = 2.0f;
-
+    if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
         if (window->KeyHold(GLFW_KEY_W)) {
-            // TODO(student): Translate the camera forward
-            camera->MoveForward(cameraSpeed * deltaTime);
+            // Translate the camera forward
+            camera->MoveForward(DRONE_SPEED * deltaTime);
         }
 
         if (window->KeyHold(GLFW_KEY_A)) {
-            // TODO(student): Translate the camera to the left
-            camera->TranslateRight(-cameraSpeed * deltaTime);
+            // Translate the camera to the left
+            camera->TranslateRight(-DRONE_SPEED * deltaTime);
         }
 
         if (window->KeyHold(GLFW_KEY_S)) {
-            // TODO(student): Translate the camera backward
-            camera->MoveForward(-cameraSpeed * deltaTime);
+            // Translate the camera backward
+            camera->MoveForward(-DRONE_SPEED * deltaTime);
         }
 
         if (window->KeyHold(GLFW_KEY_D)) {
-            // TODO(student): Translate the camera to the right
-            camera->TranslateRight(cameraSpeed * deltaTime);
+            // Translate the camera to the right
+            camera->TranslateRight(DRONE_SPEED * deltaTime);
         }
 
         if (window->KeyHold(GLFW_KEY_Q)) {
-            // TODO(student): Translate the camera downward
-            camera->TranslateUpward(-cameraSpeed * deltaTime);
+            // Translate the camera downward
+            camera->TranslateUpward(-DRONE_SPEED * deltaTime);
         }
 
         if (window->KeyHold(GLFW_KEY_E)) {
-            // TODO(student): Translate the camera upward
-            camera->TranslateUpward(cameraSpeed * deltaTime);
+            // Translate the camera upward
+            camera->TranslateUpward(DRONE_SPEED * deltaTime);
         }
-    }
 
-    if (window->KeyHold(GLFW_KEY_RIGHT)) {
-        drone->position.x += DRONE_SPEED * deltaTime;
-    }
 
-    if (window->KeyHold(GLFW_KEY_LEFT)) {
-        drone->position.x -= DRONE_SPEED * deltaTime;
-    }
+        if (window->KeyHold(GLFW_KEY_Z))
+        {
+            drone->rotationAngle += DRONE_ROTATION_SPEED * deltaTime;
+        }
 
-    if (window->KeyHold(GLFW_KEY_UP)) {
-        drone->position.z -= DRONE_SPEED * deltaTime;
-    }
-
-    if (window->KeyHold(GLFW_KEY_DOWN)) {
-        drone->position.z += DRONE_SPEED * deltaTime;
-    }
-
-    if (window->KeyHold(GLFW_KEY_U)) {
-        drone->position.y += DRONE_SPEED * deltaTime;
-    }
-
-    if (window->KeyHold(GLFW_KEY_I)) {
-        drone->position.y -= DRONE_SPEED * deltaTime;
+        if (window->KeyHold(GLFW_KEY_X))
+        {
+            drone->rotationAngle -= DRONE_ROTATION_SPEED * deltaTime;
+        }
     }
 }
 
@@ -255,22 +241,12 @@ void Game::OnKeyRelease(int key, int mods)
 void Game::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 {
     // Add mouse move event
+    if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
+        camera->RotateThirdPerson_OX(-SENSITIVITY_OX * deltaY);
+        camera->RotateThirdPerson_OY(-SENSITIVITY_OY * deltaX);
 
-    if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT))
-    {
-        float sensivityOX = 0.001f;
-        float sensivityOY = 0.001f;
-
-        // TODO(student): Rotate the camera in third-person mode around
-        // OX and OY using `deltaX` and `deltaY`. Use the sensitivity
-        // variables for setting up the rotation speed.
-        camera->RotateThirdPerson_OX(-sensivityOX * deltaY);
-        camera->RotateThirdPerson_OY(-sensivityOY * deltaX);
+        drone->rotationAngle -= SENSITIVITY_OX * deltaX;
     }
-
-    //if (window->KeyHold(GLFW_MOUSE_BUTTON_LEFT)) {
-        drone->rotationAngle -= DRONE_SENSITIVITY_OX * deltaX;
-    //}
 }
 
 
