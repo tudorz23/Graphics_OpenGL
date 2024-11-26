@@ -1,2 +1,32 @@
 #pragma once
 
+
+// Colors.
+constexpr glm::vec3 COLOR_GREY = glm::vec3(0.6f, 0.53f, 0.58f);
+constexpr glm::vec3 COLOR_RED = glm::vec3(0.8f, 0.0f, 0.0f);
+constexpr glm::vec3 COLOR_BLACK = glm::vec3(0.0f, 0.0f, 0.0f);
+constexpr glm::vec3 COLOR_GREEN = glm::vec3(0.0f, 0.8f, 0.0f);
+
+
+
+// Drone sizes.
+constexpr float DRONE_BODY_LEN = 1.0f;
+constexpr float DRONE_BODY_WIDTH = 0.1f;
+constexpr float DRONE_BODY_HEIGHT = 0.1f;
+
+constexpr float DRONE_CUBE_DIM = 0.1f;
+constexpr float DRONE_PROP_LEN = 0.3f;
+constexpr float DRONE_PROP_WIDTH = 0.02f;
+constexpr float DRONE_PROP_HEIGHT = 0.01f;
+
+
+// Drone movement parameters.
+constexpr glm::vec3 DRONE_START_POS = glm::vec3(0, 0, 0);
+constexpr float DRONE_BAR_INCL1 = glm::radians(40.0f);
+constexpr float DRONE_BAR_INCL2 = glm::radians(-40.0f);
+
+constexpr float DRONE_SPEED = 2.0f;
+constexpr float DRONE_SENSITIVITY_OX = 0.001f;
+constexpr float DRONE_SENSITIVITY_OY = 0.001f;
+
+constexpr float PROPELLER_ROTATION_SPEED = 25.0f;

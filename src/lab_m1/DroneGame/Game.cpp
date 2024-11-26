@@ -2,7 +2,7 @@
 
 #include "lab_m1/DroneGame/mesh_objects.h"
 #include "lab_m1/DroneGame/game_constants.h"
-
+#include "lab_m1/DroneGame/transforms3D.h"
 
 
 using namespace std;
@@ -37,8 +37,26 @@ void Game::Init()
     }
 
 
-    Mesh* paral = objects3d::CreateParallelepiped("paral", 1, 0.5, 0.5, glm::vec3(0.5f, 0.5f, 0.5f));
+    Mesh* paral = objects3d::CreateParallelepiped("paral", 1, 0.5, 
+											0.5, glm::vec3(0.5f, 0.5f, 0.5f));
     AddMeshToList(paral);
+
+
+
+    Mesh* droneBodyMesh = objects3d::CreateParallelepiped("droneBody", DRONE_BODY_LEN, DRONE_BODY_WIDTH,
+													DRONE_BODY_HEIGHT, COLOR_GREY);
+    AddMeshToList(droneBodyMesh);
+
+    Mesh* droneCubeMesh = objects3d::CreateParallelepiped("droneCube", DRONE_CUBE_DIM, DRONE_CUBE_DIM,
+														DRONE_CUBE_DIM, COLOR_RED);
+    AddMeshToList(droneCubeMesh);
+
+    Mesh* propellerMesh = objects3d::CreateParallelepiped("propeller", DRONE_PROP_LEN, DRONE_PROP_WIDTH,
+															  DRONE_PROP_HEIGHT, COLOR_GREEN);
+    AddMeshToList(propellerMesh);
+
+    this->drone = new Drone(DRONE_START_POS, 0, DRONE_BAR_INCL1, DRONE_BAR_INCL2);
+
 
 
     // Perspective projection params.
@@ -60,6 +78,9 @@ void Game::FrameStart()
     glm::ivec2 resolution = window->GetResolution();
     // Sets the screen area where to draw
     glViewport(0, 0, resolution.x, resolution.y);
+
+
+    drone->resetModelMatrix();
 }
 
 
@@ -89,19 +110,20 @@ void Game::Update(float deltaTimeSeconds)
 
     // Render the camera target. This is useful for understanding where
     // the rotation point is, when moving in third-person camera mode.
-    {
+    /*{
         glm::mat4 modelMatrix = glm::mat4(1);
         modelMatrix = glm::translate(modelMatrix, camera->GetTargetPosition());
         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
         RenderMesh(meshes["sphere"], shaders["VertexNormal"], modelMatrix);
-    }
+    }*/
 
 
 
-    // Test paral.
-    glm::mat4 modelMatrix = glm::mat4(1);
-    //modelMatrix = glm::scale(modelMatrix, glm::vec3(0.25f, 0.25f, 0.25f));
-    RenderMesh(meshes["paral"], shaders["VertexColor"], modelMatrix);
+    drone->updatePropellerAngle(deltaTimeSeconds);
+
+    // TEST DRONE.
+    drone->prepareForRender();
+    DrawDrone();
 }
 
 
@@ -124,6 +146,32 @@ void Game::RenderMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix)
 
     mesh->Render();
 }
+
+
+
+
+
+
+
+void Game::DrawDrone()
+{
+	// Render bars.
+    RenderMesh(meshes["droneBody"], shaders["VertexColor"], drone->bar1->modelMatrix);
+    RenderMesh(meshes["droneBody"], shaders["VertexColor"], drone->bar2->modelMatrix);
+
+    // Render cubes.
+    RenderMesh(meshes["droneCube"], shaders["VertexColor"], drone->bar1->attachment1->cubeMatrix);
+    RenderMesh(meshes["droneCube"], shaders["VertexColor"], drone->bar1->attachment2->cubeMatrix);
+    RenderMesh(meshes["droneCube"], shaders["VertexColor"], drone->bar2->attachment1->cubeMatrix);
+    RenderMesh(meshes["droneCube"], shaders["VertexColor"], drone->bar2->attachment2->cubeMatrix);
+
+    // Render propellers.
+    RenderMesh(meshes["propeller"], shaders["VertexColor"], drone->bar1->attachment1->propellerMatrix);
+    RenderMesh(meshes["propeller"], shaders["VertexColor"], drone->bar1->attachment2->propellerMatrix);
+    RenderMesh(meshes["propeller"], shaders["VertexColor"], drone->bar2->attachment1->propellerMatrix);
+    RenderMesh(meshes["propeller"], shaders["VertexColor"], drone->bar2->attachment2->propellerMatrix);
+}
+ 
 
 
 /* Callback functions */
@@ -165,6 +213,30 @@ void Game::OnInputUpdate(float deltaTime, int mods)
             camera->TranslateUpward(cameraSpeed * deltaTime);
         }
     }
+
+    if (window->KeyHold(GLFW_KEY_RIGHT)) {
+        drone->position.x += DRONE_SPEED * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_LEFT)) {
+        drone->position.x -= DRONE_SPEED * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_UP)) {
+        drone->position.z -= DRONE_SPEED * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_DOWN)) {
+        drone->position.z += DRONE_SPEED * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_U)) {
+        drone->position.y += DRONE_SPEED * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_I)) {
+        drone->position.y -= DRONE_SPEED * deltaTime;
+    }
 }
 
 
@@ -195,6 +267,10 @@ void Game::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
         camera->RotateThirdPerson_OX(-sensivityOX * deltaY);
         camera->RotateThirdPerson_OY(-sensivityOY * deltaX);
     }
+
+    //if (window->KeyHold(GLFW_MOUSE_BUTTON_LEFT)) {
+        drone->rotationAngle -= DRONE_SENSITIVITY_OX * deltaX;
+    //}
 }
 
 
