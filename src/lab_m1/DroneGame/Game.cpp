@@ -76,6 +76,8 @@ void Game::Init()
     Mesh* coneMesh = objects3d::CreateCone("cone", CONE_RADIUS, CONE_HEIGHT, NUM_SLICES, COLOR_DARK_GREEN);
     AddMeshToList(coneMesh);
 
+    this->tree1 = new Tree(glm::vec3(2, 0, 2), 0.5f);
+    this->tree2 = new Tree(glm::vec3(-2, 0, -2), 0.25f);
 
 
     // Initialize perspective projection params.
@@ -98,6 +100,8 @@ void Game::FrameStart()
     // Sets the screen area where to draw
     glViewport(0, 0, resolution.x, resolution.y);
 
+    tree1->resetModelMatrix();
+    tree2->resetModelMatrix();
 
     drone->resetModelMatrix();
 }
@@ -133,21 +137,26 @@ void Game::Update(float deltaTimeSeconds)
 
 
     // TEST cylinder.
-    modelMatrix = glm::mat4(1);
-    modelMatrix *= transf::Translate(2, CYLINDER_HEIGHT / 2, 2);
-    //modelMatrix *= transf::Scale(0.5, 1, 1);
-    RenderMesh(meshes["cylinder"], shaders["VertexColor"], modelMatrix);
+    //modelMatrix = glm::mat4(1);
+    //modelMatrix *= transf::Translate(2, CYLINDER_HEIGHT / 2, 2);
+    ////modelMatrix *= transf::Scale(0.5, 1, 1);
+    //RenderMesh(meshes["cylinder"], shaders["VertexColor"], modelMatrix);
 
-    modelMatrix = glm::mat4(1);
-    modelMatrix *= transf::Translate(2, CONE_HEIGHT / 4 + CYLINDER_HEIGHT, 2);
-    //modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
-    RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
+    //modelMatrix = glm::mat4(1);
+    //modelMatrix *= transf::Translate(2, CONE_HEIGHT / 4 + CYLINDER_HEIGHT, 2);
+    ////modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
+    //RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
 
-    modelMatrix = glm::mat4(1);
-    modelMatrix *= transf::Translate(2, CONE_HEIGHT / 2  + CYLINDER_HEIGHT, 2);
-    //modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
-    RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
-     
+    //modelMatrix = glm::mat4(1);
+    //modelMatrix *= transf::Translate(2, CONE_HEIGHT / 2  + CYLINDER_HEIGHT, 2);
+    ////modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
+    //RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
+
+    tree1->prepareForRender();
+    tree2->prepareForRender();
+
+    DrawTree(tree1);
+    DrawTree(tree2);
 
     drone->updatePropellerAngle(deltaTimeSeconds);
 
@@ -252,6 +261,20 @@ void Game::DrawDrone()
     RenderMesh(meshes["propeller"], shaders["VertexColor"], drone->bar2->attachment2->propellerMatrix);
 }
  
+
+void Game::DrawTree(Tree* tree)
+{
+	// Render trunk.
+    RenderMesh(meshes["cylinder"], shaders["VertexColor"], tree->trunkMatrix);
+
+    // Render bottom cone.
+    RenderMesh(meshes["cone"], shaders["VertexColor"], tree->bottomConeMatrix);
+
+    // Render top cone.
+    RenderMesh(meshes["cone"], shaders["VertexColor"], tree->topConeMatrix);
+}
+
+
 
 
 /* Callback functions */

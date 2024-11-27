@@ -4,6 +4,8 @@
 #include "lab_m1/DroneGame/camera.h"
 #include "lab_m1/DroneGame/Drone.h"
 
+#include "lab_m1/DroneGame/Tree.h"
+
 
 namespace drone_game
 {
@@ -33,6 +35,8 @@ namespace drone_game
         /* Drawing methods. */
         void DrawDrone();
 
+        void DrawTree(Tree* tree);
+
 
         /* Callback methods. */
         void OnInputUpdate(float deltaTime, int mods) override;
@@ -58,6 +62,11 @@ namespace drone_game
 
         // Game logic objects.
         Drone* drone;
+
+
+        // Trees.
+        Tree* tree1;
+        Tree* tree2;
 
 
         glm::mat4 modelMatrix;

@@ -75,8 +75,7 @@ namespace drone_game
 
         void MoveUpward(float distance)
 		{
-            glm::vec3 dir = glm::normalize(glm::vec3(0, up.y, 0));
-            position += dir * distance;
+            position += glm::vec3(0, 1, 0) * distance;
 		}
 
 

@@ -61,8 +61,9 @@ Mesh* objects3d::CreateTerrain(const std::string& name, int m, int n,
     std::vector<unsigned int> indices;
 
     // Add vertices.
-	for (int i = 0; i <= m; i++) {
-	    float coordZ = (i - centerRowLine) * cellWidth;
+	for (int i = 0; i <= m; i++)
+	{
+		float coordZ = (i - centerRowLine) * cellWidth;
 
 		for (int j = 0; j <= n; j++) {
 			float coordX = (j - centerColLine) * cellLen;
@@ -75,8 +76,10 @@ Mesh* objects3d::CreateTerrain(const std::string& name, int m, int n,
 
     // Add indices, building triangles.
     // For each cell, there will be two triangles.
-    for (int i = 0; i < m; i++) {
-		for (int j = 0; j < n; j++) {
+    for (int i = 0; i < m; i++)
+    {
+		for (int j = 0; j < n; j++)
+        {
 			// First triangle.
 			indices.push_back(vertsPerRow * i + j);
 			indices.push_back(vertsPerRow * (i + 1) + j);
@@ -98,17 +101,16 @@ Mesh* objects3d::CreateTerrain(const std::string& name, int m, int n,
 Mesh* objects3d::CreateCylinder(const std::string& name, float radius, float height,
 								int num_slices, glm::vec3 color)
 {
-    float halfHeight = height / 2.0f;
-
-    glm::vec3 bottomCenter = glm::vec3(0, -halfHeight, 0);
-    glm::vec3 topCenter = glm::vec3(0, halfHeight, 0);
-
     std::vector<VertexFormat> vertices;
     std::vector<unsigned int> indices;
 
-    // TODO: GET RID OF EXTRA CENTER VARIABLES.
-    vertices.emplace_back(bottomCenter, color); // index 0
-    vertices.emplace_back(topCenter, color);    // index 1
+    float halfHeight = height / 2.0f;
+
+    // Add vertex for center of bottom circle.
+    vertices.emplace_back(glm::vec3(0, -halfHeight, 0), color); // index 0
+
+    // Add vertex for center of top circle.
+    vertices.emplace_back(glm::vec3(0, halfHeight, 0), color);  // index 1
 
     float angle_step = 2.0f * (float) M_PI / (float) num_slices;
 
@@ -180,7 +182,8 @@ Mesh* objects3d::CreateCone(const std::string& name, float radius, float height,
     float angle_step = 2.0f * (float)M_PI / (float)num_slices;
 
     // Add vertices for bottom circle (num_slices vertices).
-    for (int i = 0; i < num_slices; i++) {
+    for (int i = 0; i < num_slices; i++)
+    {
         float curr_angle = angle_step * i;
 
         float x = -radius * glm::sin(curr_angle);
@@ -190,7 +193,8 @@ Mesh* objects3d::CreateCone(const std::string& name, float radius, float height,
     }
 
     // Add indices.
-    for (int i = 0; i < num_slices; i++) {
+    for (int i = 0; i < num_slices; i++)
+    {
         int bottom1 = 2 + i;
         int bottom2 = 2 + ((i + 1) % num_slices);
 
