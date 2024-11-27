@@ -52,9 +52,9 @@ void main()
     frag_color = v_color;
 
     vec2 param = vec2(v_position.x, v_position.z);
-    float noise_val = noise(param * 0.3f);
+    float noise_val = noise(param);
 
-    vec3 final_position = vec3(v_position.x, noise_val * 0.2, v_position.z);
+    vec3 final_position = vec3(v_position.x, noise_val * 0.25, v_position.z);
 
 //    vec3 color1 = vec3(0.78f, 0.05f, 0.94f);
 //    vec3 color1 = vec3(0.82, 0.647, 0.376);

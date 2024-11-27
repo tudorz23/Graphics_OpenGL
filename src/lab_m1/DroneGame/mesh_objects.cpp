@@ -51,16 +51,6 @@ Mesh* objects3d::CreateParallelepiped(const std::string& name, float length,
 }
 
 
-// Build a grid with m rows and n columns, with all the cells being identical rectangles.
-//
-// If there are m rows, there are m + 1 lines creating them.
-// Similarly, there are n + 1 lines creating the columns.
-// There should be a vertex at each intersection between these lines, so (m + 1) * (n + 1).
-//
-// Use even values for m and n, so the center of the grid will be at lines (m/2, n/2).
-//
-// On rows, the Z coordinate will vary.
-// On columns, the X coordinate will vary.
 Mesh* objects3d::CreateTerrain(const std::string& name, int m, int n,
 							   float cellLen, float cellWidth, glm::vec3 baseColor)
 {
@@ -106,4 +96,81 @@ Mesh* objects3d::CreateTerrain(const std::string& name, int m, int n,
     Mesh* terrain = new Mesh(name);
     terrain->InitFromData(vertices, indices);
     return terrain;
+}
+
+
+Mesh* objects3d::CreateCylinder(const std::string& name, float radius, float height,
+								int num_slices, glm::vec3 color)
+{
+    float halfHeight = height / 2.0f;
+
+    glm::vec3 bottomCenter = glm::vec3(0, -halfHeight, 0);
+    glm::vec3 topCenter = glm::vec3(0, halfHeight, 0);
+
+    std::vector<VertexFormat> vertices;
+    std::vector<unsigned int> indices;
+
+    vertices.emplace_back(bottomCenter, color); // index 0
+    vertices.emplace_back(topCenter, color);    // index 1
+
+    float angle_step = 2.0f * (float) M_PI / (float) num_slices;
+
+    // Add vertices for bottom and top circle (num_slices vertices).
+    for (int i = 0; i < num_slices; i++)
+    {
+        float curr_angle = angle_step * i;
+
+        float x = -radius * glm::sin(curr_angle);
+        float z = radius * glm::cos(curr_angle);
+
+        // Vertex from bottom circle.
+        vertices.emplace_back(glm::vec3(x, -halfHeight, z), color);
+
+        // Vertex from top circle.
+        vertices.emplace_back(glm::vec3(x, halfHeight, z), color);
+    }
+
+    // Add indices for the circles.
+    for (int i = 0; i < num_slices; i++)
+    {
+        // Triangle for bottom circle.
+        indices.push_back(0);
+        indices.push_back(2 + i * 2);
+        indices.push_back(2 + ((i + 1) % num_slices) * 2);
+
+        // Triangle for top circle.
+        indices.push_back(1);
+        indices.push_back(3 + i * 2);
+        indices.push_back(3 + ((i + 1) % num_slices) * 2);
+    }
+
+    //// Add indices for the top circle.
+    //for (int i = 0; i < num_slices; i++)
+    //{
+    //    indices.push_back(1);
+    //    indices.push_back(3 + i * 2);
+    //    indices.push_back(3 + ((i + 1) % num_slices) * 2);
+    //}
+
+    // Add indices for the sides.
+    for (int i = 0; i < num_slices; i++)
+    {
+        int bottom1 = 2 + i * 2;
+        int bottom2 = 2 + ((i + 1) % num_slices) * 2;
+
+        int top1 = 3 + i * 2;
+        int top2 = 3 + ((i + 1) % num_slices) * 2;
+
+        indices.push_back(bottom1);
+        indices.push_back(bottom2);
+        indices.push_back(top1);
+
+        indices.push_back(bottom2);
+        indices.push_back(top2);
+        indices.push_back(top1);
+    }
+
+    Mesh* cylinder = new Mesh(name);
+    cylinder->InitFromData(vertices, indices);
+    return cylinder;
 }

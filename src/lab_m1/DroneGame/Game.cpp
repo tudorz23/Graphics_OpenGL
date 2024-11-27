@@ -68,6 +68,10 @@ void Game::Init()
 							DRONE_BAR_INCL1, DRONE_BAR_INCL2);
 
 
+    // Add meshes for tree.
+    Mesh* cylinderMesh = objects3d::CreateCylinder("cylinder", CYLINDER_RADIUS, CYLINDER_HEIGHT, NUM_SLICES,
+													COLOR_BROWN);
+    AddMeshToList(cylinderMesh);
 
     // Initialize perspective projection params.
     fov = 60;
@@ -119,8 +123,15 @@ void Game::Update(float deltaTimeSeconds)
 
 
     // Draw terrain.
-    glm::mat4 modelMat = glm::mat4(1);
-    RenderTerrainMesh(meshes["terrain"], shaders["TerrainShader"], modelMat, COLOR_DARK_BLUE, COLOR_DARK_YELLOW);
+    modelMatrix = glm::mat4(1);
+    RenderTerrainMesh(meshes["terrain"], shaders["TerrainShader"], modelMatrix, COLOR_DARK_BLUE, COLOR_DARK_YELLOW);
+
+
+    // TEST cylinder.
+    modelMatrix = glm::mat4(1);
+    modelMatrix *= transf::Translate(2, CYLINDER_HEIGHT / 2, 2);
+    //modelMatrix *= transf::Scale(0.5, 1, 1);
+    RenderMesh(meshes["cylinder"], shaders["VertexColor"], modelMatrix);
 
 
     drone->updatePropellerAngle(deltaTimeSeconds);

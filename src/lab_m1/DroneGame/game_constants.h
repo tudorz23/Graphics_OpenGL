@@ -9,6 +9,7 @@ constexpr glm::vec3 COLOR_GREEN = glm::vec3(0.0f, 0.8f, 0.0f);
 constexpr glm::vec3 COLOR_PURPLE = glm::vec3(0.78f, 0.05f, 0.94f);
 constexpr glm::vec3 COLOR_DARK_BLUE = glm::vec3(0.82, 0.647, 0.376);
 constexpr glm::vec3 COLOR_DARK_YELLOW = glm::vec3(0.216, 0.149, 0.612);
+constexpr glm::vec3 COLOR_BROWN = glm::vec3(0.478, 0.22, 0.212);
 
 
 // Third person camera distances to the drone.
@@ -39,3 +40,9 @@ constexpr float SENSITIVITY_OX = 0.001f;
 constexpr float SENSITIVITY_OY = 0.001f;
 
 constexpr float PROPELLER_ROTATION_SPEED = 25.0f;
+
+
+// Tree constants.
+constexpr float CYLINDER_RADIUS = 0.25f;
+constexpr float CYLINDER_HEIGHT = 4.0f;
+constexpr int NUM_SLICES = 360;

@@ -58,5 +58,8 @@ namespace drone_game
 
         // Game logic objects.
         Drone* drone;
+
+
+        glm::mat4 modelMatrix;
 	};
 }
