@@ -31,5 +31,12 @@ namespace drone_game
 		Mesh* CreateCylinder(const std::string& name, float radius, float height,
 							 int num_slices, glm::vec3 color);
 
+
+		// Build a cone with the tip pointing upwards (the circle is at the bottom).
+		// (0, 0) is its center of mass (i.e. at 3/4 from the tip
+		// and 1/4 from the center of the bottom circle)
+		Mesh* CreateCone(const std::string& name, float radius, float height,
+						 int num_slices, glm::vec3 color);
+
 	}
 }

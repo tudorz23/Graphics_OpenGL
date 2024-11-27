@@ -73,6 +73,11 @@ void Game::Init()
 													COLOR_BROWN);
     AddMeshToList(cylinderMesh);
 
+    Mesh* coneMesh = objects3d::CreateCone("cone", CONE_RADIUS, CONE_HEIGHT, NUM_SLICES, COLOR_DARK_GREEN);
+    AddMeshToList(coneMesh);
+
+
+
     // Initialize perspective projection params.
     fov = 60;
     aspectRatio = window->props.aspectRatio;
@@ -133,6 +138,16 @@ void Game::Update(float deltaTimeSeconds)
     //modelMatrix *= transf::Scale(0.5, 1, 1);
     RenderMesh(meshes["cylinder"], shaders["VertexColor"], modelMatrix);
 
+    modelMatrix = glm::mat4(1);
+    modelMatrix *= transf::Translate(2, CONE_HEIGHT / 4 + CYLINDER_HEIGHT, 2);
+    //modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
+    RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
+
+    modelMatrix = glm::mat4(1);
+    modelMatrix *= transf::Translate(2, CONE_HEIGHT / 2  + CYLINDER_HEIGHT, 2);
+    //modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
+    RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
+     
 
     drone->updatePropellerAngle(deltaTimeSeconds);
 
