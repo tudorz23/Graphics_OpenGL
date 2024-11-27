@@ -43,20 +43,17 @@ namespace drone_game
 
 
 	 private:
-         Drone* drone;
-
-
-
-
-
         Camera* camera;
         glm::mat4 projectionMatrix;
 
-        // TODO(student): If you need any other class variables, define them here.
         // Perspective projection params.
         float fov;
         float aspectRatio;
         float persp_zNear;
         float persp_zFar;
+
+
+        // Game logic objects.
+        Drone* drone;
 	};
 }

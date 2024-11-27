@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game_constants.h"
 #include "utils/glm_utils.h"
 #include "utils/math_utils.h"
 
@@ -9,26 +10,35 @@ namespace drone_game
 	class Camera
 	{
      public:
-        float distanceToTarget;
         glm::vec3 position;
         glm::vec3 forward;
         glm::vec3 right;
         glm::vec3 up;
 
+        float forwardDistanceToTarget;
+        float upDistanceToTarget;
 
-		Camera()
+
+        // Constructor.
+		Camera(float forwardDistanceToTarget, float upDistanceToTarget)
 		{
 			position = glm::vec3(0, 2, 5);
 			forward = glm::vec3(0, 0, -1);
 			up = glm::vec3(0, 1, 0);
 			right = glm::vec3(1, 0, 0);
-			distanceToTarget = 2;
+
+            this->forwardDistanceToTarget = forwardDistanceToTarget;
+            this->upDistanceToTarget = upDistanceToTarget;
 		}
 
-
-        Camera(const glm::vec3& position, const glm::vec3& center, const glm::vec3& up)
+        // Constructor.
+        Camera(const glm::vec3& position, const glm::vec3& center, const glm::vec3& up,
+			   float forwardDistanceToTarget, float upDistanceToTarget)
         {
             Set(position, center, up);
+
+            this->forwardDistanceToTarget = forwardDistanceToTarget;
+            this->upDistanceToTarget = upDistanceToTarget;
         }
 
 
@@ -36,7 +46,7 @@ namespace drone_game
         { }
 
 
-        // Update camera
+        // Update camera.
         void Set(const glm::vec3& position, const glm::vec3& center, const glm::vec3& up)
         {
             this->position = position;
@@ -48,11 +58,10 @@ namespace drone_game
 
         void MoveForward(float distance)
         {
-            // Translates the camera using the `dir` vector computed from
-            // `forward`. Movement will always keep the camera at the same
-            // height. For example, if you rotate your head up/down, and then
+            // Movement will always keep the camera at the same height.
+            // For example, if you rotate your head up/down, and then
             // walk forward, then you will still keep the same relative
-            // distance (height) to the ground!
+            // distance (height) to the ground.
             glm::vec3 dir = glm::normalize(glm::vec3(forward.x, 0, forward.z));
             position += dir * distance;
         }
@@ -115,41 +124,40 @@ namespace drone_game
         void RotateThirdPerson_OX(float angle)
         {
             // Translate the observer on view direction (forward) to the target.
-            TranslateForward(distanceToTarget);
+            TranslateForward(forwardDistanceToTarget);
 
             RotateFirstPerson_OX(angle);
 
             // Translate the observer back.
-            TranslateForward(-distanceToTarget);
+            TranslateForward(-forwardDistanceToTarget);
         }
 
 
         void RotateThirdPerson_OY(float angle)
         {
-            TranslateForward(distanceToTarget);
+            TranslateForward(forwardDistanceToTarget);
             RotateFirstPerson_OY(angle);
-            TranslateForward(-distanceToTarget);
+            TranslateForward(-forwardDistanceToTarget);
         }
 
 
         void RotateThirdPerson_OZ(float angle)
         {
-            TranslateForward(distanceToTarget);
+            TranslateForward(forwardDistanceToTarget);
             RotateFirstPerson_OZ(angle);
-            TranslateForward(-distanceToTarget);
+            TranslateForward(-forwardDistanceToTarget);
         }
 
 
         glm::mat4 GetViewMatrix()
         {
-            // Returns the view matrix
             return glm::lookAt(position, position + forward, up);
         }
 
 
         glm::vec3 GetTargetPosition()
         {
-            return position + forward * distanceToTarget + up * (-0.3f);
+            return position + forward * forwardDistanceToTarget + up * upDistanceToTarget;
         }
 	};
 }

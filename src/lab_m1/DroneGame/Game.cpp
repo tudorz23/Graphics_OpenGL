@@ -21,7 +21,8 @@ Game::~Game()
 
 void Game::Init()
 {
-    camera = new Camera();
+    // Initialize camera.
+    camera = new Camera(FORWARD_DISTANCE, UP_DISTANCE);
     camera->Set(glm::vec3(0, 2, 3.5f), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
 
     {
@@ -37,12 +38,19 @@ void Game::Init()
     }
 
 
-    Mesh* paral = objects3d::CreateParallelepiped("paral", 1, 0.5, 
-											0.5, glm::vec3(0.5f, 0.5f, 0.5f));
-    AddMeshToList(paral);
+    // Create the shader program used for terrain.
+    Shader* shader = new Shader("TerrainShader");
+    shader->AddShader(PATH_JOIN(window->props.selfDir, SOURCE_PATH::M1, "DroneGame", "shaders", "VertexShader.glsl"), GL_VERTEX_SHADER);
+    shader->AddShader(PATH_JOIN(window->props.selfDir, SOURCE_PATH::M1, "DroneGame", "shaders", "FragmentShader.glsl"), GL_FRAGMENT_SHADER);
+    shader->CreateAndLink();
+    shaders[shader->GetName()] = shader;
 
 
+    // Create terrain mesh.
+    Mesh* terrainMesh = objects3d::CreateTerrain("terrain", 600, 400, 0.2f, 0.1f, COLOR_GREEN);
+    AddMeshToList(terrainMesh);
 
+    // Create drone meshes.
     Mesh* droneBodyMesh = objects3d::CreateParallelepiped("droneBody", DRONE_BODY_LEN, DRONE_BODY_WIDTH,
 															DRONE_BODY_HEIGHT, COLOR_GREY);
     AddMeshToList(droneBodyMesh);
@@ -60,7 +68,7 @@ void Game::Init()
 
 
 
-    // Perspective projection params.
+    // Initialize perspective projection params.
     fov = 60;
     aspectRatio = window->props.aspectRatio;
     persp_zNear = 0.01f;
@@ -108,26 +116,20 @@ void Game::Update(float deltaTimeSeconds)
         RenderMesh(meshes["box"], shaders["Simple"], modelMatrix);
     }
 
+    glm::mat4 modelMat = glm::mat4(1);
 
-    // Render the camera target. This is useful for understanding where
-    // the rotation point is, when moving in third-person camera mode.
-    /*{
-        glm::mat4 modelMatrix = glm::mat4(1);
-        modelMatrix = glm::translate(modelMatrix, camera->GetTargetPosition());
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
-        RenderMesh(meshes["sphere"], shaders["VertexNormal"], modelMatrix);
-    }*/
-
+    // Test terrain.
+    RenderMesh(meshes["terrain"], shaders["TerrainShader"], modelMat);
 
 
     drone->updatePropellerAngle(deltaTimeSeconds);
 
-
-    // Update drone position based on camera position.
+    // Update drone position based on camera position (the drone is the "target" of the camera).
     drone->position = camera->GetTargetPosition();
 
-    // TEST DRONE.
+    // Move the drone to its current position (executed before moving it relatively to the camera).
     drone->prepareForRender();
+
     DrawDrone();
 }
 
@@ -151,7 +153,6 @@ void Game::RenderMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix)
 
     mesh->Render();
 }
-
 
 
 

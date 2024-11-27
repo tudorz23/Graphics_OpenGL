@@ -8,6 +8,10 @@ constexpr glm::vec3 COLOR_BLACK = glm::vec3(0.0f, 0.0f, 0.0f);
 constexpr glm::vec3 COLOR_GREEN = glm::vec3(0.0f, 0.8f, 0.0f);
 
 
+// Third person camera distances to the drone.
+constexpr float FORWARD_DISTANCE = 2.0f;
+constexpr float UP_DISTANCE = -0.3f;
+
 
 // Drone sizes.
 constexpr float DRONE_BODY_LEN = 1.0f;
