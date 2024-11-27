@@ -73,6 +73,13 @@ namespace drone_game
         }
 
 
+        void MoveUpward(float distance)
+		{
+            glm::vec3 dir = glm::normalize(glm::vec3(0, up.y, 0));
+            position += dir * distance;
+		}
+
+
         void TranslateUpward(float distance)
         {
             position += up * distance;

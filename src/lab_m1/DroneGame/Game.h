@@ -22,6 +22,9 @@ namespace drone_game
 
         void RenderMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix) override;
 
+        void RenderTerrainMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix,
+							   glm::vec3 color1, glm::vec3 color2);
+
 
         /* Game logic methods. */
 

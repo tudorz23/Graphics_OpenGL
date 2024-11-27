@@ -79,7 +79,7 @@ Mesh* objects3d::CreateTerrain(const std::string& name, int m, int n,
 		{
             float coordX = (j - centerColLine) * cellLen;
 
-            vertices.push_back(VertexFormat(glm::vec3(coordX, 0.0f, coordZ), baseColor));
+            vertices.emplace_back(glm::vec3(coordX, 0.0f, coordZ), baseColor);
 		}
 	}
 

@@ -47,8 +47,9 @@ void Game::Init()
 
 
     // Create terrain mesh.
-    Mesh* terrainMesh = objects3d::CreateTerrain("terrain", 600, 400, 0.2f, 0.1f, COLOR_GREEN);
+    Mesh* terrainMesh = objects3d::CreateTerrain("terrain", 200, 200, 0.6f, 0.4f, COLOR_PURPLE);
     AddMeshToList(terrainMesh);
+
 
     // Create drone meshes.
     Mesh* droneBodyMesh = objects3d::CreateParallelepiped("droneBody", DRONE_BODY_LEN, DRONE_BODY_WIDTH,
@@ -116,10 +117,10 @@ void Game::Update(float deltaTimeSeconds)
         RenderMesh(meshes["box"], shaders["Simple"], modelMatrix);
     }
 
-    glm::mat4 modelMat = glm::mat4(1);
 
-    // Test terrain.
-    RenderMesh(meshes["terrain"], shaders["TerrainShader"], modelMat);
+    // Draw terrain.
+    glm::mat4 modelMat = glm::mat4(1);
+    RenderTerrainMesh(meshes["terrain"], shaders["TerrainShader"], modelMat, COLOR_DARK_BLUE, COLOR_DARK_YELLOW);
 
 
     drone->updatePropellerAngle(deltaTimeSeconds);
@@ -153,6 +154,55 @@ void Game::RenderMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix)
 
     mesh->Render();
 }
+
+
+void Game::RenderTerrainMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix,
+							 glm::vec3 color1, glm::vec3 color2)
+{
+    if (!mesh || !shader || !shader->program)
+        return;
+
+    // Render an object using the specified shader and the specified position
+    glUseProgram(shader->program);
+
+    // Get shader location for uniform mat4 "Model".
+    int location1 = glGetUniformLocation(shader->program, "Model");
+
+    // Set shader uniform "Model" to modelMatrix.
+    glUniformMatrix4fv(location1, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+    // Get shader location for uniform mat4 "View".
+    int location2 = glGetUniformLocation(shader->program, "View");
+
+    // Set shader uniform "View" to viewMatrix.
+    glm::mat4 viewMatrix = camera->GetViewMatrix();
+    glUniformMatrix4fv(location2, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+    // Get shader location for uniform mat4 "Projection".
+    int location3 = glGetUniformLocation(shader->program, "Projection");
+
+    // Set shader uniform "Projection" to projectionMatrix.
+    glm::mat4 projectionMatrix = GetSceneCamera()->GetProjectionMatrix();
+    glUniformMatrix4fv(location3, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+    // Get shader location for uniform vec3 "Color1".
+    int location4 = glGetUniformLocation(shader->program, "Color1");
+
+    // Set shader uniform "Color1" to color1.
+    glUniform3fv(location4, 1, glm::value_ptr(color1));
+
+    // Get shader location for uniform vec3 "Color2".
+    int location5 = glGetUniformLocation(shader->program, "Color2");
+
+    // Set shader uniform "Color1" to color1.
+    glUniform3fv(location5, 1, glm::value_ptr(color2));
+
+
+    // Draw the object
+    glBindVertexArray(mesh->GetBuffers()->m_VAO);
+    glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_INT, 0);
+}
+
 
 
 
@@ -205,12 +255,12 @@ void Game::OnInputUpdate(float deltaTime, int mods)
 
         if (window->KeyHold(GLFW_KEY_Q)) {
             // Translate the camera downward
-            camera->TranslateUpward(-DRONE_SPEED * deltaTime);
+            camera->MoveUpward(-DRONE_SPEED * deltaTime);
         }
 
         if (window->KeyHold(GLFW_KEY_E)) {
             // Translate the camera upward
-            camera->TranslateUpward(DRONE_SPEED * deltaTime);
+            camera->MoveUpward(DRONE_SPEED * deltaTime);
         }
 
 
