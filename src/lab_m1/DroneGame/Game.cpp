@@ -319,13 +319,13 @@ bool Game::CheckDroneTreeCollision(glm::vec3& dronePos)
         }
 
         // Check if the drone intersects either of the two cones.
-        if (SphereIntersectsCone(dronePos, DRONE_RADIUS, tree->bottomConeTipPos, CONE_SLOPE))
+        if (SphereIntersectsCone(dronePos, DRONE_RADIUS, tree->bottomConeTipPos, tree->coneHeight, CONE_SLOPE))
         {
             return true;
         }
 
 
-        if (SphereIntersectsCone(dronePos, DRONE_RADIUS, tree->topConeTipPos, CONE_SLOPE))
+        if (SphereIntersectsCone(dronePos, DRONE_RADIUS, tree->topConeTipPos, tree->coneHeight, CONE_SLOPE))
         {
             return true;
         }
@@ -342,12 +342,7 @@ bool Game::SphereIntersectsCylinder(glm::vec3& sphereCenter, float sphereRadius,
     // 1. Vertically: cylCenter.y + cylHeight / 2  >= sphereCenter.y - Rs.
     // 2. Horizontal distance between centers is less than the sum of the radius.
 
-    // Check 1.
-    if (cylCenter.y + cylHalfHeight < sphereCenter.y - sphereRadius)
-    {
-        // No intersection, sphere is above cylinder.
-        return false;
-    }
+    // 1 is checked in the caller.
 
     // Check 2.
     float horizDistSqr = (sphereCenter.x - cylCenter.x) * (sphereCenter.x - cylCenter.x)
@@ -359,16 +354,24 @@ bool Game::SphereIntersectsCylinder(glm::vec3& sphereCenter, float sphereRadius,
 
 
 bool Game::SphereIntersectsCone(glm::vec3& sphereCenter, float sphereRadius,
-								glm::vec3& coneTipPos, float coneSlope)
+								glm::vec3& coneTipPos, float coneHeight, float coneSlope)
 {
 	// They intersect if both conditions are true:
-    // 1. Vertically: coneCenter.y + coneHeight >= sphereCenter.y - Rs.
-    // 2. Horizontal distance between them is less than the sum of Rs and cone radius
+    // 1. Vertically: coneTipPos.y >= sphereCenter.y - Rs (sphere not to be above cone).
+    // 2. Vertically: coneTipPos.y - coneHeight <= sphereCenter.y + Rs (sphere not to be below cone).
+    // 3. Horizontal distance between them is less than the sum of Rs and cone radius
     //    in that point, which can be determined using coneSlope.
 
     // 1 is checked in the caller.
 
     // Check 2.
+    if (coneTipPos.y - coneHeight > sphereCenter.y + sphereRadius)
+    {
+        // No collision, sphere is below cone.
+        return false;
+    }
+
+    // Check 3.
     float coneRadius = coneSlope * (coneTipPos.y - sphereCenter.y);
 
     float horizDistSqr = (sphereCenter.x - coneTipPos.x) * (sphereCenter.x - coneTipPos.x)
@@ -488,8 +491,14 @@ void Game::OnInputUpdate(float deltaTime, int mods)
 
         if (window->KeyHold(GLFW_KEY_E)) {
             // Translate the camera upward
-            camera->position = camera->MoveUpward(DRONE_SPEED * deltaTime);
-            drone->position = camera->GetTargetPosition();
+            nextCameraPosition = camera->MoveUpward(DRONE_SPEED * deltaTime);
+            nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
+
+            if (!CheckDroneTreeCollision(nextDronePosition))
+            {
+                camera->position = nextCameraPosition;
+                drone->position = nextDronePosition;
+            }
         }
 
 

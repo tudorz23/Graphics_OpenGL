@@ -38,7 +38,7 @@ namespace drone_game
 									glm::vec3 &cylCenter, float cylRadius, float cylHeight);
 
         bool SphereIntersectsCone(glm::vec3& sphereCenter, float sphereRadius,
-								glm::vec3& coneTipPos, float coneSlope);
+								glm::vec3& coneTipPos, float coneHeight, float coneSlope);
 
 
         /* Drawing methods. */

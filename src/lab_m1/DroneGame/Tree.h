@@ -26,6 +26,7 @@ namespace drone_game
 		// Cone tip positions.
 		glm::vec3 bottomConeTipPos;
 		glm::vec3 topConeTipPos;
+		float coneHeight;
 
 
 		// Constructor

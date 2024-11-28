@@ -24,6 +24,7 @@ Tree::Tree(glm::vec3 position, float scaleFactor)
 
 	this->bottomConeTipPos = position + glm::vec3(0, (CYLINDER_HEIGHT + CONE_HEIGHT) * scaleFactor, 0);
 	this->topConeTipPos = position + glm::vec3(0, totalHeight, 0);
+	this->coneHeight = CONE_HEIGHT * scaleFactor;
 }
 
 
