@@ -56,40 +56,44 @@ namespace drone_game
         }
 
 
-        void MoveForward(float distance)
+        glm::vec3 MoveForward(float distance)
         {
             // Movement will always keep the camera at the same height.
             // For example, if you rotate your head up/down, and then
             // walk forward, then you will still keep the same relative
             // distance (height) to the ground.
             glm::vec3 dir = glm::normalize(glm::vec3(forward.x, 0, forward.z));
-            position += dir * distance;
+            glm::vec3 next_position = position + dir * distance;
+            return next_position;
         }
 
 
-        void TranslateForward(float distance)
+        glm::vec3 TranslateForward(float distance)
         {
-            position += forward * distance;
+            glm::vec3 next_position = position + forward * distance;
+            return next_position;
         }
 
 
-        void MoveUpward(float distance)
+        glm::vec3 MoveUpward(float distance)
 		{
-            position += glm::vec3(0, 1, 0) * distance;
+            glm::vec3 next_position = position + glm::vec3(0, 1, 0) * distance;
+            return next_position;
 		}
 
 
-        void TranslateUpward(float distance)
+        glm::vec3 TranslateUpward(float distance)
         {
-            position += up * distance;
+            glm::vec3 next_position = position + up * distance;
+            return next_position;
         }
 
 
-        void TranslateRight(float distance)
+        glm::vec3 TranslateRight(float distance)
         {
             glm::vec3 dir = glm::normalize(glm::vec3(right.x, 0, right.z));
-            position += dir * distance;
-
+            glm::vec3 next_position = position + dir * distance;
+            return next_position;
         }
 
 
@@ -164,6 +168,12 @@ namespace drone_game
         glm::vec3 GetTargetPosition()
         {
             return position + forward * forwardDistanceToTarget + up * upDistanceToTarget;
+        }
+
+
+        glm::vec3 GetTargetNextPosition(glm::vec3 pos)
+        {
+            return pos + forward * forwardDistanceToTarget + up * upDistanceToTarget;
         }
 	};
 }

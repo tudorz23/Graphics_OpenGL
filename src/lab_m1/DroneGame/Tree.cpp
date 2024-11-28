@@ -15,6 +15,11 @@ Tree::Tree(glm::vec3 position, float scaleFactor)
 	this->trunkMatrix = glm::mat4(1);
 	this->topConeMatrix = glm::mat4(1);
 	this->bottomConeMatrix = glm::mat4(1);
+
+	this->trunkElevation = CYLINDER_HEIGHT * scaleFactor / 2;
+	this->trunkCenter = this->position + glm::vec3(0, trunkElevation, 0);
+	this->trunkRadius = CYLINDER_RADIUS * scaleFactor;
+
 }
 
 
@@ -32,7 +37,7 @@ void Tree::prepareForRender()
 	translate(position);
 
 	// Translate the trunk to surface level.
-	this->trunkMatrix *= transf::Translate(0, CYLINDER_HEIGHT* scaleFactor / 2, 0);
+	this->trunkMatrix *= transf::Translate(0, this->trunkElevation, 0);
 
 	// Translate the bottom cone on top of the trunk.
 	this->bottomConeMatrix *= transf::Translate(0, CONE_HEIGHT * scaleFactor / 4 + CYLINDER_HEIGHT * scaleFactor, 0);

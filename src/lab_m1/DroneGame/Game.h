@@ -32,6 +32,12 @@ namespace drone_game
         void PlaceObstacles();
 
 
+        bool CheckDroneTreeCollision(glm::vec3 &dronePos);
+
+        bool SphereIntersectsCylinder(glm::vec3 &sphereCenter, float sphereRadius,
+									glm::vec3 &cylCenter, float cylRadius, float cylHeight);
+
+
         /* Drawing methods. */
         void DrawDrone();
 

@@ -16,6 +16,14 @@ namespace drone_game
 		float scaleFactor;
 
 
+		// How much the center is elevated on Oy so the base is at 0.
+		float trunkElevation;
+		float trunkRadius;
+
+
+		glm::vec3 trunkCenter;
+
+
 		// Constructor
 		Tree(glm::vec3 position, float scaleFactor);
 

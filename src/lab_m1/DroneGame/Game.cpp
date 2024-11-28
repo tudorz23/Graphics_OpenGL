@@ -79,9 +79,8 @@ void Game::Init()
     Mesh* coneMesh = objects3d::CreateCone("cone", CONE_RADIUS, CONE_HEIGHT, NUM_SLICES, COLOR_DARK_GREEN);
     AddMeshToList(coneMesh);
 
-    /*this->tree1 = new Tree(glm::vec3(2, 0, 2), 0.5f);
-    this->tree2 = new Tree(glm::vec3(-2, 0, -2), 0.25f);*/
 
+    // Generate and place the obstacles on the terrain.
     PlaceObstacles();
 
 
@@ -146,12 +145,7 @@ void Game::Update(float deltaTimeSeconds)
     RenderTerrainMesh(meshes["terrain"], shaders["TerrainShader"], modelMatrix, COLOR_DARK_BLUE, COLOR_DARK_YELLOW);
 
 
-    /*tree1->prepareForRender();
-    tree2->prepareForRender();
-
-    DrawTree(tree1);
-    DrawTree(tree2);*/
-
+    // Draw the trees.
     for (Tree *tree : this->trees)
     {
         tree->prepareForRender();
@@ -161,7 +155,7 @@ void Game::Update(float deltaTimeSeconds)
     drone->updatePropellerAngle(deltaTimeSeconds);
 
     // Update drone position based on camera position (the drone is the "target" of the camera).
-    drone->position = camera->GetTargetPosition();
+    //drone->position = camera->GetTargetPosition();
 
     // Move the drone to its current position (executed before moving it relatively to the camera).
     drone->prepareForRender();
@@ -277,7 +271,7 @@ void Game::PlaceObstacles()
         float treeX = -1.f;
         float treeZ = -1.f;
 
-        while (1) {
+        while (true) {
             int randomRow = rand() % maxRow;
             int randomCol = rand() % maxCol;
 
@@ -306,6 +300,45 @@ void Game::PlaceObstacles()
     }
 }
 
+
+bool Game::CheckDroneTreeCollision(glm::vec3& dronePos)
+{
+    for (Tree *tree : this->trees)
+    {
+	    // Check if drone intersects the trunk (sphere-cylinder).
+        if (SphereIntersectsCylinder(dronePos, DRONE_RADIUS,
+            tree->trunkCenter, tree->trunkRadius, tree->trunkElevation))
+        {
+            return true;
+        }
+
+        // TODO: Drone Cone intersection.
+    }
+
+    return false;
+}
+
+
+bool Game::SphereIntersectsCylinder(glm::vec3& sphereCenter, float sphereRadius,
+									glm::vec3& cylCenter, float cylRadius, float cylHalfHeight)
+{
+	// They intersect if both conditions are true:
+    // 1. Vertically: cylCenter.y + cylHeight / 2  >= sphereCenter.y - Rs
+    // 2. Horizontal distance between centers is less than the sum of the radius.
+
+    // Check 1.
+    if (cylCenter.y + cylHalfHeight < sphereCenter.y - sphereRadius)
+    {
+        // No intersection, sphere is above cylinder.
+        return false;
+    }
+
+    // Check 2.
+    float horizDistSqr = (sphereCenter.x - cylCenter.x) * (sphereCenter.x - cylCenter.x)
+					+ (sphereCenter.z - cylCenter.z) * (sphereCenter.z - cylCenter.z);
+
+    return (horizDistSqr <= (sphereRadius + cylRadius) * (sphereRadius + cylRadius));
+}
 
 
 
@@ -351,34 +384,73 @@ void Game::DrawTree(Tree* tree)
 void Game::OnInputUpdate(float deltaTime, int mods)
 {
     if (window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT)) {
+        glm::vec3 nextCameraPosition;
+        glm::vec3 nextDronePosition;
+
         if (window->KeyHold(GLFW_KEY_W)) {
             // Translate the camera forward
-            camera->MoveForward(DRONE_SPEED * deltaTime);
+            nextCameraPosition = camera->MoveForward(DRONE_SPEED * deltaTime);
+            nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
+
+            if (!CheckDroneTreeCollision(nextDronePosition))
+            {
+                camera->position = nextCameraPosition;
+                drone->position = nextDronePosition;
+            }
         }
 
         if (window->KeyHold(GLFW_KEY_A)) {
             // Translate the camera to the left
-            camera->TranslateRight(-DRONE_SPEED * deltaTime);
+            nextCameraPosition = camera->TranslateRight(-DRONE_SPEED * deltaTime);
+            nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
+
+            if (!CheckDroneTreeCollision(nextDronePosition))
+            {
+                camera->position = nextCameraPosition;
+                drone->position = nextDronePosition;
+            }
         }
 
         if (window->KeyHold(GLFW_KEY_S)) {
             // Translate the camera backward
-            camera->MoveForward(-DRONE_SPEED * deltaTime);
+            nextCameraPosition = camera->MoveForward(-DRONE_SPEED * deltaTime);
+            nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
+
+            if (!CheckDroneTreeCollision(nextDronePosition))
+            {
+                camera->position = nextCameraPosition;
+                drone->position = nextDronePosition;
+            }
         }
 
         if (window->KeyHold(GLFW_KEY_D)) {
             // Translate the camera to the right
-            camera->TranslateRight(DRONE_SPEED * deltaTime);
+            nextCameraPosition = camera->TranslateRight(DRONE_SPEED * deltaTime);
+            nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
+
+            if (!CheckDroneTreeCollision(nextDronePosition))
+            {
+                camera->position = nextCameraPosition;
+                drone->position = nextDronePosition;
+            }
         }
 
         if (window->KeyHold(GLFW_KEY_Q)) {
             // Translate the camera downward
-            camera->MoveUpward(-DRONE_SPEED * deltaTime);
+            nextCameraPosition = camera->MoveUpward(-DRONE_SPEED * deltaTime);
+            nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
+
+            if (nextDronePosition.y > MAX_TERRAIN_HEIGHT && !CheckDroneTreeCollision(nextDronePosition))
+            {
+                camera->position = nextCameraPosition;
+                drone->position = nextDronePosition;
+            }
         }
 
         if (window->KeyHold(GLFW_KEY_E)) {
             // Translate the camera upward
-            camera->MoveUpward(DRONE_SPEED * deltaTime);
+            camera->position = camera->MoveUpward(DRONE_SPEED * deltaTime);
+            drone->position = camera->GetTargetPosition();
         }
 
 
@@ -414,7 +486,9 @@ void Game::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
         camera->RotateThirdPerson_OX(-SENSITIVITY_OX * deltaY);
         camera->RotateThirdPerson_OY(-SENSITIVITY_OY * deltaX);
 
-        drone->rotationAngle -= SENSITIVITY_OX * deltaX;
+        drone->rotationAngle -= SENSITIVITY_OY * deltaX;
+
+        drone->position = camera->GetTargetPosition();
     }
 }
 

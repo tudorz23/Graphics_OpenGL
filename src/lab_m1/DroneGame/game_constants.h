@@ -1,6 +1,5 @@
 #pragma once
 
-
 // Colors.
 constexpr glm::vec3 COLOR_GREY = glm::vec3(0.6f, 0.53f, 0.58f);
 constexpr glm::vec3 COLOR_RED = glm::vec3(0.8f, 0.0f, 0.0f);
@@ -23,6 +22,7 @@ constexpr int TERRAIN_M = 212;
 constexpr int TERRAIN_N = 212;
 constexpr float TERRAIN_CELL_LEN = 0.6f;
 constexpr float TERRAIN_CELL_WIDTH = 0.6f;
+constexpr float MAX_TERRAIN_HEIGHT = 0.3f;
 
 
 // Drone sizes.
@@ -35,13 +35,15 @@ constexpr float DRONE_PROP_LEN = 0.3f;
 constexpr float DRONE_PROP_WIDTH = 0.02f;
 constexpr float DRONE_PROP_HEIGHT = 0.01f;
 
+constexpr float DRONE_RADIUS = 0.5f;
+
 
 // Drone movement parameters.
 constexpr glm::vec3 DRONE_START_POS = glm::vec3(0, 0, 0);
 constexpr float DRONE_BAR_INCL1 = glm::radians(40.0f);
 constexpr float DRONE_BAR_INCL2 = glm::radians(-40.0f);
 
-constexpr float DRONE_SPEED = 3.0f;
+constexpr float DRONE_SPEED = 5.0f;
 constexpr float DRONE_ROTATION_SPEED = 2.0f;
 
 constexpr float SENSITIVITY_OX = 0.001f;
