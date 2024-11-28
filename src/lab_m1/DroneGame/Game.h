@@ -29,7 +29,7 @@ namespace drone_game
 
 
         /* Game logic methods. */
-
+        void PlaceObstacles();
 
 
         /* Drawing methods. */
@@ -67,6 +67,10 @@ namespace drone_game
         // Trees.
         Tree* tree1;
         Tree* tree2;
+
+
+        // Obstacles.
+        std::vector<Tree*> trees;
 
 
         glm::mat4 modelMatrix;

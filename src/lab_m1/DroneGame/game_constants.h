@@ -18,6 +18,13 @@ constexpr float FORWARD_DISTANCE = 2.0f;
 constexpr float UP_DISTANCE = -0.3f;
 
 
+// Terrain size constants.
+constexpr int TERRAIN_M = 200;
+constexpr int TERRAIN_N = 200;
+constexpr float TERRAIN_CELL_LEN = 0.6f;
+constexpr float TERRAIN_CELL_WIDTH = 0.4f;
+
+
 // Drone sizes.
 constexpr float DRONE_BODY_LEN = 1.0f;
 constexpr float DRONE_BODY_WIDTH = 0.1f;
@@ -50,3 +57,7 @@ constexpr int NUM_SLICES = 120;
 
 constexpr float CONE_RADIUS = 1.4f;
 constexpr float CONE_HEIGHT = 2.5f;
+
+
+// Obstacles constants.
+constexpr int NR_TREES = 50;

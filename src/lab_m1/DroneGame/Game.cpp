@@ -1,9 +1,12 @@
 #include "lab_m1/DroneGame/Game.h"
 
+#include <iostream>
+
 #include "lab_m1/DroneGame/mesh_objects.h"
 #include "lab_m1/DroneGame/game_constants.h"
 #include "lab_m1/DroneGame/transforms3D.h"
 
+#include <unordered_set>
 
 using namespace std;
 using namespace drone_game;
@@ -47,7 +50,7 @@ void Game::Init()
 
 
     // Create terrain mesh.
-    Mesh* terrainMesh = objects3d::CreateTerrain("terrain", 200, 200, 0.6f, 0.4f, COLOR_PURPLE);
+    Mesh* terrainMesh = objects3d::CreateTerrain("terrain", TERRAIN_M, TERRAIN_N, TERRAIN_CELL_LEN, TERRAIN_CELL_WIDTH, COLOR_PURPLE);
     AddMeshToList(terrainMesh);
 
 
@@ -76,8 +79,10 @@ void Game::Init()
     Mesh* coneMesh = objects3d::CreateCone("cone", CONE_RADIUS, CONE_HEIGHT, NUM_SLICES, COLOR_DARK_GREEN);
     AddMeshToList(coneMesh);
 
-    this->tree1 = new Tree(glm::vec3(2, 0, 2), 0.5f);
-    this->tree2 = new Tree(glm::vec3(-2, 0, -2), 0.25f);
+    /*this->tree1 = new Tree(glm::vec3(2, 0, 2), 0.5f);
+    this->tree2 = new Tree(glm::vec3(-2, 0, -2), 0.25f);*/
+
+    PlaceObstacles();
 
 
     // Initialize perspective projection params.
@@ -100,8 +105,13 @@ void Game::FrameStart()
     // Sets the screen area where to draw
     glViewport(0, 0, resolution.x, resolution.y);
 
-    tree1->resetModelMatrix();
-    tree2->resetModelMatrix();
+    /*tree1->resetModelMatrix();
+    tree2->resetModelMatrix();*/
+
+    for (Tree *tree : this->trees)
+    {
+        tree->resetModelMatrix();
+    }
 
     drone->resetModelMatrix();
 }
@@ -136,27 +146,17 @@ void Game::Update(float deltaTimeSeconds)
     RenderTerrainMesh(meshes["terrain"], shaders["TerrainShader"], modelMatrix, COLOR_DARK_BLUE, COLOR_DARK_YELLOW);
 
 
-    // TEST cylinder.
-    //modelMatrix = glm::mat4(1);
-    //modelMatrix *= transf::Translate(2, CYLINDER_HEIGHT / 2, 2);
-    ////modelMatrix *= transf::Scale(0.5, 1, 1);
-    //RenderMesh(meshes["cylinder"], shaders["VertexColor"], modelMatrix);
-
-    //modelMatrix = glm::mat4(1);
-    //modelMatrix *= transf::Translate(2, CONE_HEIGHT / 4 + CYLINDER_HEIGHT, 2);
-    ////modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
-    //RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
-
-    //modelMatrix = glm::mat4(1);
-    //modelMatrix *= transf::Translate(2, CONE_HEIGHT / 2  + CYLINDER_HEIGHT, 2);
-    ////modelMatrix *= transf::Scale(0.5, 0.5, 0.5);
-    //RenderMesh(meshes["cone"], shaders["VertexColor"], modelMatrix);
-
-    tree1->prepareForRender();
+    /*tree1->prepareForRender();
     tree2->prepareForRender();
 
     DrawTree(tree1);
-    DrawTree(tree2);
+    DrawTree(tree2);*/
+
+    for (Tree *tree : this->trees)
+    {
+        tree->prepareForRender();
+        DrawTree(tree);
+    }
 
     drone->updatePropellerAngle(deltaTimeSeconds);
 
@@ -237,6 +237,67 @@ void Game::RenderTerrainMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelM
     glBindVertexArray(mesh->GetBuffers()->m_VAO);
     glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_INT, 0);
 }
+
+
+
+// The terrain is a TERRAIN_M x TERRAIN_N grid of cells, with each cell being of
+// size TERRAIN_CELL_LEN x TERRAIN_CELL_WIDTH.
+//
+// To randomly place obstacles, consider the intersection points between vertical
+// lines that create the columns and the horizontal lines that create the rows
+// (will consider only the inner such points, without those on the edges, so
+// (TERRAIN_M - 1) x (TERRAIN_N - 1) points.
+//
+// The top left point will be considered to be on position (0, 0). For each created
+// obstacle, generate two random numbers, one for the row and one for the column.
+// Each position will have a unique id, so for (i, j), the id is i * (TERRAIN_N - 1) + j.
+// Keep these ids in a set, to make sure there are no two obstacles on the same position.
+void Game::PlaceObstacles()
+{
+    // Get the position of the point considered as (0, 0).
+    float startX = -(TERRAIN_N - 2) / 2.0f * TERRAIN_CELL_LEN;
+    float startZ = -(TERRAIN_M - 2) / 2.0f * TERRAIN_CELL_WIDTH;
+
+    int maxRow = TERRAIN_M - 1;
+    int maxCol = TERRAIN_N - 1;
+
+    unordered_set<int> positionsTaken;
+
+    // Place the trees.
+    for (int i = 0; i < NR_TREES; i++)
+    {
+        float treeX = -1.f;
+        float treeZ = -1.f;
+
+        while (1) {
+            int randomRow = rand() % maxRow;
+            int randomCol = rand() % maxCol;
+
+            int id = randomRow * maxCol + randomCol;
+
+            if (positionsTaken.find(id) == positionsTaken.end())
+            {
+                positionsTaken.insert(id);
+
+                treeX = startX + randomCol * TERRAIN_CELL_LEN;
+                treeZ = startZ + randomRow * TERRAIN_CELL_WIDTH;
+
+                std::cout << "Tree at randomRow: " << randomRow << ", and randomCol: " << randomCol << "\n";
+
+                break;
+            }
+        }
+
+        int randomScale = rand() % 51 + 50;
+        float scaleFactor = (float) randomScale / 100.0f;
+
+        cout << "Tree scaleFactor is: " << scaleFactor << "\n\n";
+
+        Tree* newTree = new Tree(glm::vec3(treeX, 0.0f, treeZ), scaleFactor);
+        this->trees.push_back(newTree);
+    }
+}
+
 
 
 
