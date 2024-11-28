@@ -247,10 +247,13 @@ void Game::RenderTerrainMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelM
 // lines that create the columns and the horizontal lines that create the rows
 // (will consider only the inner such points, without those on the edges, so
 // (TERRAIN_M - 1) x (TERRAIN_N - 1) points.
+// The top left point will be considered to be on position (0, 0).
+// Each obstacle will sit on one of the positions of a new matrix placed on
+// the terrain grid, that has the space between cells larger, to make sure the
+// obstacles do not intersect.
 //
-// The top left point will be considered to be on position (0, 0). For each created
-// obstacle, generate two random numbers, one for the row and one for the column.
-// Each position will have a unique id, so for (i, j), the id is i * (TERRAIN_N - 1) + j.
+// For each created obstacle, generate two random numbers, one for the row and one for the column.
+// Each position will have a unique id, so for (i, j), the id is i * (maxCol) + j.
 // Keep these ids in a set, to make sure there are no two obstacles on the same position.
 void Game::PlaceObstacles()
 {
@@ -258,8 +261,13 @@ void Game::PlaceObstacles()
     float startX = -(TERRAIN_N - 2) / 2.0f * TERRAIN_CELL_LEN;
     float startZ = -(TERRAIN_M - 2) / 2.0f * TERRAIN_CELL_WIDTH;
 
-    int maxRow = TERRAIN_M - 1;
-    int maxCol = TERRAIN_N - 1;
+    cout << "startx = " << startX << ", startZ = " << startZ << "\n";
+
+    int maxRow = OBST_MAX_ROW;
+    int maxCol = OBST_MAX_COL;
+
+    cout << "copacul se duce pe MaxX = " << startX + maxCol * OBSTACLE_SPACE;
+    cout << ", MaxZ = " << startZ + maxRow * OBSTACLE_SPACE << "\n";
 
     unordered_set<int> positionsTaken;
 
@@ -279,8 +287,8 @@ void Game::PlaceObstacles()
             {
                 positionsTaken.insert(id);
 
-                treeX = startX + randomCol * TERRAIN_CELL_LEN;
-                treeZ = startZ + randomRow * TERRAIN_CELL_WIDTH;
+                treeX = startX + randomCol * OBSTACLE_SPACE;
+                treeZ = startZ + randomRow * OBSTACLE_SPACE;
 
                 std::cout << "Tree at randomRow: " << randomRow << ", and randomCol: " << randomCol << "\n";
 
