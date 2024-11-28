@@ -16,10 +16,14 @@ Tree::Tree(glm::vec3 position, float scaleFactor)
 	this->topConeMatrix = glm::mat4(1);
 	this->bottomConeMatrix = glm::mat4(1);
 
+	this->totalHeight = (CYLINDER_HEIGHT + CONE_HEIGHT / 4.0f + CONE_HEIGHT) * scaleFactor;
+
 	this->trunkElevation = CYLINDER_HEIGHT * scaleFactor / 2;
 	this->trunkCenter = this->position + glm::vec3(0, trunkElevation, 0);
 	this->trunkRadius = CYLINDER_RADIUS * scaleFactor;
 
+	this->bottomConeTipPos = position + glm::vec3(0, (CYLINDER_HEIGHT + CONE_HEIGHT) * scaleFactor, 0);
+	this->topConeTipPos = position + glm::vec3(0, totalHeight, 0);
 }
 
 

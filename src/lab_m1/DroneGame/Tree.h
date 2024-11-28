@@ -15,13 +15,17 @@ namespace drone_game
 		glm::vec3 position;
 		float scaleFactor;
 
+		float totalHeight;
 
-		// How much the center is elevated on Oy so the base is at 0.
+		// How much the center of trunk is elevated on Oy so the base is at 0.
 		float trunkElevation;
 		float trunkRadius;
-
-
 		glm::vec3 trunkCenter;
+
+
+		// Cone tip positions.
+		glm::vec3 bottomConeTipPos;
+		glm::vec3 topConeTipPos;
 
 
 		// Constructor

@@ -60,6 +60,9 @@ constexpr int NUM_SLICES = 120;
 constexpr float CONE_RADIUS = 1.4f;
 constexpr float CONE_HEIGHT = 2.5f;
 
+// tg(alpha) = radius / height.
+constexpr float CONE_SLOPE = CONE_RADIUS / CONE_HEIGHT;
+
 
 // Obstacles constants.
 constexpr int NR_TREES = 30;

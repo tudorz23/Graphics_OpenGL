@@ -305,6 +305,12 @@ bool Game::CheckDroneTreeCollision(glm::vec3& dronePos)
 {
     for (Tree *tree : this->trees)
     {
+        // If the drone is above the tree, they do not collide.
+        if (tree->totalHeight < dronePos.y - DRONE_RADIUS)
+        {
+            continue;
+        }
+
 	    // Check if drone intersects the trunk (sphere-cylinder).
         if (SphereIntersectsCylinder(dronePos, DRONE_RADIUS,
             tree->trunkCenter, tree->trunkRadius, tree->trunkElevation))
@@ -312,7 +318,17 @@ bool Game::CheckDroneTreeCollision(glm::vec3& dronePos)
             return true;
         }
 
-        // TODO: Drone Cone intersection.
+        // Check if the drone intersects either of the two cones.
+        if (SphereIntersectsCone(dronePos, DRONE_RADIUS, tree->bottomConeTipPos, CONE_SLOPE))
+        {
+            return true;
+        }
+
+
+        if (SphereIntersectsCone(dronePos, DRONE_RADIUS, tree->topConeTipPos, CONE_SLOPE))
+        {
+            return true;
+        }
     }
 
     return false;
@@ -323,7 +339,7 @@ bool Game::SphereIntersectsCylinder(glm::vec3& sphereCenter, float sphereRadius,
 									glm::vec3& cylCenter, float cylRadius, float cylHalfHeight)
 {
 	// They intersect if both conditions are true:
-    // 1. Vertically: cylCenter.y + cylHeight / 2  >= sphereCenter.y - Rs
+    // 1. Vertically: cylCenter.y + cylHeight / 2  >= sphereCenter.y - Rs.
     // 2. Horizontal distance between centers is less than the sum of the radius.
 
     // Check 1.
@@ -335,10 +351,33 @@ bool Game::SphereIntersectsCylinder(glm::vec3& sphereCenter, float sphereRadius,
 
     // Check 2.
     float horizDistSqr = (sphereCenter.x - cylCenter.x) * (sphereCenter.x - cylCenter.x)
-					+ (sphereCenter.z - cylCenter.z) * (sphereCenter.z - cylCenter.z);
+					   + (sphereCenter.z - cylCenter.z) * (sphereCenter.z - cylCenter.z);
 
     return (horizDistSqr <= (sphereRadius + cylRadius) * (sphereRadius + cylRadius));
 }
+
+
+
+bool Game::SphereIntersectsCone(glm::vec3& sphereCenter, float sphereRadius,
+								glm::vec3& coneTipPos, float coneSlope)
+{
+	// They intersect if both conditions are true:
+    // 1. Vertically: coneCenter.y + coneHeight >= sphereCenter.y - Rs.
+    // 2. Horizontal distance between them is less than the sum of Rs and cone radius
+    //    in that point, which can be determined using coneSlope.
+
+    // 1 is checked in the caller.
+
+    // Check 2.
+    float coneRadius = coneSlope * (coneTipPos.y - sphereCenter.y);
+
+    float horizDistSqr = (sphereCenter.x - coneTipPos.x) * (sphereCenter.x - coneTipPos.x)
+					   + (sphereCenter.z - coneTipPos.z) * (sphereCenter.z - coneTipPos.z);
+
+
+    return (horizDistSqr <= (sphereRadius + coneRadius) * (sphereRadius + coneRadius));
+}
+
 
 
 
