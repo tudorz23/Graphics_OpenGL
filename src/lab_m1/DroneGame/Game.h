@@ -5,6 +5,7 @@
 #include "lab_m1/DroneGame/Drone.h"
 
 #include "lab_m1/DroneGame/Tree.h"
+#include "lab_m1/DroneGame/House.h"
 
 
 namespace drone_game
@@ -46,6 +47,8 @@ namespace drone_game
 
         void DrawTree(Tree* tree);
 
+        void DrawHouse(House* house);
+
 
         /* Callback methods. */
         void OnInputUpdate(float deltaTime, int mods) override;
@@ -80,6 +83,7 @@ namespace drone_game
 
         // Obstacles.
         std::vector<Tree*> trees;
+        std::vector<House*> houses;
 
 
         glm::mat4 modelMatrix;

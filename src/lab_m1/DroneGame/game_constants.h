@@ -10,6 +10,9 @@ constexpr glm::vec3 COLOR_DARK_BLUE = glm::vec3(0.82, 0.647, 0.376);
 constexpr glm::vec3 COLOR_DARK_YELLOW = glm::vec3(0.216, 0.149, 0.612);
 constexpr glm::vec3 COLOR_BROWN = glm::vec3(0.478, 0.22, 0.212);
 constexpr glm::vec3 COLOR_DARK_GREEN = glm::vec3(0.231, 0.51, 0.137);
+constexpr glm::vec3 COLOR_YELLOW = glm::vec3(0.8, 0.788, 0.208);
+
+constexpr glm::vec3 COLOR_DARK_PURPLE = glm::vec3(0.122, 0.043, 0.502);
 
 
 // Third person camera distances to the drone.
@@ -65,7 +68,16 @@ constexpr float CONE_SLOPE = CONE_RADIUS / CONE_HEIGHT;
 
 
 // Obstacles constants.
-constexpr int NR_TREES = 30;
-constexpr float OBSTACLE_SPACE = 4.0f;
+constexpr int NR_TREES = 35;
+constexpr float OBSTACLE_SPACE = 3.9f;
 constexpr int OBST_MAX_ROW = 31;
 constexpr int OBST_MAX_COL = 31;
+
+constexpr int NR_HOUSES = 20;
+
+
+// House constants.
+constexpr float HOUSE_LEN = 3.0f;
+constexpr float HOUSE_WIDTH = 3.0f;
+constexpr float HOUSE_HEIGHT = 4.0f;
+

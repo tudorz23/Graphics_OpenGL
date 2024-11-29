@@ -49,12 +49,12 @@ void Game::Init()
     shaders[shader->GetName()] = shader;
 
 
-    // Create terrain mesh.
+    // Add terrain mesh.
     Mesh* terrainMesh = objects3d::CreateTerrain("terrain", TERRAIN_M, TERRAIN_N, TERRAIN_CELL_LEN, TERRAIN_CELL_WIDTH, COLOR_PURPLE);
     AddMeshToList(terrainMesh);
 
 
-    // Create drone meshes.
+    // Add drone meshes.
     Mesh* droneBodyMesh = objects3d::CreateParallelepiped("droneBody", DRONE_BODY_LEN, DRONE_BODY_WIDTH,
 															DRONE_BODY_HEIGHT, COLOR_GREY);
     AddMeshToList(droneBodyMesh);
@@ -80,6 +80,12 @@ void Game::Init()
     AddMeshToList(coneMesh);
 
 
+    // Add mesh for house.
+    Mesh* houseMesh = objects3d::CreateParallelepiped("house", HOUSE_WIDTH, 
+													HOUSE_LEN, HOUSE_HEIGHT, COLOR_YELLOW);
+    AddMeshToList(houseMesh);
+
+
     // Generate and place the obstacles on the terrain.
     PlaceObstacles();
 
@@ -97,7 +103,7 @@ void Game::Init()
 void Game::FrameStart()
 {
     // Clears the color buffer (using the previously set color) and depth buffer
-    glClearColor(0, 0, 0, 1);
+    glClearColor(COLOR_DARK_PURPLE.x, COLOR_DARK_PURPLE.y, COLOR_DARK_PURPLE.z, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::ivec2 resolution = window->GetResolution();
@@ -110,6 +116,11 @@ void Game::FrameStart()
     for (Tree *tree : this->trees)
     {
         tree->resetModelMatrix();
+    }
+
+    for (House *house : this->houses)
+    {
+        house->resetModelMatrix();
     }
 
     drone->resetModelMatrix();
@@ -150,6 +161,13 @@ void Game::Update(float deltaTimeSeconds)
     {
         tree->prepareForRender();
         DrawTree(tree);
+    }
+
+    // Draw the houses.
+    for (House *house : this->houses)
+    {
+        house->prepareForRender();
+        DrawHouse(house);
     }
 
     drone->updatePropellerAngle(deltaTimeSeconds);
@@ -252,8 +270,8 @@ void Game::RenderTerrainMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelM
 void Game::PlaceObstacles()
 {
     // Get the position of the point considered as (0, 0).
-    float startX = -(TERRAIN_N - 2) / 2.0f * TERRAIN_CELL_LEN;
-    float startZ = -(TERRAIN_M - 2) / 2.0f * TERRAIN_CELL_WIDTH;
+    float startX = -(TERRAIN_N - 2) / 2.0f * TERRAIN_CELL_LEN + TERRAIN_CELL_LEN * 2;
+    float startZ = -(TERRAIN_M - 2) / 2.0f * TERRAIN_CELL_WIDTH + TERRAIN_CELL_WIDTH * 2;
 
     cout << "startx = " << startX << ", startZ = " << startZ << "\n";
 
@@ -297,6 +315,37 @@ void Game::PlaceObstacles()
 
         Tree* newTree = new Tree(glm::vec3(treeX, 0.0f, treeZ), scaleFactor);
         this->trees.push_back(newTree);
+    }
+
+
+    // Place the houses.
+    for (int i = 0; i < NR_HOUSES; i++)
+    {
+        float houseX = -1.f;
+        float houseZ = -1.f;
+
+        while (true) {
+            int randomRow = rand() % maxRow;
+            int randomCol = rand() % maxCol;
+
+            int id = randomRow * maxCol + randomCol;
+
+            if (positionsTaken.find(id) == positionsTaken.end())
+            {
+                positionsTaken.insert(id);
+
+                houseX = startX + randomCol * OBSTACLE_SPACE;
+                houseZ = startZ + randomRow * OBSTACLE_SPACE;
+
+                break;
+            }
+        }
+
+        int randomScale = rand() % 51 + 50;
+        float scaleFactor = (float)randomScale / 100.0f;
+
+        House* newHouse = new House(glm::vec3(houseX, 0.0f, houseZ), scaleFactor);
+        this->houses.push_back(newHouse);
     }
 }
 
@@ -418,6 +467,11 @@ void Game::DrawTree(Tree* tree)
     RenderMesh(meshes["cone"], shaders["VertexColor"], tree->topConeMatrix);
 }
 
+
+void Game::DrawHouse(House* house)
+{
+    RenderMesh(meshes["house"], shaders["VertexColor"], house->modelMatrix);
+}
 
 
 
