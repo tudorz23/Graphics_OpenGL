@@ -10,7 +10,7 @@ constexpr glm::vec3 COLOR_DARK_BLUE = glm::vec3(0.82, 0.647, 0.376);
 constexpr glm::vec3 COLOR_DARK_YELLOW = glm::vec3(0.216, 0.149, 0.612);
 constexpr glm::vec3 COLOR_BROWN = glm::vec3(0.478, 0.22, 0.212);
 constexpr glm::vec3 COLOR_DARK_GREEN = glm::vec3(0.231, 0.51, 0.137);
-constexpr glm::vec3 COLOR_YELLOW = glm::vec3(0.8, 0.788, 0.208);
+constexpr glm::vec3 COLOR_YELLOW = glm::vec3(0.612, 0.6, 0.106);
 
 constexpr glm::vec3 COLOR_DARK_PURPLE = glm::vec3(0.122, 0.043, 0.502);
 

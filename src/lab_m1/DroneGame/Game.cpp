@@ -81,8 +81,8 @@ void Game::Init()
 
 
     // Add mesh for house.
-    Mesh* houseMesh = objects3d::CreateParallelepiped("house", HOUSE_WIDTH, 
-													HOUSE_LEN, HOUSE_HEIGHT, COLOR_YELLOW);
+    Mesh* houseMesh = objects3d::CreateParallelepiped("house", HOUSE_LEN, 
+													HOUSE_WIDTH, HOUSE_HEIGHT, COLOR_YELLOW);
     AddMeshToList(houseMesh);
 
 
@@ -260,9 +260,9 @@ void Game::RenderTerrainMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelM
 // (will consider only the inner such points, without those on the edges, so
 // (TERRAIN_M - 1) x (TERRAIN_N - 1) points.
 // The top left point will be considered to be on position (0, 0).
-// Each obstacle will sit on one of the positions of a new matrix placed on
-// the terrain grid, that has the space between cells larger, to make sure the
-// obstacles do not intersect.
+// Each obstacle will sit on one of the positions of a new (slightly smaller) matrix
+// placed on the terrain grid, that has the space between cells larger, to make sure
+// the obstacles do not intersect.
 //
 // For each created obstacle, generate two random numbers, one for the row and one for the column.
 // Each position will have a unique id, so for (i, j), the id is i * (maxCol) + j.
@@ -350,7 +350,13 @@ void Game::PlaceObstacles()
 }
 
 
-bool Game::CheckDroneTreeCollision(glm::vec3& dronePos)
+bool Game::DroneCollidesWithAnyObstacle(glm::vec3& dronePos)
+{
+    return DroneCollidesWithAnyHouse(dronePos) || DroneCollidesWithAnyTree(dronePos);
+}
+
+
+bool Game::DroneCollidesWithAnyTree(glm::vec3& dronePos)
 {
     for (Tree *tree : this->trees)
     {
@@ -379,6 +385,26 @@ bool Game::CheckDroneTreeCollision(glm::vec3& dronePos)
             return true;
         }
     }
+
+    return false;
+}
+
+
+bool Game::DroneCollidesWithAnyHouse(glm::vec3& dronePos)
+{
+	for (House *house : this->houses)
+	{
+		// If the drone is above the house, they do not collide.
+        if (house->maxY < dronePos.y - DRONE_RADIUS)
+        {
+            continue;
+        }
+
+        if (SphereIntersectsHouse(dronePos, DRONE_RADIUS, house))
+        {
+            return true;
+        }
+	}
 
     return false;
 }
@@ -431,6 +457,18 @@ bool Game::SphereIntersectsCone(glm::vec3& sphereCenter, float sphereRadius,
 }
 
 
+bool Game::SphereIntersectsHouse(glm::vec3 sphereCenter, float sphereRadius, House* house)
+{
+    float x = glm::max(house->minX, glm::min(sphereCenter.x, house->maxX));
+    float y = glm::max(house->minY, glm::min(sphereCenter.y, house->maxY));
+    float z = glm::max(house->minZ, glm::min(sphereCenter.z, house->maxZ));
+
+    float dist = glm::sqrt((x - sphereCenter.x) * (x - sphereCenter.x) +
+		         (y - sphereCenter.y) * (y - sphereCenter.y) +
+		         (z - sphereCenter.z) * (z - sphereCenter.z));
+
+    return dist < sphereRadius;
+}
 
 
 
@@ -488,7 +526,7 @@ void Game::OnInputUpdate(float deltaTime, int mods)
             nextCameraPosition = camera->MoveForward(DRONE_SPEED * deltaTime);
             nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
 
-            if (!CheckDroneTreeCollision(nextDronePosition))
+            if (!DroneCollidesWithAnyObstacle(nextDronePosition))
             {
                 camera->position = nextCameraPosition;
                 drone->position = nextDronePosition;
@@ -500,7 +538,7 @@ void Game::OnInputUpdate(float deltaTime, int mods)
             nextCameraPosition = camera->TranslateRight(-DRONE_SPEED * deltaTime);
             nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
 
-            if (!CheckDroneTreeCollision(nextDronePosition))
+            if (!DroneCollidesWithAnyObstacle(nextDronePosition))
             {
                 camera->position = nextCameraPosition;
                 drone->position = nextDronePosition;
@@ -512,7 +550,7 @@ void Game::OnInputUpdate(float deltaTime, int mods)
             nextCameraPosition = camera->MoveForward(-DRONE_SPEED * deltaTime);
             nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
 
-            if (!CheckDroneTreeCollision(nextDronePosition))
+            if (!DroneCollidesWithAnyObstacle(nextDronePosition))
             {
                 camera->position = nextCameraPosition;
                 drone->position = nextDronePosition;
@@ -524,7 +562,7 @@ void Game::OnInputUpdate(float deltaTime, int mods)
             nextCameraPosition = camera->TranslateRight(DRONE_SPEED * deltaTime);
             nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
 
-            if (!CheckDroneTreeCollision(nextDronePosition))
+            if (!DroneCollidesWithAnyObstacle(nextDronePosition))
             {
                 camera->position = nextCameraPosition;
                 drone->position = nextDronePosition;
@@ -536,7 +574,7 @@ void Game::OnInputUpdate(float deltaTime, int mods)
             nextCameraPosition = camera->MoveUpward(-DRONE_SPEED * deltaTime);
             nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
 
-            if (nextDronePosition.y > MAX_TERRAIN_HEIGHT && !CheckDroneTreeCollision(nextDronePosition))
+            if (nextDronePosition.y > MAX_TERRAIN_HEIGHT && !DroneCollidesWithAnyObstacle(nextDronePosition))
             {
                 camera->position = nextCameraPosition;
                 drone->position = nextDronePosition;
@@ -548,7 +586,7 @@ void Game::OnInputUpdate(float deltaTime, int mods)
             nextCameraPosition = camera->MoveUpward(DRONE_SPEED * deltaTime);
             nextDronePosition = camera->GetTargetNextPosition(nextCameraPosition);
 
-            if (!CheckDroneTreeCollision(nextDronePosition))
+            if (!DroneCollidesWithAnyObstacle(nextDronePosition))
             {
                 camera->position = nextCameraPosition;
                 drone->position = nextDronePosition;

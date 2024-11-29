@@ -9,6 +9,8 @@ namespace drone_game
 {
 	namespace objects3d
 	{
+		// Build a parallelepiped with length parallel to Ox, width parallel to Oz
+		// and height parallel to Oy.
 		Mesh* CreateParallelepiped(const std::string& name, float length, float width,
 									float height, glm::vec3 color);
 

@@ -11,6 +11,13 @@ namespace drone_game
 		glm::vec3 position;
 		float scaleFactor;
 
+		float minX;
+		float maxX;
+		float minY;
+		float maxY;
+		float minZ;
+		float maxZ;
+
 
 		// Constructor
 		House(glm::vec3 position, float scaleFactor);

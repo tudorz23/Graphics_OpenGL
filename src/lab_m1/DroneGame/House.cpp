@@ -15,6 +15,14 @@ House::House(glm::vec3 position, float scaleFactor)
 	this->modelMatrix = glm::mat4(1);
 
 
+	this->minX = position.x - HOUSE_LEN / 2 * scaleFactor;
+	this->maxX = position.x + HOUSE_LEN / 2 * scaleFactor;
+
+	this->minY = 0.0f;
+	this->maxY = HOUSE_HEIGHT * scaleFactor;
+
+	this->minZ = position.z - HOUSE_WIDTH / 2 * scaleFactor;
+	this->maxZ = position.z + HOUSE_WIDTH / 2 * scaleFactor;
 }
 
 
