@@ -16,9 +16,13 @@ uniform vec3 Color2;
 
 
 // Output
-out vec3 frag_normal;
-out vec2 frag_textcoord;
-out vec3 frag_color;
+//out vec3 frag_normal;
+//out vec2 frag_textcoord;
+//out vec3 frag_color;
+
+out vec3 frag_color1;
+out vec3 frag_color2;
+out float frag_noise;
 
 
 float random (in vec2 arg)
@@ -46,10 +50,9 @@ float noise(in vec2 coord)
 
 void main()
 {
-    // Send output to fragment shader
-    frag_normal = v_normal;
-    frag_textcoord = v_textcoord;
-    frag_color = v_color;
+//    frag_normal = v_normal;
+//    frag_textcoord = v_textcoord;
+//    frag_color = v_color;
 
     vec2 param = vec2(v_position.x, v_position.z);
     float noise_val = noise(param);
@@ -62,7 +65,12 @@ void main()
 //    vec3 color2 = vec3(0.42, 0.439, 0.306);
 //    vec3 color2 = vec3(0.639, 0.631, 0.078);
 
-    frag_color = mix(Color1, Color2, noise_val);
+//    frag_color = mix(Color1, Color2, noise_val);
+
+    // Send output to fragment shader.
+    frag_color1 = Color1;
+    frag_color2 = Color2;
+    frag_noise = noise_val;
 
     // Compute gl_Position
     gl_Position = Projection * View * Model * vec4(final_position, 1.0);
