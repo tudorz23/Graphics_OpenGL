@@ -72,6 +72,7 @@ void Drone::resetModelMatrix()
 }
 
 
+
 /* ---------- DroneBar methods ---------- */
 
 // Constructor.
@@ -137,7 +138,6 @@ void DroneBar::resetModelMatrix()
 
 
 
-
 /* ---------- DroneAttachment methods ---------- */
 
 // Constructor.
@@ -191,7 +191,6 @@ void DroneAttachment::updatePropellerAngle(float deltaTime)
 		this->propellerAngle -= M_PI * 2.0f;
 	}
 }
-
 
 
 void DroneAttachment::resetModelMatrix()

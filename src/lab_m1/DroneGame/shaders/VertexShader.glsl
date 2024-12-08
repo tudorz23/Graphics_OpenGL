@@ -16,10 +16,6 @@ uniform vec3 Color2;
 
 
 // Output
-//out vec3 frag_normal;
-//out vec2 frag_textcoord;
-//out vec3 frag_color;
-
 out vec3 frag_color1;
 out vec3 frag_color2;
 out float frag_noise;
@@ -41,7 +37,6 @@ float noise(in vec2 coord)
     float c = random(i + vec2(0.0, 1.0));
     float d = random(i + vec2(1.0, 1.0));
 
-    //vec2 u = f * f * (3.0 - 2.0 * f);
     vec2 u = smoothstep(0.,1.,f);
 
     return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
@@ -50,22 +45,10 @@ float noise(in vec2 coord)
 
 void main()
 {
-//    frag_normal = v_normal;
-//    frag_textcoord = v_textcoord;
-//    frag_color = v_color;
-
     vec2 param = vec2(v_position.x, v_position.z);
     float noise_val = noise(param);
 
     vec3 final_position = vec3(v_position.x, noise_val * 0.25, v_position.z);
-
-//    vec3 color1 = vec3(0.78f, 0.05f, 0.94f);
-//    vec3 color1 = vec3(0.82, 0.647, 0.376);
-//    vec3 color2 = vec3(0.216, 0.149, 0.612);
-//    vec3 color2 = vec3(0.42, 0.439, 0.306);
-//    vec3 color2 = vec3(0.639, 0.631, 0.078);
-
-//    frag_color = mix(Color1, Color2, noise_val);
 
     // Send output to fragment shader.
     frag_color1 = Color1;

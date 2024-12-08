@@ -1,10 +1,6 @@
 #version 330
 
 // Input
-//in vec3 frag_normal;
-//in vec2 frag_textcoord;
-//in vec3 frag_color;
-
 in vec3 frag_color1;
 in vec3 frag_color2;
 in float frag_noise;

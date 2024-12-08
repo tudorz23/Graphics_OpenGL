@@ -57,11 +57,9 @@ void Tree::prepareForRender()
 }
 
 
-
 void Tree::resetModelMatrix()
 {
 	this->trunkMatrix = glm::mat4(1);
 	this->topConeMatrix = glm::mat4(1);
 	this->bottomConeMatrix = glm::mat4(1);
 }
-

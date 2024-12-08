@@ -80,4 +80,3 @@ constexpr int NR_HOUSES = 20;
 constexpr float HOUSE_LEN = 3.0f;
 constexpr float HOUSE_WIDTH = 3.0f;
 constexpr float HOUSE_HEIGHT = 4.0f;
-
